@@ -931,9 +931,12 @@ static void __init reserve_ion_memory(void)
 
 		if (heap->extra_data) {
 			int fixed_position = NOT_FIXED;
+			struct ion_cp_heap_pdata *pdata = NULL;
 
 			switch ((int)heap->type) {
 			case ION_HEAP_TYPE_CP:
+				pdata =
+				(struct ion_cp_heap_pdata *)heap->extra_data;
 				fixed_position = ((struct ion_cp_heap_pdata *)
 					heap->extra_data)->fixed_position;
 				break;
@@ -960,6 +963,9 @@ static void __init reserve_ion_memory(void)
 						0xa0000000);
 					WARN_ON(ret);
 				}
+				pdata->secure_base = fixed_middle_start
+							- HOLE_SIZE;
+				pdata->secure_size = HOLE_SIZE + heap->size;
 				break;
 			case FIXED_HIGH:
 				heap->base = fixed_high_start;
