@@ -962,6 +962,12 @@ config MACH_FSM9XXX_SURF
 	  chipset based SURF evaluation board and
 	  FFA board.
 
+config MACH_M2_SPR
+        depends on ARCH_MSM8960
+        default n
+        bool "MSM8960 Samsung M2_SPR"
+        help
+          Support for the Samsung M2 Sprint device.
 endmenu
 
 config MSM_STACKED_MEMORY
