@@ -62,7 +62,8 @@ allowed_warnings = set([
    "xt_socket.c:161",
    "inet_hashtables.h:356",
    "xc4000.c:1049",
-   "xc4000.c:1063",	
+   "xc4000.c:1063",
+   "mdp4_video_enhance.c:164",	
  ])
 
 # Capture the name of the object file, can find it.

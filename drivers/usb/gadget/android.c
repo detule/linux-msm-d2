@@ -978,7 +978,7 @@ static int acm_function_bind_config(struct android_usb_function *f,
 {
 	char *name, *xport_name = NULL;
 	char buf[32], *b, xport_name_buf[32], *tb;
-	int err = -1, i;
+	int err = 0, i;
 	static int acm_initialized, ports;
 
 	if (acm_initialized)
@@ -994,7 +994,7 @@ static int acm_function_bind_config(struct android_usb_function *f,
 	while (b) {
 		name = strsep(&b, ",");
 
-		if (name) {
+		if (name[0]) {
 			if (tb)
 				xport_name = strsep(&tb, ",");
 			err = acm_init_port(ports, name, xport_name);

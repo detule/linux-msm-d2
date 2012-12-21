@@ -35,6 +35,10 @@
 #include "msm_watchdog.h"
 #include "timer.h"
 
+#ifdef CONFIG_KEXEC_HARDBOOT
+#include <asm/kexec.h>
+#endif
+
 #define WDT0_RST	0x38
 #define WDT0_EN		0x40
 #define WDT0_BARK_TIME	0x4C
@@ -261,7 +265,7 @@ void msm_restart(char mode, const char *cmd)
 
 	pm8xxx_reset_pwr_off(1);
 
-	if (cmd != NULL) {
+	if (cmd[0]) {
 		if (!strncmp(cmd, "bootloader", 10)) {
 			__raw_writel(0x77665500, restart_reason);
 		} else if (!strncmp(cmd, "recovery", 8)) {
@@ -274,7 +278,9 @@ void msm_restart(char mode, const char *cmd)
 			__raw_writel(0x77665501, restart_reason);
 		}
 	} else {
-		__raw_writel(0x77665501, restart_reason);
+		pr_err("%s : clear reset flag\r\n", __func__);
+		/* clear abnormal reset flag */
+		__raw_writel(0x12345678, restart_reason);
 	}
 #ifdef CONFIG_LGE_CRASH_HANDLER
 	if (in_panic == 1)
@@ -322,6 +328,18 @@ static int __init msm_pmic_restart_init(void)
 
 late_initcall(msm_pmic_restart_init);
 
+#ifdef CONFIG_KEXEC_HARDBOOT
+void msm_kexec_hardboot(void)
+{
+	/* Set PM8XXX PMIC to reset on power off. */
+	pm8xxx_reset_pwr_off(1);
+
+	/* Reboot with the recovery kernel since the boot kernel decompressor may
+	 * not support the hardboot jump. */
+	__raw_writel(0x77665502, restart_reason);
+}
+#endif
+
 static int __init msm_restart_init(void)
 {
 #ifdef CONFIG_MSM_DLOAD_MODE
@@ -336,6 +354,9 @@ static int __init msm_restart_init(void)
 	msm_tmr0_base = msm_timer_get_timer0_base();
 	restart_reason = MSM_IMEM_BASE + RESTART_REASON_ADDR;
 	pm_power_off = msm_power_off;
+#ifdef CONFIG_KEXEC_HARDBOOT
+	kexec_hardboot_hook = msm_kexec_hardboot;
+#endif
 
 	return 0;
 }
