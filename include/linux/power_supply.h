@@ -143,6 +143,15 @@ enum power_supply_type {
 #ifdef CONFIG_WIRELESS_CHARGER
         POWER_SUPPLY_TYPE_WIRELESS,
 #endif
+	POWER_SUPPLY_TYPE_BMS,		/* Battery Monitor System */
+	POWER_SUPPLY_TYPE_CARDOCK,
+#ifdef CONFIG_WIRELESS_CHARGING
+	POWER_SUPPLY_TYPE_WPC,          /* Wireless Charging should be 10 */
+#else
+	POWER_SUPPLY_TYPE_DUMMY,        /* # 10 is assigned for wireless */
+#endif
+	POWER_SUPPLY_TYPE_OTG,
+
 };
 
 union power_supply_propval {
