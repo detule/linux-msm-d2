@@ -142,6 +142,14 @@ enum power_supply_type {
 	POWER_SUPPLY_TYPE_USB_CDP,	/* Charging Downstream Port */
 	POWER_SUPPLY_TYPE_USB_ACA,	/* Accessory Charger Adapters */
 	POWER_SUPPLY_TYPE_BMS,		/* Battery Monitor System */
+	POWER_SUPPLY_TYPE_CARDOCK,
+#ifdef CONFIG_WIRELESS_CHARGING
+	POWER_SUPPLY_TYPE_WPC,          /* Wireless Charging should be 10 */
+#else
+	POWER_SUPPLY_TYPE_DUMMY,        /* # 10 is assigned for wireless */
+#endif
+	POWER_SUPPLY_TYPE_OTG,
+
 };
 
 union power_supply_propval {
