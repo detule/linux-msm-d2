@@ -965,6 +965,7 @@ config MACH_FSM9XXX_SURF
 config MACH_M2_SPR
         depends on ARCH_MSM8960
         default n
+	select CMA
         bool "MSM8960 Samsung M2_SPR"
         help
           Support for the Samsung M2 Sprint device.
@@ -1012,6 +1013,14 @@ config KERNEL_PMEM_SMI_REGION
 	depends on ANDROID_PMEM && ((ARCH_QSD8X50 && !PMEM_GPU0) || (ARCH_MSM8X60 && !VCM))
 	help
 	   Enable the in-kernel PMEM allocator to use SMI memory.
+
+config KERNEL_PMEM_EBI_REGION
+	bool "Enable in-kernel PMEM region for EBI"
+	default y if ARCH_MSM8X60
+	depends on ANDROID_PMEM && (ARCH_MSM8X60 || ARCH_MSM8960 || ARCH_MSMCOPPER)
+	help
+	  Enable the in-kernel PMEM allocator to use EBI memory.
+
 
 config PMEM_GPU0
 	bool "Enable PMEM GPU0 region"
