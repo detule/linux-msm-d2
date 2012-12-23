@@ -3358,7 +3358,7 @@ static void msm_hsusb_vbus_power_smb347s(bool on)
 }
 #endif
 
-static void msm_hsusb_vbus_power(bool on)
+static int msm_hsusb_vbus_power(bool on)
 {
 	if (system_rev < BOARD_REV03)
 		msm_hsusb_vbus_power_max8627(on);
@@ -3366,6 +3366,7 @@ static void msm_hsusb_vbus_power(bool on)
 	else
 		msm_hsusb_vbus_power_smb347s(on);
 #endif
+	return 0;
 }
 
 static int phy_settings[] = {
@@ -3439,7 +3440,7 @@ static struct msm_otg_platform_data msm_otg_pdata = {
 	.vbus_power		= msm_hsusb_vbus_power,
 	.power_budget		= 750,
 	.phy_init_seq = phy_settings,
-	.smb347s		= false,
+//	.smb347s		= false,
 #ifdef CONFIG_MSM_BUS_SCALING
 	.bus_scale_table	= &usb_bus_scale_pdata,
 #endif
