@@ -2434,7 +2434,7 @@ static void samsung_sys_class_init(void)
 };
 
 #if defined(CONFIG_NFC_PN544)
-static int pn544_conf_gpio(void)
+static void pn544_conf_gpio(void)
 {
 	pr_debug("pn544_conf_gpio\n");
 
@@ -2442,7 +2442,7 @@ static int pn544_conf_gpio(void)
 		GPIO_CFG_NO_PULL, GPIO_CFG_2MA), 1);
 	gpio_tlmm_config(GPIO_CFG(GPIO_NFC_SCL, 0, GPIO_CFG_INPUT,
 		GPIO_CFG_NO_PULL, GPIO_CFG_2MA), 1);
-	return 0;
+	return;
 }
 
 static int __init pn544_init(void)
@@ -3890,8 +3890,6 @@ static void mxt_init_hw_liquid(void)
 	}
 	return;
 
-err_ldo_gpio_set_dir:
-	gpio_set_value(GPIO_MXT_TS_LDO_EN, 0);
 err_ldo_gpio_req:
 	gpio_free(GPIO_MXT_TS_LDO_EN);
 err_irq_gpio_req:
