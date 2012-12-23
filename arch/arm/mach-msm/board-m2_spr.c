@@ -4028,13 +4028,13 @@ static struct spi_board_info spi_board_info[] __initdata = {
 	},
 };
 #endif
-
+#if 0
 static struct msm_pm_sleep_status_data msm_pm_slp_sts_data = {
 	.base_addr = MSM_ACC0_BASE + 0x08,
 	.cpu_offset = MSM_ACC1_BASE - MSM_ACC0_BASE,
 	.mask = 1UL << 13,
 };
-
+#endif
 static struct platform_device msm_device_saw_core0 = {
 	.name          = "saw-regulator",
 	.id            = 0,
@@ -5357,7 +5357,9 @@ static void __init samsung_m2_spr_init(void)
 				msm_pm_data);
 	change_memory_power = &msm8960_change_memory_power;
 	BUG_ON(msm_pm_boot_init(&msm_pm_boot_pdata));
+#if 0
 	msm_pm_init_sleep_status_data(&msm_pm_slp_sts_data);
+#endif
 #if defined(CONFIG_BCM4334) || defined(CONFIG_BCM4334_MODULE)
 	printk(KERN_INFO "[WIFI] system_rev = %d\n", system_rev);
 	if (system_rev >= BOARD_REV03)
