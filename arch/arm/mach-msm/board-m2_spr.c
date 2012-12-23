@@ -4409,7 +4409,9 @@ static struct platform_device *common_devices[] __initdata = {
 #endif
 	&msm8960_iommu_domain_device,
 	&msm8960_cpu_idle_device,
+#if 0
 	&msm8960_msm_gov_device,
+#endif
 };
 
 static struct platform_device *m2_spr_devices[] __initdata = {
