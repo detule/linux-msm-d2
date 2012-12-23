@@ -3987,7 +3987,7 @@ static struct msm_i2c_platform_data msm8960_i2c_qup_gsbi12_pdata = {
 	.clk_freq = 400000,
 	.src_clk_rate = 24000000,
 };
-
+#if 0
 static struct msm_rpm_platform_data msm_rpm_data = {
 	.reg_base_addrs = {
 		[MSM_RPM_PAGE_STATUS] = MSM_RPM_BASE,
@@ -4002,6 +4002,7 @@ static struct msm_rpm_platform_data msm_rpm_data = {
 	.msm_apps_ipc_rpm_reg = MSM_APCS_GCC_BASE + 0x008,
 	.msm_apps_ipc_rpm_val = 4,
 };
+#endif
 #ifndef CONFIG_S5C73M3
 static struct ks8851_pdata spi_eth_pdata = {
 	.irq_gpio = KS8851_IRQ_GPIO,
@@ -4382,7 +4383,7 @@ static struct platform_device *common_devices[] __initdata = {
 #ifdef CONFIG_HW_RANDOM_MSM
 	&msm_device_rng,
 #endif
-	&msm_rpm_device,
+	&msm8960_rpm_device,
 #ifdef CONFIG_ION_MSM
 	&ion_dev,
 #endif
@@ -5236,7 +5237,7 @@ static void __init samsung_m2_spr_init(void)
 		pr_err("meminfo_init() failed!\n");
 
 	msm_tsens_early_init(&msm_tsens_pdata);
-	BUG_ON(msm_rpm_init(&msm_rpm_data));
+	BUG_ON(msm_rpm_init(&msm8960_rpm_data));
 	BUG_ON(msm_rpmrs_levels_init(msm_rpmrs_levels,
 		ARRAY_SIZE(msm_rpmrs_levels)));
 
