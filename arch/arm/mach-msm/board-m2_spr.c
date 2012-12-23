@@ -4390,12 +4390,13 @@ static struct platform_device *common_devices[] __initdata = {
 	&msm_rpm_log_device,
 	&msm_rpm_stat_device,
 	&msm_device_tz_log,
-
+#if 0
 #ifdef CONFIG_MSM_QDSS
 	&msm_etb_device,
 	&msm_tpiu_device,
 	&msm_funnel_device,
 	&msm_etm_device,
+#endif
 #endif
 	&msm_device_dspcrashd_8960,
 	&msm8960_device_watchdog,
