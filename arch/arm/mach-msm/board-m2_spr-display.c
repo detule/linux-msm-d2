@@ -23,6 +23,7 @@
 #include <mach/gpiomux.h>
 #include <mach/msm8960-gpio.h>
 #include <linux/ion.h>
+#include <linux/msm_ion.h>
 #include <mach/ion.h>
 
 #include <mach/socinfo.h>
@@ -42,8 +43,8 @@
 #define IMA_CMC_EN	PM8921_GPIO_PM_TO_SYS(PMIC_GPIO_IMA_CMC_EN)
 #define IMA_nRST	PM8921_GPIO_PM_TO_SYS(PMIC_GPIO_IMA_nRST) /*RESETB */
 #define IMA_SLEEP	PM8921_GPIO_PM_TO_SYS(PMIC_GPIO_IMA_SLEEP) /*SLEEPB*/
-#ifdef CONFIG_MIPI_SAMSUNG_ESD_REFRESH 
-#ifdef CONFIG_SAMSUNG_CMC624
+#if defined(CONFIG_MIPI_SAMSUNG_ESD_REFRESH)
+#if defined(CONFIG_SAMSUNG_CMC624)
 #define CMC_ESD	PM8921_GPIO_PM_TO_SYS(PMIC_GPIO_CMC_ESD_DET)
 #define OLED_ESD	PM8921_GPIO_PM_TO_SYS(PMIC_GPIO_VGH_ESD_DET)
 #endif
@@ -104,7 +105,7 @@ static struct platform_device cmc624_i2c_gpio_device = {
 #endif
 
 
-#ifdef CONFIG_MIPI_SAMSUNG_ESD_REFRESH
+#if defined(CONFIG_MIPI_SAMSUNG_ESD_REFRESH)
 static struct sec_esd_platform_data esd_pdata;
 static struct platform_device samsung_mipi_esd_refresh_device = {
 	.name = "samsung_mipi_esd_refresh",
@@ -114,7 +115,7 @@ static struct platform_device samsung_mipi_esd_refresh_device = {
 	},
 };
 #endif
-#ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
+#if defined(CONFIG_FB_MSM_TRIPLE_BUFFER)
 /* prim = 540 x 960 x 4(bpp) x 3(pages) */
 #if defined(CONFIG_FB_MSM_MIPI_SAMSUNG_OLED_VIDEO_WVGA_PT_PANEL)
 #define MSM_FB_PRIM_BUF_SIZE (480 * 800 * 4 * 3)
@@ -213,9 +214,9 @@ static struct platform_device samsung_mipi_esd_refresh_device = {
 #define TVOUT_PANEL_NAME	"tvout_msm"
 
 #ifdef CONFIG_FB_MSM_HDMI_AS_PRIMARY
-static unsigned char hdmi_is_primary = 1;
+ unsigned char hdmi_is_primary = 1;
 #else
-static unsigned char hdmi_is_primary;
+ unsigned char hdmi_is_primary;
 #endif
 
 unsigned char msm8960_hdmi_as_primary_selected(void)
@@ -1354,8 +1355,9 @@ static int mipi_dsi_cdp_panel_power(int on)
 
 	return 0;
 }
-
+#if 0
 static char mipi_dsi_splash_is_enabled(void);
+#endif
 static int mipi_dsi_panel_power(int on)
 {
 	int ret;
@@ -1501,12 +1503,12 @@ void __init msm8960_mdp_writeback(struct memtype_reserve* reserve_table)
 		mdp_pdata.ov1_wb_size;
 #endif
 }
-
+#if 0
 static char mipi_dsi_splash_is_enabled(void)
 {
 	return mdp_pdata.cont_splash_enabled;
 }
-
+#endif
 static struct platform_device mipi_dsi_renesas_panel_device = {
 	.name = "mipi_renesas",
 	.id = 0,

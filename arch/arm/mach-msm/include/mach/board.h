@@ -567,6 +567,17 @@ struct isp1763_platform_data {
 	int (*setup_gpio)(int enable);
 };
 #endif
+
+#if defined(CONFIG_MIPI_SAMSUNG_ESD_REFRESH)
+struct sec_esd_platform_data {
+	int esd_gpio_irq;
+#if defined(CONFIG_SAMSUNG_CMC624)
+	int esd_gpio_cmc_irq;
+#endif
+};
+#endif
+
+
 /* common init routines for use by arch/arm/mach-msm/board-*.c */
 
 #ifdef CONFIG_OF_DEVICE
