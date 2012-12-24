@@ -4716,6 +4716,33 @@ static struct msm_rpmrs_level msm_rpmrs_levels[] = {
 	},
 };
 
+static struct msm_rpmrs_platform_data msm_rpmrs_data __initdata = {
+	.levels = &msm_rpmrs_levels[0],
+	.num_levels = ARRAY_SIZE(msm_rpmrs_levels),
+	.vdd_mem_levels  = {
+		[MSM_RPMRS_VDD_MEM_RET_LOW]	= 750000,
+		[MSM_RPMRS_VDD_MEM_RET_HIGH]	= 750000,
+		[MSM_RPMRS_VDD_MEM_ACTIVE]	= 1050000,
+		[MSM_RPMRS_VDD_MEM_MAX]		= 1150000,
+	},
+	.vdd_dig_levels = {
+		[MSM_RPMRS_VDD_DIG_RET_LOW]	= 500000,
+		[MSM_RPMRS_VDD_DIG_RET_HIGH]	= 750000,
+		[MSM_RPMRS_VDD_DIG_ACTIVE]	= 950000,
+		[MSM_RPMRS_VDD_DIG_MAX]		= 1150000,
+	},
+	.vdd_mask = 0x7FFFFF,
+	.rpmrs_target_id = {
+		[MSM_RPMRS_ID_PXO_CLK]		= MSM_RPM_ID_PXO_CLK,
+		[MSM_RPMRS_ID_L2_CACHE_CTL]	= MSM_RPM_ID_LAST,
+		[MSM_RPMRS_ID_VDD_DIG_0]	= MSM_RPM_ID_PM8921_S3_0,
+		[MSM_RPMRS_ID_VDD_DIG_1]	= MSM_RPM_ID_PM8921_S3_1,
+		[MSM_RPMRS_ID_VDD_MEM_0]	= MSM_RPM_ID_PM8921_L24_0,
+		[MSM_RPMRS_ID_VDD_MEM_1]	= MSM_RPM_ID_PM8921_L24_1,
+		[MSM_RPMRS_ID_RPM_CTL]		= MSM_RPM_ID_RPM_CTL,
+	},
+};
+
 static struct msm_pm_boot_platform_data msm_pm_boot_pdata __initdata = {
 	.mode = MSM_PM_BOOT_CONFIG_TZ,
 };
@@ -5205,7 +5232,7 @@ static struct pm_gpio ear_micbiase = {
 	.output_value	= 0,
 };
 
-static int secjack_gpio_init()
+static int secjack_gpio_init(void)
 {
 	int rc;
 
@@ -5246,19 +5273,19 @@ static int secjack_gpio_init()
 }
 #endif
 
-void main_mic_bias_init()
+void main_mic_bias_init(void)
 {
 	int ret;
 	ret = gpio_request(GPIO_MAIN_MIC_BIAS, "LDO_BIAS");
 	if (ret) {
 		pr_err("%s: ldo bias gpio %d request"
 				"failed\n", __func__, GPIO_MAIN_MIC_BIAS);
-		return ret;
+		return;
 	}
 	gpio_direction_output(GPIO_MAIN_MIC_BIAS, 0);
 }
 
-static int configure_codec_lineout_gpio()
+static int configure_codec_lineout_gpio(void)
 {
 	int ret;
 	struct pm_gpio param = {
@@ -5284,7 +5311,7 @@ static int configure_codec_lineout_gpio()
 	return 0;
 }
 
-static int tabla_codec_ldo_en_init()
+static int tabla_codec_ldo_en_init(void)
 {
 	int ret;
 
@@ -5313,8 +5340,7 @@ static void __init samsung_m2_spr_init(void)
 
 	msm_tsens_early_init(&msm_tsens_pdata);
 	BUG_ON(msm_rpm_init(&msm8960_rpm_data));
-	BUG_ON(msm_rpmrs_levels_init(msm_rpmrs_levels,
-		ARRAY_SIZE(msm_rpmrs_levels)));
+	BUG_ON(msm_rpmrs_levels_init(&msm_rpmrs_data));
 
 	gpio_rev_init();
 	regulator_suppress_info_printing();
