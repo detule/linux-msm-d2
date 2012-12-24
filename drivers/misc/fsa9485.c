@@ -949,8 +949,8 @@ static int fsa9485_handle_dock_vol_key(struct fsa9485_usbsw *info, int adc)
 {
 	struct input_dev *input = info->input;
 	int pre_key = info->previous_key;
-	unsigned int code;
-	int state;
+	unsigned int code=0;
+	int state=0;
 
 	if (adc == ADC_OPEN) {
 		switch (pre_key) {
