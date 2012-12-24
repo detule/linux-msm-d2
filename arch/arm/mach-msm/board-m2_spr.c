@@ -300,6 +300,7 @@ struct sx150x_platform_data msm8960_sx150x_data[] = {
 
 #endif
 
+#if 0
 static struct gpiomux_setting sec_ts_ldo_act_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_8MA,
@@ -321,7 +322,7 @@ static struct msm_gpiomux_config msm8960_sec_ts_configs[] = {
 		},
 	},
 };
-
+#endif
 #define MSM_PMEM_ADSP_SIZE                 0x9600000 /* 150 Mbytes */
 #define MSM_PMEM_ADSP_SIZE_FOR_2GB         0xA500000 /* 165 Mbytes */
 #define MSM_PMEM_AUDIO_SIZE        0x160000 /* 1.375 Mbytes */
@@ -2120,7 +2121,7 @@ static struct i2c_board_info opt_i2c_borad_info[] = {
 	},
 #endif
 };
-
+#if 0
 static void gp2a_led_onoff(int);
 
 #if defined(CONFIG_OPTICAL_GP2A)
@@ -2149,6 +2150,7 @@ static struct platform_device opt_gp2a = {
 		.platform_data  = &opt_gp2a_data,
 	},
 };
+#endif
 #endif
 #endif
 #ifdef CONFIG_MPU_SENSORS_MPU6050B1_411
@@ -2729,12 +2731,13 @@ static struct i2c_board_info a2220_device[] __initdata = {
 static struct i2c_gpio_platform_data  a2220_i2c_gpio_data = {
 	.udelay			= 1,
 };
-
+#if 0
 static struct platform_device a2220_i2c_gpio_device = {
 	.name			= "i2c-gpio",
 	.id			= MSM_A2220_I2C_BUS_ID,
 	.dev.platform_data	= &a2220_i2c_gpio_data,
 };
+#endif
 static struct gpiomux_setting a2220_gsbi_config = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_8MA,
@@ -2852,8 +2855,9 @@ static struct slim_device msm_slim_tabla = {
 		.platform_data = &tabla_platform_data,
 	},
 };
+#if 0
 static u8 tabla20_e_addr[6] = {0, 0, 0x60, 0, 0x17, 2};
-
+#endif
 static struct tabla_pdata tabla20_platform_data = {
 	.slimbus_slave_device = {
 		.name = "tabla-slave",
@@ -4078,7 +4082,7 @@ static struct platform_device msm8960_device_ext_5v_vreg __devinitdata = {
 		.platform_data = &msm_gpio_regulator_pdata[GPIO_VREG_ID_EXT_5V],
 	},
 };
-
+#if 0
 static struct platform_device msm8960_device_ext_l2_vreg __devinitdata = {
 	.name	= GPIO_REGULATOR_DEV_NAME,
 	.id	= 91,
@@ -4086,7 +4090,7 @@ static struct platform_device msm8960_device_ext_l2_vreg __devinitdata = {
 		.platform_data = &msm_gpio_regulator_pdata[GPIO_VREG_ID_EXT_L2],
 	},
 };
-
+#endif
 static struct platform_device msm8960_device_ext_3p3v_vreg __devinitdata = {
 	.name	= GPIO_REGULATOR_DEV_NAME,
 	.id	= PM8921_GPIO_PM_TO_SYS(17),
@@ -4531,8 +4535,10 @@ static struct platform_device *m2_spr_devices[] __initdata = {
 #if defined(CONFIG_OPTICAL_GP2A) || defined(CONFIG_OPTICAL_GP2AP020A00F) \
 	|| defined(CONFIG_SENSORS_CM36651)
 	&opt_i2c_gpio_device,
+#if 0
 #if defined(CONFIG_OPTICAL_GP2A) || defined(CONFIG_OPTICAL_GP2AP020A00F)
 	&opt_gp2a,
+#endif
 #endif
 #endif
 #ifdef CONFIG_BT_BCM4334
@@ -4617,7 +4623,7 @@ static void __init msm8960_gfx_init(void)
 		platform_device_register(&msm_kgsl_2d1);
 	}
 }
-
+#if 0
 static struct msm_cpuidle_state msm_cstates[] __initdata = {
 	{0, 0, "C0", "WFI",
 		MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT},
@@ -4658,7 +4664,7 @@ static struct msm_pm_platform_data msm_pm_data[MSM_PM_SLEEP_MODE_NR * 2] = {
 		.suspend_enabled = 0,
 	},
 };
-
+#endif
 static struct msm_rpmrs_level msm_rpmrs_levels[] = {
 	{
 		MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT,
