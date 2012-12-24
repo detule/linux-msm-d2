@@ -211,6 +211,11 @@ config FB_MSM_MIPI_DSI_NT35516
 	bool
 	select FB_MSM_MIPI_DSI
 
+config SAMSUNG_CMC624
+	bool "Support for integrated LCD controller in msm8960"
+	depends on FB && ARCH_MSM
+	default n
+
 config FB_MSM_MIPI_DSI_TC358764_DSI2LVDS
 	bool
 	select FB_MSM_MIPI_DSI

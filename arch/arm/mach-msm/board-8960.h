@@ -89,6 +89,7 @@ void msm8960_pm8921_gpio_mpp_init(void);
 void msm8960_mdp_writeback(struct memtype_reserve *reserve_table);
 #define MSM_8960_GSBI4_QUP_I2C_BUS_ID 4
 #define MSM_8960_GSBI3_QUP_I2C_BUS_ID 3
+#define MSM_8960_GSBI8_QUP_I2C_BUS_ID 8
 #define MSM_8960_GSBI10_QUP_I2C_BUS_ID 10
 
 extern struct msm_rtb_platform_data msm8960_rtb_pdata;
