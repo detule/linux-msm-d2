@@ -48,6 +48,13 @@ extern struct regulator_init_data msm_saw_regulator_pdata_s6;
 
 extern struct rpm_regulator_platform_data msm_rpm_regulator_pdata __devinitdata;
 
+#if defined(CONFIG_TOUCHSCREEN_MMS144) || \
+	defined(CONFIG_TOUCHSCREEN_MMS136) || \
+	defined(CONFIG_TOUCHSCREEN_MMS136_TABLET)
+extern void __init mms_tsp_input_init(void);
+#endif
+
+
 #if defined(CONFIG_GPIO_SX150X) || defined(CONFIG_GPIO_SX150X_MODULE)
 enum {
 	GPIO_EXPANDER_IRQ_BASE = (PM8921_IRQ_BASE + PM8921_NR_IRQS),

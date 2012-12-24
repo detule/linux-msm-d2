@@ -5358,7 +5358,7 @@ static void __init samsung_m2_spr_init(void)
 			msm_otg_pdata.phy_init_seq =
 				liquid_v1_phy_init_seq;
 	}
-	msm_otg_pdata.swfi_latency =
+	android_usb_pdata.swfi_latency =
 		msm_rpmrs_levels[0].latency_us;
 
 #ifdef CONFIG_USB_HOST_NOTIFY
@@ -5400,13 +5400,16 @@ static void __init samsung_m2_spr_init(void)
 		msm_num_footswitch_devices);
 	if (machine_is_msm8960_liquid())
 		platform_device_register(&msm8960_device_ext_3p3v_vreg);
+	if (cpu_is_msm8960ab())
+		platform_device_register(&msm8960ab_device_acpuclk);
+	else
+		platform_device_register(&msm8960_device_acpuclk);
 	platform_add_devices(common_devices, ARRAY_SIZE(common_devices));
 	msm8960_pm8921_gpio_mpp_init();
 	platform_add_devices(m2_spr_devices, ARRAY_SIZE(m2_spr_devices));
 	msm8960_init_hsic();
 	msm8960_init_cam();
 	msm8960_init_mmc();
-	acpuclk_init(&acpuclk_8960_soc_data);
 	if (machine_is_msm8960_liquid())
 		mxt_init_hw_liquid();
 	samsung_sys_class_init();

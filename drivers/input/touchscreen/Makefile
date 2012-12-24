@@ -80,3 +80,6 @@ obj-$(CONFIG_TOUCHSCREEN_MSM_LEGACY)		+= msm_touch.o
 obj-$(CONFIG_TOUCHSCREEN_CY8C_TS)	+= cy8c_ts.o
 obj-$(CONFIG_TOUCHSCREEN_CYTTSP_I2C_QC)       += cyttsp-i2c-qc.o
 obj-$(CONFIG_TOUCHSCREEN_FT5X06)	+= ft5x06_ts.o
+obj-$(CONFIG_TOUCHSCREEN_MMS144)        += mms_ts_144.o
+obj-$(CONFIG_TOUCHSCREEN_MMS136)        += mms_ts_136.o
+obj-$(CONFIG_TOUCHSCREEN_MMS136_TABLET)	+= mms_ts_136_tablet.o
