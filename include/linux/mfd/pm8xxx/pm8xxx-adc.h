@@ -95,6 +95,9 @@ enum pm8xxx_adc_channels {
 	ADC_MPP_2_ATEST_5,
 	ADC_MPP_2_ATEST_6,
 	ADC_MPP_2_ATEST_7,
+#ifdef CONFIG_SAMSUNG_JACK
+	ADC_MPP_1_AMUX6_SCALE_DEFAULT,
+#endif
 	ADC_CHANNEL_MAX_NUM,
 };
 
