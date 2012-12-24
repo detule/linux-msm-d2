@@ -43,6 +43,7 @@ allowed_warnings = set([
     "alignment.c:327",
     "mmu.c:602",
     "return_address.c:62",
+    "mdp4_video_enhance.c:164",
  ])
 
 # Capture the name of the object file, can find it.
