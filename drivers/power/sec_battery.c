@@ -33,6 +33,7 @@
 #include <linux/gpio.h>
 #include <mach/msm8960-gpio.h>
 #include <linux/mfd/pm8xxx/pm8xxx-adc.h>
+#include <asm/system_info.h>
 
 #define FG_T_SOC		0
 #define FG_T_VCELL		1
@@ -287,7 +288,7 @@ static int sec_bat_check_vf(struct sec_bat_info *info)
 
 	return 0;
 }
-
+#if 0
 static int sec_bat_check_detbat(struct sec_bat_info *info)
 {
 	struct power_supply *psy = power_supply_get_by_name(info->charger_name);
@@ -339,7 +340,7 @@ static int sec_bat_check_detbat(struct sec_bat_info *info)
 
 	return value.intval;
 }
-
+#endif
 static int sec_bat_set_fuelgauge_reset(struct sec_bat_info *info)
 {
 #if defined(CONFIG_BATTERY_MAX17040) || \
@@ -1492,7 +1493,7 @@ cable_skip:
 
 static void sec_bat_charging_time_management(struct sec_bat_info *info)
 {
-	unsigned long charging_time;
+	unsigned long charging_time=0;
 	ktime_t	current_time;
 	struct timespec ts;
 
@@ -2808,9 +2809,10 @@ static __devinit int sec_bat_probe(struct platform_device *pdev)
 	queue_work(info->monitor_wqueue, &info->monitor_work);
 
 	return 0;
-
+#if 0
 err_request_irq:
 	destroy_workqueue(info->monitor_wqueue);
+#endif
 err_supply_unreg_ac:
 	power_supply_unregister(&info->psy_ac);
 err_supply_unreg_usb:

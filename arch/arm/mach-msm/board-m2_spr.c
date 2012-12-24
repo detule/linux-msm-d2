@@ -1318,7 +1318,7 @@ static void fsa9485_mhl_cb(bool attached)
 
 	switch (set_cable_status) {
 	case CABLE_TYPE_MISC:
-		value.intval = POWER_SUPPLY_TYPE_BMS;
+		value.intval = POWER_SUPPLY_TYPE_MISC;
 		break;
 	case CABLE_TYPE_NONE:
 		value.intval = POWER_SUPPLY_TYPE_BATTERY;

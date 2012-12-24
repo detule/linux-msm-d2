@@ -135,6 +135,9 @@ enum power_supply_property {
 	POWER_SUPPLY_TYPE_SMART_DOCK, /* for SAMSUNG Smart dock */
 	POWER_SUPPLY_PROP_CURRENT_ADJ, /* for SAMSUNG Charging */
 	POWER_SUPPLY_PROP_FUELGAUGE_STATE, /*for SAMSUNG fuelgauging */
+#ifdef CONFIG_WIRELESS_CHARGING
+	POWER_SUPPLY_PROP_WIRELESS_CHARGING, /* for SAMSUNG Wireless Charging */
+#endif
 	POWER_SUPPLY_PROP_SCOPE,
 	/* Properties of type `const char *' */
 	POWER_SUPPLY_PROP_MODEL_NAME,
@@ -152,7 +155,9 @@ enum power_supply_type {
 	POWER_SUPPLY_TYPE_USB_CDP,	/* Charging Downstream Port */
 	POWER_SUPPLY_TYPE_USB_ACA,	/* Accessory Charger Adapters */
 	POWER_SUPPLY_TYPE_BMS,		/* Battery Monitor System */
+	POWER_SUPPLY_TYPE_MISC,
 	POWER_SUPPLY_TYPE_CARDOCK,
+	POWER_SUPPLY_TYPE_UARTOFF,
 #ifdef CONFIG_WIRELESS_CHARGING
 	POWER_SUPPLY_TYPE_WPC,          /* Wireless Charging should be 10 */
 #else
