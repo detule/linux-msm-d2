@@ -70,9 +70,9 @@ void  melfas_vdd_on(bool onoff)
 	int ret = 0;
 	/* 3.3V */
 	static struct regulator *reg_l17;
-	static struct regulator *reg_l11;
 	/* 1.8V */
 #ifdef CONFIG_MACH_M2_VZW
+	static struct regulator *reg_l11;
 	if (system_rev < BOARD_REV02) {
 		if (onoff)
 			gpio_direction_output(10, 1);
@@ -232,10 +232,10 @@ int is_melfas_vdd_on(void)
 	int ret;
 	/* 3.3V */
 	static struct regulator *reg_l17;
-	static struct regulator *reg_l11;
 #if defined(CONFIG_MACH_ESPRESSO_VZW) || defined(CONFIG_MACH_ESPRESSO_ATT) \
 				|| defined(CONFIG_MACH_ESPRESSO10_VZW) \
 				|| defined(CONFIG_MACH_ESPRESSO_SPR)
+	static struct regulator *reg_l11;
 	if (system_rev < BOARD_REV03) {
 		if (!reg_l17) {
 			reg_l17 = regulator_get(NULL, "8921_l17");
