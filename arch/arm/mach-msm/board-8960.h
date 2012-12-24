@@ -54,6 +54,10 @@ extern struct rpm_regulator_platform_data msm_rpm_regulator_pdata __devinitdata;
 extern void __init mms_tsp_input_init(void);
 #endif
 
+#define PLATFORM_IS_CHARM25() \
+	(machine_is_msm8960_cdp() && \
+		(socinfo_get_platform_subtype() == 1) \
+	)
 
 #if defined(CONFIG_GPIO_SX150X) || defined(CONFIG_GPIO_SX150X_MODULE)
 enum {
