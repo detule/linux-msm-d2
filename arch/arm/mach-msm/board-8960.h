@@ -60,6 +60,8 @@ extern void __init mms_tsp_input_init(void);
 		(socinfo_get_platform_subtype() == 1) \
 	)
 extern int gpio_rev(unsigned int);
+extern int samsung_cmc624_on(int enable);
+extern int samsung_has_cmc624(void);
 #if defined(CONFIG_GPIO_SX150X) || defined(CONFIG_GPIO_SX150X_MODULE)
 enum {
 	GPIO_EXPANDER_IRQ_BASE = (PM8921_IRQ_BASE + PM8921_NR_IRQS),
