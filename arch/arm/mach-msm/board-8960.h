@@ -58,7 +58,7 @@ extern void __init mms_tsp_input_init(void);
 	(machine_is_msm8960_cdp() && \
 		(socinfo_get_platform_subtype() == 1) \
 	)
-
+extern int gpio_rev(unsigned int);
 #if defined(CONFIG_GPIO_SX150X) || defined(CONFIG_GPIO_SX150X_MODULE)
 enum {
 	GPIO_EXPANDER_IRQ_BASE = (PM8921_IRQ_BASE + PM8921_NR_IRQS),
