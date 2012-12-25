@@ -5459,7 +5459,9 @@ static void __init samsung_m2_spr_init(void)
 	slim_register_board_info(msm_slim_devices,
 		ARRAY_SIZE(msm_slim_devices));
 	msm8960_init_dsps();
+#if 0
 	msm_pm_set_rpm_wakeup_irq(RPM_APCC_CPU0_WAKE_UP_IRQ);
+#endif
 	change_memory_power = &msm8960_change_memory_power;
 	BUG_ON(msm_pm_boot_init(&msm_pm_boot_pdata));
 #if 0
