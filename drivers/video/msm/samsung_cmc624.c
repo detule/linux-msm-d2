@@ -18,7 +18,7 @@
 #define DEBUG			/* uncomment if you want debugging output */
 
 #include <linux/delay.h>
-#include <mach/gpio.h>
+#include <mach/gpio-v1.h>
 #include "msm_fb.h"
 #include <linux/regulator/gpio-regulator.h>
 #include <linux/regulator/consumer.h>
