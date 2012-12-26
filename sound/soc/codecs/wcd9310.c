@@ -19,6 +19,7 @@
 #include <linux/ratelimit.h>
 #include <linux/debugfs.h>
 #include <linux/wait.h>
+#include <linux/switch.h>
 #include <linux/mfd/wcd9xxx/core.h>
 #include <linux/mfd/wcd9xxx/wcd9xxx_registers.h>
 #include <linux/mfd/wcd9xxx/wcd9310_registers.h>
@@ -350,6 +351,16 @@ struct tabla_priv {
 	struct dentry *debugfs_poke;
 	struct dentry *debugfs_mbhc;
 #endif
+};
+
+/*Add headset detect,sendend key sysfs for Samsung factorytest*/
+struct switch_dev switch_jack_detection = {
+	.name = "h2w",     /* /sys/class/switch/h2w/state */
+};
+
+/* To support samsung factory test */
+struct switch_dev switch_sendend = {
+	.name = "send_end", /* /sys/class/switch/send_end/state */
 };
 
 static const u32 comp_shift[] = {
