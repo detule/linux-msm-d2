@@ -179,6 +179,11 @@
 #ifdef CONFIG_KEXEC_HARDBOOT
 #include <asm/kexec.h>
 #endif
+
+#ifdef CONFIG_ANDROID_RAM_CONSOLE
+#include <linux/persistent_ram.h>
+#endif
+
 extern int system_rev;
 #ifdef CONFIG_TOUCHSCREEN_MMS144
 struct tsp_callbacks *charger_callbacks;
@@ -1084,17 +1089,21 @@ early_param("ext_display", ext_display_setup);
 #define RAM_CONSOLE_START 0xfff00000
 #define RAM_CONSOLE_SIZE  (SZ_1M-SZ_4K)
 
-static struct resource ram_console_resource[] = {
-	{
-		.flags = IORESOURCE_MEM,
-	},
-};
-
 static struct platform_device ram_console_device = {
 	.name          = "ram_console",
 	.id            = -1,
-	.num_resources = ARRAY_SIZE(ram_console_resource),
-	.resource      = ram_console_resource,
+};
+
+struct persistent_ram_descriptor ram_console_desc = {
+	.name = "ram_console",
+	.size = RAM_CONSOLE_SIZE,
+};
+
+struct persistent_ram ram_console_ram = {
+	.start = RAM_CONSOLE_START,
+	.size = RAM_CONSOLE_SIZE,
+	.num_descs = 1,
+	.descs = &ram_console_desc,
 };
 #endif
 
@@ -1126,13 +1135,6 @@ static void __init msm8960_reserve(void)
 		BUG_ON(ret);
 	}
 
-#ifdef CONFIG_ANDROID_RAM_CONSOLE
-	if (memblock_remove(RAM_CONSOLE_START, RAM_CONSOLE_SIZE) == 0) {
-		ram_console_resource[0].start = RAM_CONSOLE_START;
-		ram_console_resource[0].end   = RAM_CONSOLE_START+RAM_CONSOLE_SIZE-1;
-	}
-#endif
-
 #ifdef CONFIG_KEXEC_HARDBOOT
 	memblock_remove(KEXEC_HB_PAGE_ADDR, SZ_4K);
 #endif
@@ -1147,6 +1149,10 @@ static int msm8960_change_memory_power(u64 start, u64 size,
 static void __init msm8960_allocate_memory_regions(void)
 {
 	msm8960_allocate_fb_region();
+#ifdef CONFIG_ANDROID_RAM_CONSOLE
+	persistent_ram_early_init(&ram_console_ram);
+#endif
+
 }
 #ifdef CONFIG_KEYBOARD_CYPRESS_TOUCH_236
 static void cypress_power_onoff(int onoff)
@@ -4357,6 +4363,7 @@ struct platform_device msm8960_msm_gov_device = {
 
 
 static struct platform_device *common_devices[] __initdata = {
+	&ram_console_device,
 	&msm8960_device_dmov,
 	&msm_device_smd,
 	&msm8960_device_uart_gsbi5,
