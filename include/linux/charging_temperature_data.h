@@ -19,7 +19,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
+#include <linux/mfd/pm8xxx/pm8xxx-adc.h>
 #ifndef __CHARGING_TEMPERATURE_DATA_H
 #define __CHARGING_TEMPERATURE_DATA_H __FILE__
 
@@ -79,8 +79,8 @@ static const int temp_table[][2] = {
 };
 
 #elif defined(CONFIG_MACH_M2_SPR)
-static const int temp_table[][2] = {
-	{26385,	 800},
+static const struct pm8xxx_adc_map_pt temp_table[] = {
+	{26385, 800},
 	{26787,	 750},
 	{27136,	 700},
 	{27540,	 650},
