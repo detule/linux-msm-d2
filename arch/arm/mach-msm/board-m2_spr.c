@@ -4431,7 +4431,7 @@ static struct platform_device *common_devices[] __initdata = {
 	&ion_dev,
 #endif
 	&msm_rpm_log_device,
-	&msm_rpm_stat_device,
+	&msm8960_rpm_stat_device,
 	&msm_device_tz_log,
 #if 0
 #ifdef CONFIG_MSM_QDSS
@@ -5400,8 +5400,13 @@ static void __init samsung_m2_spr_init(void)
 	msm_spm_init(msm_spm_data, ARRAY_SIZE(msm_spm_data));
 	msm_spm_l2_init(msm_spm_l2_data);
 	msm8960_init_buses();
-	platform_add_devices(msm_footswitch_devices,
-		msm_num_footswitch_devices);
+	if (cpu_is_msm8960ab()) {
+		platform_add_devices(msm8960ab_footswitch,
+				msm8960ab_num_footswitch);
+	} else {
+		platform_add_devices(msm8960_footswitch,
+			msm8960_num_footswitch);
+	}
 	if (machine_is_msm8960_liquid())
 		platform_device_register(&msm8960_device_ext_3p3v_vreg);
 	if (cpu_is_msm8960ab())
