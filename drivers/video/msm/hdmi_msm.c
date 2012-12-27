@@ -4494,9 +4494,11 @@ static int hdmi_msm_power_off(struct platform_device *pdev)
 	/* Enable HPD interrupt and listen to connect interrupts */
 	hdmi_msm_hpd_polarity_setup(HPD_CONNECT_POLARITY,
 				!external_common_state->hpd_state);
+#if defined(CONFIG_VIDEO_MHL_V1) || defined(CONFIG_VIDEO_MHL_V2) \
+                || defined(CONFIG_VIDEO_MHL_TAB_V2)
 	if (hdmi_msm_state->mhl_hpd_state)
 		hdmi_msm_hpd_on();
-
+#endif
 	return 0;
 }
 
@@ -4751,7 +4753,10 @@ static int hdmi_msm_hpd_feature(int on)
 
 	DEV_INFO("%s: %d\n", __func__, on);
 	if (on) {
+#if defined(CONFIG_VIDEO_MHL_V1) || defined(CONFIG_VIDEO_MHL_V2) \
+                || defined(CONFIG_VIDEO_MHL_TAB_V2)
 		if (hdmi_msm_state->mhl_hpd_state)
+#endif
 			rc = hdmi_msm_hpd_on();
 	} else {
 		external_common_state->hpd_state = 0;
