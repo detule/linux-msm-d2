@@ -806,7 +806,7 @@ int32_t pm8xxx_adc_batt_scaler(struct pm8xxx_adc_arb_btm_param *btm_param,
 	return rc;
 }
 EXPORT_SYMBOL_GPL(pm8xxx_adc_batt_scaler);
-
+#ifdef CONFIG_PM8921_SEC_CHARGER
 int32_t pm8xxx_adc_sec_board_therm_default(int32_t adc_code,
 		const struct pm8xxx_adc_properties *adc_properties,
 		const struct pm8xxx_adc_chan_properties *chan_properties,
@@ -824,3 +824,4 @@ int32_t pm8xxx_adc_sec_board_therm_default(int32_t adc_code,
 				&adc_chan_result->physical);
 	}
 EXPORT_SYMBOL_GPL(pm8xxx_adc_sec_board_therm_default);
+#endif

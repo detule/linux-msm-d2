@@ -171,8 +171,9 @@ static struct pm8xxx_adc_scale_fn adc_scale_fn[] = {
 	[ADC_SCALE_PA_THERM] = {pm8xxx_adc_scale_pa_therm},
 	[ADC_SCALE_PMIC_THERM] = {pm8xxx_adc_scale_pmic_therm},
 	[ADC_SCALE_XOTHERM] = {pm8xxx_adc_tdkntcg_therm},
+#ifdef CONFIG_PM8921_SEC_CHARGER
 	[ADC_SCALE_SEC_BOARD_THERM] = {pm8xxx_adc_sec_board_therm_default},
-
+#endif
 };
 
 #define CHG_CNTRL_2                                    0x212
