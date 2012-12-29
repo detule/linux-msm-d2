@@ -1189,7 +1189,7 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	map.type = MT_MINICLEAN;
 	create_mapping(&map);
 #endif
-
+	*((unsigned char*)0xffffaf03) = 'a';
 	/*
 	 * Create a mapping for the machine vectors at the high-vectors
 	 * location (0xffff0000).  If we aren't using high-vectors, also
@@ -1201,11 +1201,13 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	map.type = MT_HIGH_VECTORS;
 	create_mapping(&map, false);
 
+	*((unsigned char*)0xffffaf07) = 'b';
 	if (!vectors_high()) {
 		map.virtual = 0;
 		map.type = MT_LOW_VECTORS;
 		create_mapping(&map, false);
 	}
+	*((unsigned char*)0xffffaf0b) = 'c';
 
 	/*
 	 * Ask the machine support to map in the statically mapped devices.
@@ -1429,14 +1431,21 @@ static void __init map_lowmem(void)
 void __init paging_init(struct machine_desc *mdesc)
 {
 	void *zero_page;
+	*((unsigned char*)0xffffaf02) = 'a';
 
 	memblock_set_current_limit(arm_lowmem_limit);
+	*((unsigned char*)0xffffaf06) = 'b';
 
 	build_mem_type_table();
+	*((unsigned char*)0xffffaf0A) = 'c';
 	prepare_page_table();
+	*((unsigned char*)0xffffaf0d) = 'd';
 	map_lowmem();
+	*((unsigned char*)0xffffaf12) = 'e';
 	dma_contiguous_remap();
+	*((unsigned char*)0xffffaf16) = 'f';
 	devicemaps_init(mdesc);
+	*((unsigned char*)0xffffaf1A) = 'g';
 	kmap_init();
 
 	top_pmd = pmd_off_k(0xffff0000);

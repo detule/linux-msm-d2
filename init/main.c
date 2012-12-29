@@ -481,21 +481,27 @@ asmlinkage void __init start_kernel(void)
 	char * command_line;
 	extern const struct kernel_param __start___param[], __stop___param[];
 
+	*((unsigned long*)0xffffaf0c) = 'D';
 	/*
 	 * Need to run as early as possible, to initialize the
 	 * lockdep hash:
 	 */
 	lockdep_init();
+	*((unsigned long*)0xffffaf10) = 'E';
 	smp_setup_processor_id();
+	*((unsigned long*)0xffffaf14) = 'F';
 	debug_objects_early_init();
+	*((unsigned long*)0xffffaf18) = 'G';
 
 	/*
 	 * Set up the the initial canary ASAP:
 	 */
 	boot_init_stack_canary();
+	*((unsigned long*)0xffffaf1C) = 'H';
 
 	cgroup_init_early();
 
+	*((unsigned long*)0xffffaf20) = 'I';
 	local_irq_disable();
 	early_boot_irqs_disabled = true;
 
@@ -503,14 +509,23 @@ asmlinkage void __init start_kernel(void)
  * Interrupts are still disabled. Do necessary setups, then
  * enable them
  */
+
+	*((unsigned long*)0xffffaf24) = 'J';
 	tick_init();
+	*((unsigned long*)0xffffaf28) = 'K';
 	boot_cpu_init();
+	*((unsigned long*)0xffffaf2C) = 'L';
 	page_address_init();
+	*((unsigned long*)0xffffaf30) = 'M';
 	printk(KERN_NOTICE "%s", linux_banner);
 	setup_arch(&command_line);
+	*((unsigned long*)0xffffaf34) = 'N';
 	mm_init_owner(&init_mm, &init_task);
+	*((unsigned long*)0xffffaf38) = 'O';
 	mm_init_cpumask(&init_mm);
+	*((unsigned long*)0xffffaf3C) = 'P';
 	setup_command_line(command_line);
+	*((unsigned long*)0xffffaf40) = 'Q';
 	setup_nr_cpu_ids();
 	setup_per_cpu_areas();
 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
