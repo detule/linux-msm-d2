@@ -178,7 +178,6 @@ config ARCH_MSM8960
 	select ARM_HAS_SG_CHAIN
 	select MSM_KRAIT_WFE_FIXUP
 	select MSM_ULTRASOUND_A
-	select MSM_IOMMU_GPU_SYNC
 	select GENERIC_TIME_VSYSCALL
 	select USE_USER_ACCESSIBLE_TIMERS
 	select ARM_USE_USER_ACCESSIBLE_TIMERS
@@ -215,7 +214,6 @@ config ARCH_MSM8930
 	select HOLES_IN_ZONE if SPARSEMEM
 	select ARM_HAS_SG_CHAIN
 	select MSM_KRAIT_WFE_FIXUP
-	select MSM_IOMMU_GPU_SYNC
 	select GENERIC_TIME_VSYSCALL
 	select USE_USER_ACCESSIBLE_TIMERS
 	select ARM_USE_USER_ACCESSIBLE_TIMERS
@@ -249,7 +247,6 @@ config ARCH_APQ8064
 	select ARM_HAS_SG_CHAIN
 	select MSM_KRAIT_WFE_FIXUP
 	select MSM_ULTRASOUND_A
-	select MSM_IOMMU_GPU_SYNC
 	select GENERIC_TIME_VSYSCALL
 	select USE_USER_ACCESSIBLE_TIMERS
 	select ARM_USE_USER_ACCESSIBLE_TIMERS
@@ -965,8 +962,6 @@ config MACH_FSM9XXX_SURF
 config MACH_M2_SPR
         depends on ARCH_MSM8960
         default n
-	select CMA
-        select MSM_IOMMU
         bool "MSM8960 Samsung M2_SPR"
         help
           Support for the Samsung M2 Sprint device.
