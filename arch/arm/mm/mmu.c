@@ -821,12 +821,13 @@ void __init iotable_init(struct map_desc *io_desc, int nr)
 {
 	struct map_desc *md;
 	struct vm_struct *vm;
-
+	int i = 1;
+	*((unsigned char*)0xffffaf50) = 'b';
 	if (!nr)
 		return;
 
 	vm = early_alloc_aligned(sizeof(*vm) * nr, __alignof__(*vm));
-
+	*((unsigned char*)0xffffaf50) = 'c';
 	for (md = io_desc; nr; md++, nr--) {
 		create_mapping(md, false);
 		vm->addr = (void *)(md->virtual & PAGE_MASK);
@@ -836,7 +837,9 @@ void __init iotable_init(struct map_desc *io_desc, int nr)
 		vm->flags |= VM_ARM_MTYPE(md->type);
 		vm->caller = iotable_init;
 		vm_area_add_early(vm++);
+		++i;
 	}
+	*((unsigned char*)0xffffaf50) = 'd';
 }
 
 #ifndef CONFIG_ARM_LPAE
@@ -1203,7 +1206,9 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	 */
 	if (mdesc->map_io)
 		mdesc->map_io();
+	*((unsigned char*)0xffffaf50) = 'e';
 	fill_pmd_gaps();
+	*((unsigned char*)0xffffaf50) = 'f';
 
 	/*
 	 * Finally flush the caches and tlb to ensure that we're in a
@@ -1212,7 +1217,9 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	 * back.  After this point, we can start to touch devices again.
 	 */
 	local_flush_tlb_all();
+	*((unsigned char*)0xffffaf50) = 'h';
 	flush_cache_all();
+	*((unsigned char*)0xffffaf50) = 'i';
 }
 
 static void __init kmap_init(void)
@@ -1414,7 +1421,7 @@ void __init paging_init(struct machine_desc *mdesc)
 	build_mem_type_table();
 	*((unsigned char*)0xffffaf0A) = 'c';
 	prepare_page_table();
-	*((unsigned char*)0xffffaf0d) = 'd';
+	*((unsigned char*)0xffffaf0e) = 'd';
 	map_lowmem();
 	*((unsigned char*)0xffffaf12) = 'e';
 	dma_contiguous_remap();
