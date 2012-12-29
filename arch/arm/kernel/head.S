@@ -128,6 +128,9 @@ ENTRY(stext)
 	bl	__fixup_pv_table
 #endif
 	bl	__create_page_tables
+	ldr	r12, =0xffffaf04
+	mov	r13, #0x42
+	str	r13,[r12]
 
 	/*
 	 * The following calls CPU specific code in a position independent
@@ -304,6 +307,10 @@ __create_page_tables:
 	orr	r3, r7, #0x7c000000
 	str	r3, [r0]
 #endif
+	ldr	r12, =0xfff00000
+	add	r0, r4, r12, lsr #(SECTION_SHIFT - PMD_ORDER)
+	orr	r3, r7, r12
+	str	r3, [r0]
 #ifdef CONFIG_ARCH_RPC
 	/*
 	 * Map in screen at 0x02000000 & SCREEN2_BASE
@@ -466,6 +473,10 @@ ENTRY(__turn_mmu_on)
 	mcreq	p15, 7, r3, c15, c0, 2
 #endif
 	mov	r3, r13
+
+	ldr	r12, =0xffffaf08
+	mov	r13, #0x43
+	str	r13,[r12]
 	mov	pc, r3
 __turn_mmu_on_end:
 ENDPROC(__turn_mmu_on)

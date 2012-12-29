@@ -458,6 +458,9 @@ not_relocated:	mov	r0, #0
 		bl	decompress_kernel
 		bl	cache_clean_flush
 		bl	cache_off
+		ldr	r0, =0xffffaf00
+		mov	r1, #0x41
+		str	r1,[r0]
 		mov	r0, #0			@ must be zero
 		mov	r1, r7			@ restore architecture number
 		mov	r2, r8			@ restore atags pointer
