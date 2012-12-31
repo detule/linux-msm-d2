@@ -1058,8 +1058,8 @@ early_param("ext_display", ext_display_setup);
 
 /* Exclude the last 4 kB to preserve the kexec hardboot page. */
 #ifdef CONFIG_ANDROID_RAM_CONSOLE
-#define RAM_CONSOLE_START 0xfff00000
-#define RAM_CONSOLE_SIZE  (SZ_1M-SZ_4K)
+#define RAM_CONSOLE_START 0x9fde0000
+#define RAM_CONSOLE_SIZE  0x20000
 
 static struct platform_device ram_console_device = {
 	.name          = "ram_console",
@@ -4341,7 +4341,6 @@ struct platform_device msm8960_msm_gov_device = {
 
 
 static struct platform_device *common_devices[] __initdata = {
-	&ram_console_device,
 	&msm8960_device_dmov,
 	&msm_device_smd,
 	&msm8960_device_uart_gsbi5,
@@ -4530,9 +4529,6 @@ static struct platform_device *m2_spr_devices[] __initdata = {
 #ifdef CONFIG_VIBETONZ
 	&vibetonz_device,
 #endif /* CONFIG_VIBETONZ */
-#ifdef CONFIG_ANDROID_RAM_CONSOLE
-	&ram_console_device,
-#endif
 };
 
 static void __init msm8960_i2c_init(void)
@@ -5318,11 +5314,12 @@ static int tabla_codec_ldo_en_init(void)
 
 static void __init samsung_m2_spr_init(void)
 {
+#ifdef CONFIG_ANDROID_RAM_CONSOLE
+	platform_device_register(&ram_console_device);
+#endif
 #ifdef CONFIG_SEC_DEBUG
 	sec_debug_init();
 #endif
-	if (socinfo_init() < 0)
-		pr_err("socinfo_init() failed!\n");
 
 	if (meminfo_init(SYS_MEMORY, SZ_256M) < 0)
 		pr_err("meminfo_init() failed!\n");
