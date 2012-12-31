@@ -833,13 +833,14 @@ void __init iotable_init(struct map_desc *io_desc, int nr)
 	struct map_desc *md;
 	struct vm_struct *vm;
 	int i = 1;
-	*((unsigned char*)0xffffaf50) = 'b';
+	*((unsigned char*)0xbb705050) = 'b';
 	if (!nr)
 		return;
 
 	vm = early_alloc_aligned(sizeof(*vm) * nr, __alignof__(*vm));
-	*((unsigned char*)0xffffaf50) = 'c';
+	*((unsigned char*)0xbb705050) = 'c';
 	for (md = io_desc; nr; md++, nr--) {
+//		*((unsigned char*)0xbb705050+i) = 'c';
 		create_mapping(md, false);
 		vm->addr = (void *)(md->virtual & PAGE_MASK);
 		vm->size = PAGE_ALIGN(md->length + (md->virtual & ~PAGE_MASK));
@@ -850,7 +851,7 @@ void __init iotable_init(struct map_desc *io_desc, int nr)
 		vm_area_add_early(vm++);
 		++i;
 	}
-	*((unsigned char*)0xffffaf50) = 'd';
+	*((unsigned char*)0xbb705050) = 'd';
 }
 
 #ifndef CONFIG_ARM_LPAE
@@ -1087,7 +1088,8 @@ static inline void prepare_page_table(void)
 	 * Clear out all the mappings below the kernel image.
 	 */
 	for (addr = 0; addr < MODULES_VADDR; addr += PMD_SIZE)
-		pmd_clear(pmd_off_k(addr));
+//		pmd_clear(pmd_off_k(addr));
+		{}
 
 #ifdef CONFIG_XIP_KERNEL
 	/* The XIP kernel is mapped in the module area -- skip over it */
@@ -1192,7 +1194,7 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	map.type = MT_MINICLEAN;
 	create_mapping(&map);
 #endif
-	*((unsigned char*)0xffffaf03) = 'a';
+	*((unsigned char*)0xbb705003) = 'a';
 	/*
 	 * Create a mapping for the machine vectors at the high-vectors
 	 * location (0xffff0000).  If we aren't using high-vectors, also
@@ -1204,22 +1206,22 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	map.type = MT_HIGH_VECTORS;
 	create_mapping(&map, false);
 
-	*((unsigned char*)0xffffaf07) = 'b';
+	*((unsigned char*)0xbb705007) = 'b';
 	if (!vectors_high()) {
 		map.virtual = 0;
 		map.type = MT_LOW_VECTORS;
 		create_mapping(&map, false);
 	}
-	*((unsigned char*)0xffffaf0b) = 'c';
+	*((unsigned char*)0xbb70500b) = 'c';
 
 	/*
 	 * Ask the machine support to map in the statically mapped devices.
 	 */
 	if (mdesc->map_io)
 		mdesc->map_io();
-	*((unsigned char*)0xffffaf50) = 'e';
+	*((unsigned char*)0xbb705050) = 'e';
 	fill_pmd_gaps();
-	*((unsigned char*)0xffffaf50) = 'f';
+	*((unsigned char*)0xbb705050) = 'f';
 
 	if (use_user_accessible_timers()) {
 		/*
@@ -1234,7 +1236,7 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 			create_mapping(&map, false);
 		}
 	}
-	*((unsigned char*)0xffffaf50) = 'g';
+	*((unsigned char*)0xbb705050) = 'g';
 
 	/*
 	 * Finally flush the caches and tlb to ensure that we're in a
@@ -1243,9 +1245,9 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
 	 * back.  After this point, we can start to touch devices again.
 	 */
 	local_flush_tlb_all();
-	*((unsigned char*)0xffffaf50) = 'h';
+	*((unsigned char*)0xbb705050) = 'h';
 	flush_cache_all();
-	*((unsigned char*)0xffffaf50) = 'i';
+	*((unsigned char*)0xbb705050) = 'i';
 }
 
 static void __init kmap_init(void)
@@ -1439,21 +1441,21 @@ static void __init map_lowmem(void)
 void __init paging_init(struct machine_desc *mdesc)
 {
 	void *zero_page;
-	*((unsigned char*)0xffffaf02) = 'a';
+	*((unsigned char*)0xbb705002) = 'a';
 
 	memblock_set_current_limit(arm_lowmem_limit);
-	*((unsigned char*)0xffffaf06) = 'b';
+	*((unsigned char*)0xbb705006) = 'b';
 
 	build_mem_type_table();
-	*((unsigned char*)0xffffaf0A) = 'c';
+	*((unsigned char*)0xbb70500A) = 'c';
 	prepare_page_table();
-	*((unsigned char*)0xffffaf0e) = 'd';
+	*((unsigned char*)0xbb70500e) = 'd';
 	map_lowmem();
-	*((unsigned char*)0xffffaf12) = 'e';
+	*((unsigned char*)0xbb705012) = 'e';
 	dma_contiguous_remap();
-	*((unsigned char*)0xffffaf16) = 'f';
+	*((unsigned char*)0xbb705016) = 'f';
 	devicemaps_init(mdesc);
-	*((unsigned char*)0xffffaf1A) = 'g';
+	*((unsigned char*)0xbb70501A) = 'g';
 	kmap_init();
 
 	top_pmd = pmd_off_k(0xffff0000);
