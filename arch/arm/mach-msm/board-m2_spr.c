@@ -151,7 +151,7 @@
 #include "pm.h"
 #include <mach/cpuidle.h>
 #include "rpm_resources.h"
-#include "mpm.h"
+#include <mach/mpm.h>
 #include "acpuclock.h"
 #include "rpm_log.h"
 #include "smd_private.h"
@@ -3188,10 +3188,8 @@ static struct platform_device *mdm_devices[] __initdata = {
 
 static void __init msm8960_map_io(void)
 {
-	*((unsigned char*)0xffffaf0f) = 'd';
 	msm_shared_ram_phys = MSM_SHARED_RAM_PHYS;
 	msm_map_msm8960_io();
-	*((unsigned char*)0xffffaf13) = 'e';
 
 	if (socinfo_init() < 0)
 		pr_err("socinfo_init() failed!\n");
@@ -3203,7 +3201,13 @@ static void __init msm8960_map_io(void)
 
 static void __init msm8960_init_irq(void)
 {
-	msm_mpm_irq_extn_init();
+	struct msm_mpm_device_data *data = NULL;
+
+#ifdef CONFIG_MSM_MPM
+	data = &msm8960_mpm_dev_data;
+#endif
+
+	msm_mpm_irq_extn_init(data);
 	gic_init(0, GIC_PPI_START, MSM_QGIC_DIST_BASE,
 						(void *)MSM_QGIC_CPU_BASE);
 
