@@ -119,9 +119,11 @@ static int __cpuinit krait_release_secondary(unsigned long base, int cpu)
 	if (!base_ptr)
 		return -ENODEV;
 
+	*((unsigned char*)0xbb70500E) = 'Q';
 	msm_spm_turn_on_cpu_rail(cpu);
 
 	if (cpu_is_krait_v1() || cpu_is_krait_v2()) {
+		*((unsigned char*)0xbb705012) = 'Q';
 		writel_relaxed(0x109, base_ptr+0x04);
 		writel_relaxed(0x101, base_ptr+0x04);
 		mb();
@@ -202,11 +204,13 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
 	unsigned long timeout;
 
 	pr_debug("Starting secondary CPU %d\n", cpu);
+	*((unsigned char*)0xbb705006) = 'Q';
 
 	/* Set preset_lpj to avoid subsequent lpj recalculations */
 	preset_lpj = loops_per_jiffy;
 
 	if (per_cpu(cold_boot_done, cpu) == false) {
+		*((unsigned char*)0xbb70500A) = 'Q';
 		release_secondary(cpu);
 		per_cpu(cold_boot_done, cpu) = true;
 	}

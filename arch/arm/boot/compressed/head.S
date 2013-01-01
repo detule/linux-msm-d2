@@ -458,7 +458,7 @@ not_relocated:	mov	r0, #0
 		bl	decompress_kernel
 		bl	cache_clean_flush
 		bl	cache_off
-		ldr	r0, =0xffffaf00
+		ldr	r0, =0xbb705000
 		mov	r1, #0x41
 		str	r1,[r0]
 		mov	r0, #0			@ must be zero

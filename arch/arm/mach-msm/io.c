@@ -210,7 +210,6 @@ static struct map_desc msm8960_io_desc[] __initdata = {
 
 void __init msm_map_msm8960_io(void)
 {
-	*((unsigned char*)0xbb705050) = 'a';
 	msm_map_io(msm8960_io_desc, ARRAY_SIZE(msm8960_io_desc));
 }
 #endif /* CONFIG_ARCH_MSM8960 */
