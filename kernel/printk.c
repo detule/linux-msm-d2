@@ -1511,7 +1511,6 @@ void register_console(struct console *newcon)
 	unsigned long flags;
 	struct console *bcon = NULL;
 
-	*((unsigned char*)0xbb70511) = 'Q';
 	/*
 	 * before we register a new CON_BOOT console, make sure we don't
 	 * already have a valid console
@@ -1527,7 +1526,6 @@ void register_console(struct console *newcon)
 		}
 	}
 
-	*((unsigned char*)0xbb70515) = 'Q';
 	if (console_drivers && console_drivers->flags & CON_BOOT)
 		bcon = console_drivers;
 
@@ -1590,7 +1588,6 @@ void register_console(struct console *newcon)
 		break;
 	}
 
-	*((unsigned char*)0xbb70519) = 'Q';
 	if (!(newcon->flags & CON_ENABLED))
 		return;
 
@@ -1618,7 +1615,6 @@ void register_console(struct console *newcon)
 		console_drivers->next = newcon;
 	}
 	if (newcon->flags & CON_PRINTBUFFER) {
-		*((unsigned char*)0xbb7051D) = 'Q';
 		/*
 		 * console_unlock(); will print out the buffered messages
 		 * for us.
@@ -1633,9 +1629,7 @@ void register_console(struct console *newcon)
 		 */
 		exclusive_console = newcon;
 	}
-	*((unsigned char*)0xbb70521) = 'Q';
 	console_unlock();
-	*((unsigned char*)0xbb70525) = 'Q';
 	console_sysfs_notify();
 
 	/*

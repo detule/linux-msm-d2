@@ -936,9 +936,7 @@ void __init setup_arch(char **cmdline_p)
 	struct machine_desc *mdesc;
 
 	setup_processor();
-//	*((unsigned char*)0xbb705001) = 'a';
 	mdesc = setup_machine_fdt(__atags_pointer);
-//	*((unsigned char*)0xbb705005) = 'b';
 	if (!mdesc)
 		mdesc = setup_machine_tags(machine_arch_type);
 	machine_desc = mdesc;
@@ -949,7 +947,6 @@ void __init setup_arch(char **cmdline_p)
 	if (mdesc->restart_mode)
 		reboot_setup(&mdesc->restart_mode);
 
-//	*((unsigned char*)0xbb705009) = 'c';
 	init_mm.start_code = (unsigned long) _text;
 	init_mm.end_code   = (unsigned long) _etext;
 	init_mm.end_data   = (unsigned long) _edata;
@@ -960,39 +957,30 @@ void __init setup_arch(char **cmdline_p)
 	*cmdline_p = cmd_line;
 
 	parse_early_param();
-//	*((unsigned char*)0xbb70500d) = 'd';
 	if (mdesc->init_very_early)
 		mdesc->init_very_early();
 
 	sort(&meminfo.bank, meminfo.nr_banks, sizeof(meminfo.bank[0]), meminfo_cmp, NULL);
 	sanity_check_meminfo();
-//	*((unsigned char*)0xbb705011) = 'e';
 	arm_memblock_init(&meminfo, mdesc);
 
-//	*((unsigned char*)0xbb705015) = 'f';
 	paging_init(mdesc);
-//	*((unsigned char*)0xbb705019) = 'g';
 
 	request_standard_resources(mdesc);
 
-//	*((unsigned char*)0xbb70501d) = 'h';
 
 	if (mdesc->restart)
 		arm_pm_restart = mdesc->restart;
 
 	unflatten_device_tree();
-//	*((unsigned char*)0xbb705021) = 'i';
 
 #ifdef CONFIG_SMP
 	if (is_smp())
 		smp_init_cpus();
 #endif
-//	*((unsigned char*)0xbb705025) = 'j';
 	reserve_crashkernel();
-//	*((unsigned char*)0xbb705029) = 'k';
 
 	tcm_init();
-//	*((unsigned char*)0xbb70502d) = 'l';
 
 #ifdef CONFIG_MULTI_IRQ_HANDLER
 	handle_arch_irq = mdesc->handle_irq;
