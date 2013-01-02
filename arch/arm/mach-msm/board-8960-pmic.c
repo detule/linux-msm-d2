@@ -22,6 +22,7 @@
 #include <mach/restart.h>
 #include "devices.h"
 #include "board-8960.h"
+extern int system_rev;
 
 struct pm8xxx_gpio_init {
 	unsigned			gpio;
@@ -396,7 +397,17 @@ static int pm8921_therm_mitigation[] = {
 #define MAX_VOLTAGE_MV		4200
 #define CHG_TERM_MA		100
 static struct pm8921_charger_platform_data pm8921_chg_pdata __devinitdata = {
+#ifdef CONFIG_PM8921_SEC_CHARGER
+//	.safety_time		= 512, /* max */
+	.update_time		= 30000,
+	.cool_temp		= 0,
+	.warm_temp		= 0,
+//	.get_cable_type		= msm8960_get_cable_type,
+#else
 	.update_time		= 60000,
+	.cool_temp		= 10,
+	.warm_temp		= 45,
+#endif
 	.max_voltage		= MAX_VOLTAGE_MV,
 	.min_voltage		= 3200,
 	.uvd_thresh_voltage	= 4050,
@@ -405,8 +416,6 @@ static struct pm8921_charger_platform_data pm8921_chg_pdata __devinitdata = {
 	.resume_voltage_delta	= 60,
 	.resume_charge_percent	= 99,
 	.term_current		= CHG_TERM_MA,
-	.cool_temp		= 10,
-	.warm_temp		= 45,
 	.temp_check_period	= 1,
 	.max_bat_chg_current	= 1100,
 	.cool_bat_chg_current	= 350,
@@ -594,8 +603,51 @@ static struct msm_ssbi_platform_data msm8960_ssbi_pm8921_pdata __devinitdata = {
 	},
 };
 
+static void msm8921_sec_charger_init(void)
+{
+	/* batt_id */
+	if (machine_is_M2_ATT() && system_rev >= 0x02) {
+		pm8921_chg_pdata.batt_id_min = 860000;
+		pm8921_chg_pdata.batt_id_max = 960000;
+	} else if (machine_is_M2_SKT() && system_rev >= 0x02) {
+		pm8921_chg_pdata.batt_id_min = 860000;
+		pm8921_chg_pdata.batt_id_max = 960000;
+	} else if (machine_is_M2_SPR() && system_rev >= 0x01) {
+		pm8921_chg_pdata.batt_id_min = 860000;
+		pm8921_chg_pdata.batt_id_max = 960000;
+	} else if (machine_is_M2_VZW() && system_rev >= 0x04) {
+		pm8921_chg_pdata.batt_id_min = 810000;
+		pm8921_chg_pdata.batt_id_max = 960000;
+	} else if (machine_is_M2_DCM() && system_rev >= 0x00) {
+		pm8921_chg_pdata.batt_id_min = 860000;
+		pm8921_chg_pdata.batt_id_max = 960000;
+	} else if (machine_is_jaguar() && system_rev >= 0x04) {
+		pm8921_chg_pdata.batt_id_min = 860000;
+		pm8921_chg_pdata.batt_id_max = 960000;
+	} else {
+		/*
+		* PMIC ES1 has problem for adc reading
+		* So batt_id min and max should be '0',
+		* Then charger driver will skip batt_id checking
+		*/
+		pm8921_chg_pdata.batt_id_min = 0;
+		pm8921_chg_pdata.batt_id_max = 0;
+	}
+
+	/* battery voltage */
+	if ((machine_is_M2_ATT() && system_rev >= 0x02) ||
+		(machine_is_M2_SPR() && system_rev >= 0x02) ||
+		(machine_is_M2_VZW() && system_rev >= 0x06) ||
+		(machine_is_jaguar() && system_rev >= 0x0A) ||
+		(machine_is_M2_DCM() && system_rev >= 0x00) ||
+		machine_is_JASPER())
+		pm8921_chg_pdata.max_voltage = 4350;
+}
+
 void __init msm8960_init_pmic(void)
 {
+	msm8921_sec_charger_init();
+
 	pmic_reset_irq = PM8921_IRQ_BASE + PM8921_RESOUT_IRQ;
 	msm8960_device_ssbi_pmic.dev.platform_data =
 				&msm8960_ssbi_pm8921_pdata;
