@@ -55,24 +55,22 @@ static int __devinit ram_console_probe(struct platform_device *pdev)
 	struct ram_console_platform_data *pdata = pdev->dev.platform_data;
 	struct persistent_ram_zone *prz;
 
-	*((unsigned char*)0xbb705005) = 'Q';
 	prz = persistent_ram_init_ringbuffer(&pdev->dev, true);
-	if (IS_ERR(prz)) {
-		*((unsigned char*)0xbb705009) = 'Q';
+	if (IS_ERR(prz))
 		return PTR_ERR(prz);
-	}
+
 
 	if (pdata) {
 		bootinfo = kstrdup(pdata->bootinfo, GFP_KERNEL);
 		if (bootinfo)
 			bootinfo_size = strlen(bootinfo);
 	}
-	console_verbose();
-	*((unsigned char*)0xbb70500D) = 'Q';
+
 	ram_console_zone = prz;
 	ram_console.data = prz;
 
 	register_console(&ram_console);
+
 	return 0;
 }
 
@@ -85,7 +83,6 @@ static struct platform_driver ram_console_driver = {
 
 static int __init ram_console_module_init(void)
 {
-	*((unsigned char*)0xbb705001) = 'Q';
 	return platform_driver_register(&ram_console_driver);
 }
 
