@@ -222,11 +222,11 @@ VREG_CONSUMERS(S4) = {
 };
 VREG_CONSUMERS(S5) = {
 	REGULATOR_SUPPLY("8921_s5",		NULL),
-	REGULATOR_SUPPLY("krait0",		NULL),
+	REGULATOR_SUPPLY("krait0",		"acpuclk-8960"),
 };
 VREG_CONSUMERS(S6) = {
 	REGULATOR_SUPPLY("8921_s6",		NULL),
-	REGULATOR_SUPPLY("krait1",		NULL),
+	REGULATOR_SUPPLY("krait1",		"acpuclk-8960"),
 };
 VREG_CONSUMERS(S7) = {
 	REGULATOR_SUPPLY("8921_s7",		NULL),
@@ -481,6 +481,7 @@ struct max77693_regulator_data max77693_regulators[] = {
 		.constraints = { \
 			.name		= _name, \
 			.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE, \
+					  REGULATOR_CHANGE_STATUS, \
 			.min_uV		= _min_uV, \
 			.max_uV		= _max_uV, \
 		}, \
@@ -643,7 +644,7 @@ msm_rpm_regulator_init_data[] __devinitdata = {
 	RPM_SMPS(S3,	 0, 1, 1,  500000, 1150000, NULL, 100000, 4p80),
 	RPM_SMPS(S4,	 1, 1, 0, 1800000, 1800000, NULL, 100000, 1p60),
 	RPM_SMPS(S7,	 0, 1, 0, 1150000, 1150000, NULL, 100000, 3p20),
-	RPM_SMPS(S8,     1, 1, 1, 2100000, 2100000, NULL, 100000, 1p60),
+	RPM_SMPS(S8,     1, 1, 1, 2050000, 2100000, NULL, 100000, 1p60),
 	/*	ID     a_on pd ss min_uV   max_uV  supply  sys_uA init_ip */
 	RPM_LDO(L1,	 1, 1, 0, 1050000, 1050000, "8921_s4", 0, 10000),
 #if defined(CONFIG_FB_MSM_MIPI_BOEOT_TFT_VIDEO_WSVGA_PT_PANEL) \
