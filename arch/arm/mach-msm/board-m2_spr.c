@@ -4477,48 +4477,6 @@ static struct platform_device sec_device_jack = {
 };
 #endif
 
-
-static struct msm_dcvs_freq_entry msm8960_freq[] = {
-	{ 384000, 166981,  345600},
-	{ 702000, 213049,  632502},
-	{1026000, 285712,  925613},
-	{1242000, 383945, 1176550},
-	{1458000, 419729, 1465478},
-	{1512000, 434116, 1546674},
-
-};
-
-static struct msm_dcvs_core_info msm8960_core_info = {
-	.num_cores		= 2,
-	.core_param		= {
-		.core_type	= MSM_DCVS_CORE_TYPE_CPU,
-	},
-	.freq_tbl = &msm8960_freq[0],
-	.algo_param = {
-		.em_win_size_min_us		= 100000,
-		.em_win_size_max_us		= 300000,
-		.em_max_util_pct		= 97,
-		.slack_mode_dynamic		= 0,
-		.slack_weight_thresh_pct	= 3,
-		.slack_time_min_us = 58000,
-		.slack_time_max_us = 58000,
-		.disable_pc_threshold = 1458000,
-		.ss_win_size_min_us		= 1000000,
-		.ss_win_size_max_us		= 1000000,
-		.ss_util_pct			= 95,
-		.ss_no_corr_below_freq		= 0,
-	},
-};
-
-struct platform_device msm8960_msm_gov_device = {
-	.name = "msm_dcvs_gov",
-	.id = -1,
-	.dev = {
-		.platform_data = &msm8960_core_info,
-	},
-};
-
-
 static struct platform_device *common_devices[] __initdata = {
 	&msm8960_device_dmov,
 	&msm_device_smd,
@@ -4617,7 +4575,6 @@ static struct platform_device *common_devices[] __initdata = {
 	&msm_cache_dump_device,
 #endif
 	&msm8960_iommu_domain_device,
-	&msm8960_msm_gov_device,
 };
 
 static struct platform_device *m2_spr_devices[] __initdata = {
