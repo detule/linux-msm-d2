@@ -709,10 +709,45 @@ msm_rpm_regulator_init_data[] __devinitdata = {
 int msm_pm8921_regulator_pdata_len __devinitdata =
 	ARRAY_SIZE(msm_pm8921_regulator_pdata);
 
+#define RPM_REG_MAP(_id, _sleep_also, _voter, _supply, _dev_name) \
+	{ \
+		.vreg_id = RPM_VREG_ID_PM8921_##_id, \
+		.sleep_also = _sleep_also, \
+		.voter = _voter, \
+		.supply = _supply, \
+		.dev_name = _dev_name, \
+	}
+static struct rpm_regulator_consumer_mapping
+	      msm_rpm_regulator_consumer_mapping[] __devinitdata = {
+	RPM_REG_MAP(L23, 0, 1, "krait0_l23", "acpuclk-8960"),
+	RPM_REG_MAP(L23, 0, 2, "krait1_l23", "acpuclk-8960"),
+	RPM_REG_MAP(L23, 0, 6, "l2_l23",     "acpuclk-8960"),
+	RPM_REG_MAP(L24, 0, 1, "krait0_mem", "acpuclk-8960"),
+	RPM_REG_MAP(L24, 0, 2, "krait1_mem", "acpuclk-8960"),
+	RPM_REG_MAP(S3,  0, 1, "krait0_dig", "acpuclk-8960"),
+	RPM_REG_MAP(S3,  0, 2, "krait1_dig", "acpuclk-8960"),
+	RPM_REG_MAP(S8,  0, 1, "krait0_s8",  "acpuclk-8960"),
+	RPM_REG_MAP(S8,  0, 2, "krait1_s8",  "acpuclk-8960"),
+	RPM_REG_MAP(S8,  0, 6, "l2_s8",      "acpuclk-8960"),
+
+	RPM_REG_MAP(L23, 0, 1, "krait0_l23", "acpuclk-8960ab"),
+	RPM_REG_MAP(L23, 0, 2, "krait1_l23", "acpuclk-8960ab"),
+	RPM_REG_MAP(L23, 0, 6, "l2_l23",     "acpuclk-8960ab"),
+	RPM_REG_MAP(L24, 0, 1, "krait0_mem", "acpuclk-8960ab"),
+	RPM_REG_MAP(L24, 0, 2, "krait1_mem", "acpuclk-8960ab"),
+	RPM_REG_MAP(S3,  0, 1, "krait0_dig", "acpuclk-8960ab"),
+	RPM_REG_MAP(S3,  0, 2, "krait1_dig", "acpuclk-8960ab"),
+	RPM_REG_MAP(S8,  0, 1, "krait0_s8",  "acpuclk-8960ab"),
+	RPM_REG_MAP(S8,  0, 2, "krait1_s8",  "acpuclk-8960ab"),
+	RPM_REG_MAP(S8,  0, 6, "l2_s8",      "acpuclk-8960ab"),
+};
+
 struct rpm_regulator_platform_data msm_rpm_regulator_pdata __devinitdata = {
 	.init_data		= msm_rpm_regulator_init_data,
 	.num_regulators		= ARRAY_SIZE(msm_rpm_regulator_init_data),
 	.version		= RPM_VREG_VERSION_8960,
 	.vreg_id_vdd_mem	= RPM_VREG_ID_PM8921_L24,
 	.vreg_id_vdd_dig	= RPM_VREG_ID_PM8921_S3,
+	.consumer_map		= msm_rpm_regulator_consumer_mapping,
+	.consumer_map_len = ARRAY_SIZE(msm_rpm_regulator_consumer_mapping),
 };
