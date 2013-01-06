@@ -1359,7 +1359,7 @@ static void fsa9485_usb_cb(bool attached)
 	if (system_rev >= 0x3) {
 		if (attached) {
 			pr_info("%s set vbus state\n", __func__);
-//			msm_otg_set_vbus_state(attached);
+			msm_otg_set_vbus_state(attached);
 		}
 	}
 
@@ -1402,7 +1402,7 @@ static void fsa9485_charger_cb(bool attached)
 	pr_info("fsa9480_charger_cb attached %d\n", attached);
 	set_cable_status = attached ? CABLE_TYPE_AC : CABLE_TYPE_NONE;
 
-//	msm_otg_set_charging_state(attached);
+	msm_otg_set_charging_state(attached);
 
 	for (i = 0; i < 10; i++) {
 		psy = power_supply_get_by_name("battery");
@@ -1512,7 +1512,7 @@ static void fsa9485_usb_cdp_cb(bool attached)
 	if (system_rev >= 0x3) {
 		if (attached) {
 			pr_info("%s set vbus state\n", __func__);
-//			msm_otg_set_vbus_state(attached);
+			msm_otg_set_vbus_state(attached);
 		}
 	}
 

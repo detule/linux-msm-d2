@@ -10,7 +10,6 @@
  * GNU General Public License for more details.
  *
  */
-
 #include <linux/module.h>
 #include <linux/device.h>
 #include <linux/platform_device.h>
@@ -2411,6 +2410,12 @@ static void msm_otg_sm_work(struct work_struct *w)
 			otg->phy->state = OTG_STATE_A_IDLE;
 			work = 1;
 		} else if (test_bit(B_SESS_VLD, &motg->inputs)) {
+#ifdef CONFIG_USB_SWITCH_FSA9485
+			if (motg->chg_state != USB_CHG_STATE_DETECTED) {
+				motg->chg_type = USB_SDP_CHARGER;
+				motg->chg_state = USB_CHG_STATE_DETECTED;
+			}
+#endif
 			pr_debug("b_sess_vld\n");
 			switch (motg->chg_state) {
 			case USB_CHG_STATE_UNDEFINED:
@@ -3127,12 +3132,13 @@ static irqreturn_t msm_otg_irq(int irq, void *data)
 	return ret;
 }
 
-static void msm_otg_set_vbus_state(int online)
+void msm_otg_set_vbus_state(int online)
 {
 	static bool init;
 	struct msm_otg *motg = the_msm_otg;
 
 	/* Ignore received BSV interrupts, if ID pin is GND */
+	pr_debug("%s: %d", __func__, online);
 	if (!test_bit(ID, &motg->inputs)) {
 		/*
 		 * state machine work waits for initial VBUS
@@ -3170,6 +3176,42 @@ complete:
 	else
 		queue_work(system_nrt_wq, &motg->sm_work);
 }
+EXPORT_SYMBOL_GPL(msm_otg_set_vbus_state);
+
+void msm_otg_set_charging_state(bool enable)
+{
+	struct msm_otg *motg = the_msm_otg;
+	static bool charging;
+
+	if (charging == enable)
+		return;
+	else
+		charging = enable;
+
+	pr_info("%s enable=%d\n", __func__, enable);
+
+	if (enable) {
+		motg->chg_type = USB_DCP_CHARGER;
+		motg->chg_state = USB_CHG_STATE_DETECTED;
+		schedule_work(&motg->sm_work);
+	} else {
+		motg->chg_state = USB_CHG_STATE_UNDEFINED;
+		motg->chg_type = USB_INVALID_CHARGER;
+	}
+}
+EXPORT_SYMBOL_GPL(msm_otg_set_charging_state);
+
+void msm_otg_set_id_state(bool enable)
+{
+	struct msm_otg *motg = the_msm_otg;
+	struct usb_phy *phy = &motg->phy;
+
+	if (atomic_read(&motg->in_lpm)) {
+		pr_info("msm_otg_set_id_state : in LPM\n");
+		pm_runtime_resume(phy->dev);
+	}
+}
+EXPORT_SYMBOL_GPL(msm_otg_set_id_state);
 
 static void msm_pmic_id_status_w(struct work_struct *w)
 {
