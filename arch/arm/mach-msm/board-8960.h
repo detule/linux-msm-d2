@@ -89,6 +89,7 @@ enum {
 extern struct sx150x_platform_data msm8960_sx150x_data[];
 extern struct msm_camera_board_info msm8960_camera_board_info;
 
+int msm8960_get_cable_type(void);
 void msm8960_init_cam(void);
 void msm8960_init_fb(void);
 void msm8960_init_pmic(void);
@@ -108,3 +109,6 @@ void msm8960_mdp_writeback(struct memtype_reserve *reserve_table);
 extern struct msm_rtb_platform_data msm8960_rtb_pdata;
 extern struct msm_cache_dump_platform_data msm8960_cache_dump_pdata;
 extern void msm8960_add_vidc_device(void);
+extern void msm_otg_set_vbus_state(int);
+extern void msm_otg_set_charging_state(bool);
+extern void msm_otg_set_id_state(bool);
