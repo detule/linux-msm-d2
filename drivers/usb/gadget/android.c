@@ -898,7 +898,7 @@ static int acm_function_bind_config(struct android_usb_function *f,
 {
 	char *name;
 	char buf[32], *b;
-	int err = -1, i;
+	int err = 0, i;
 	static int acm_initialized, ports;
 
 	if (acm_initialized)
