@@ -945,7 +945,7 @@ static int acm_function_bind_config(struct android_usb_function *f,
 	while (b) {
 		name = strsep(&b, ",");
 
-		if (name) {
+		if (name[0]) {
 			err = acm_init_port(ports, name);
 			if (err) {
 				pr_err("acm: Cannot open port '%s'", name);
