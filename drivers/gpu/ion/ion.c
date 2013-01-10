@@ -1311,7 +1311,7 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		if (copy_from_user(&data, (void __user *)arg, sizeof(data)))
 			return -EFAULT;
 		data.handle = ion_alloc(client, data.len, data.align,
-					     data.heap_mask, data.flags);
+					     ion_full_heap_mask, data.flags);
 
 		if (IS_ERR(data.handle))
 			return PTR_ERR(data.handle);
