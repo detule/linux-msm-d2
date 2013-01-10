@@ -1065,8 +1065,8 @@ static int msm_otg_notify_chg_type(struct msm_otg *motg)
 		charger_type = POWER_SUPPLY_TYPE_USB_ACA;
 	else
 		charger_type = POWER_SUPPLY_TYPE_BATTERY;
-
-	return pm8921_set_usb_power_supply_type(charger_type);
+	return 0;
+//	return pm8921_set_usb_power_supply_type(charger_type);
 }
 
 static int msm_otg_notify_power_supply(struct msm_otg *motg, unsigned mA)
@@ -2987,7 +2987,7 @@ void msm_otg_set_vbus_state(int online)
 {
 	static bool init;
 	struct msm_otg *motg = the_msm_otg;
-	struct usb_otg *otg = motg->phy.otg;
+//	struct usb_otg *otg = motg->phy.otg;
 
 	/* Ignore received BSV interrupts, if ID pin is GND */
 	pr_debug("%s: %d", __func__, online);
@@ -2997,9 +2997,10 @@ void msm_otg_set_vbus_state(int online)
 		 * completion in UNDEFINED state.  Process
 		 * the initial VBUS event in ID_GND state.
 		 */
-		if (init)
+		if (init) {
+			dev_info(motg->phy.dev, "msm_otg_set_vbus_state(1): on working\n");
 			return;
-		goto complete;
+		}
 	}
 
 	if (online) {

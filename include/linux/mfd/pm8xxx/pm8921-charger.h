@@ -124,7 +124,6 @@ enum pm8921_chg_led_src_config {
 struct pm8921_charger_platform_data {
 	struct pm8xxx_charger_core_data	charger_cdata;
 	unsigned int			safety_time;
-	unsigned int			safety_time;
 	unsigned int			ttrkl_time;
 	unsigned int			update_time;
 	unsigned int			max_voltage;
