@@ -1406,31 +1406,31 @@ void __init msm8960_init_cam(void)
 #endif
 
 #if defined(CONFIG_S5C73M3)
-		s_info = &msm_camera_sensor_s5c73m3_data;
+	s_info = &msm_camera_sensor_s5c73m3_data;
 #if defined(CONFIG_MACH_M2_DCM) || defined(CONFIG_MACH_K2_KDI)
-		s_info->sensor_platform_info->sensor_pwd =
-			gpio_rev(CAM_CORE_EN);
+	s_info->sensor_platform_info->sensor_pwd =
+		gpio_rev(CAM_CORE_EN);
 #endif
-		msm_get_cam_resources(s_info);
-		platform_device_register(cam_dev[0]);
+	msm_get_cam_resources(s_info);
+	platform_device_register(cam_dev[0]);
 #endif
 #if defined(CONFIG_S5K6A3YX)
-		s_info = &msm_camera_sensor_s5k6a3yx_data;
+	s_info = &msm_camera_sensor_s5k6a3yx_data;
 #if defined(CONFIG_MACH_M2_DCM) || defined(CONFIG_MACH_K2_KDI)
-		s_info->sensor_platform_info->sensor_pwd =
-			gpio_rev(CAM_CORE_EN);
+	s_info->sensor_platform_info->sensor_pwd =
+		gpio_rev(CAM_CORE_EN);
 #endif
-		 if (rev) {
-			s_info->sensor_platform_info->mclk =
-				GPIO_CAM_MCLK2;
-			s_info->gpio_conf->cam_gpiomux_conf_tbl =
-				msm8960_cam_2d_configs_v2;
-			s_info->gpio_conf->cam_gpio_tbl =
-				msm_cam_gpio_2d_tbl_v2;
+	 if (rev) {
+		s_info->sensor_platform_info->mclk =
+			GPIO_CAM_MCLK2;
+		s_info->gpio_conf->cam_gpiomux_conf_tbl =
+			msm8960_cam_2d_configs_v2;
+		s_info->gpio_conf->cam_gpio_tbl =
+			msm_cam_gpio_2d_tbl_v2;
 	}
 
-		msm_get_cam_resources(s_info);
-		platform_device_register(cam_dev[1]);
+	msm_get_cam_resources(s_info);
+	platform_device_register(cam_dev[1]);
 #endif
 	if (spi_register_board_info(
 				    s5c73m3_spi_info,

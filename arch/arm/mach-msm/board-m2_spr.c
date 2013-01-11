@@ -4919,21 +4919,6 @@ struct i2c_registry {
 
 #ifdef CONFIG_MSM_CAMERA
 static struct i2c_board_info msm_camera_boardinfo[] __initdata = {
-#ifdef CONFIG_IMX074
-	{
-	I2C_BOARD_INFO("imx074", 0x1A),
-	},
-#endif
-#ifdef CONFIG_OV2720
-	{
-	I2C_BOARD_INFO("ov2720", 0x6C),
-	},
-#endif
-#ifdef CONFIG_ISX012
-	{
-	I2C_BOARD_INFO("isx012", 0x3D),
-	},
-#endif
 #ifdef CONFIG_S5C73M3
 	{
 	I2C_BOARD_INFO("s5c73m3", 0x78>>1),
@@ -4942,16 +4927,6 @@ static struct i2c_board_info msm_camera_boardinfo[] __initdata = {
 #ifdef CONFIG_S5K6A3YX
 	{
 	I2C_BOARD_INFO("s5k6a3yx", 0x20),
-	},
-#endif
-#ifdef CONFIG_S5K6AA
-	{
-	I2C_BOARD_INFO("s5k6aa", 0x78>>1),
-	},
-#endif
-#ifdef CONFIG_S5K8AAY
-	{
-	I2C_BOARD_INFO("s5k8aay", 0x5A>>1),
 	},
 #endif
 #ifdef CONFIG_MSM_CAMERA_FLASH_SC628A
