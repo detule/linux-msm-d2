@@ -11,6 +11,7 @@
  *
  */
 #include <linux/kernel.h>
+#include <linux/msm_thermal.h>
 #include <linux/platform_device.h>
 #include <linux/io.h>
 #include <linux/irq.h>
@@ -4260,6 +4261,19 @@ static struct tsens_platform_data msm_tsens_pdata  = {
 		.tsens_num_sensor	= 5,
 };
 
+static struct platform_device msm_tsens_device = {
+	.name   = "tsens8960-tm",
+	.id = -1,
+};
+
+static struct msm_thermal_data msm_thermal_pdata = {
+	.sensor_id = 0,
+	.poll_ms = 250,
+	.limit_temp_degC = 60,
+	.temp_hysteresis_degC = 10,
+	.freq_step = 2,
+};
+
 /* Bluetooth */
 #ifdef CONFIG_BT_BCM4334
 static struct platform_device bcm4334_bluetooth_device = {
@@ -4613,6 +4627,7 @@ static struct platform_device *common_devices[] __initdata = {
 	&msm_cache_dump_device,
 #endif
 	&msm8960_iommu_domain_device,
+	&msm_tsens_device,
 };
 
 static struct platform_device *m2_spr_devices[] __initdata = {
@@ -5472,6 +5487,15 @@ static void __init msm8960ab_update_krait_spm(void)
 	}
 }
 
+static void __init msm8960_tsens_init(void)
+{
+	if (cpu_is_msm8960())
+		if (SOCINFO_VERSION_MAJOR(socinfo_get_version()) == 1)
+			return;
+
+	msm_tsens_early_init(&msm_tsens_pdata);
+}
+
 static void __init samsung_m2_spr_init(void)
 {
 #ifdef CONFIG_ANDROID_RAM_CONSOLE
@@ -5485,7 +5509,8 @@ static void __init samsung_m2_spr_init(void)
 		pr_err("meminfo_init() failed!\n");
 
 	platform_device_register(&msm_gpio_device);
-	msm_tsens_early_init(&msm_tsens_pdata);
+	msm8960_tsens_init();
+	msm_thermal_init(&msm_thermal_pdata);
 	BUG_ON(msm_rpm_init(&msm8960_rpm_data));
 	BUG_ON(msm_rpmrs_levels_init(&msm_rpmrs_data));
 
