@@ -179,12 +179,17 @@ struct msm_camera_csi_lane_params {
 	uint16_t csi_lane_mask;
 	uint8_t csi_phy_sel;
 };
-
+#if defined(CONFIG_S5C73M3) && defined(CONFIG_S5K6A3YX) /* D2 */
+struct msm_camera_gpio_conf {
+        void *cam_gpiomux_conf_tbl;
+        uint8_t cam_gpiomux_conf_tbl_size;
+        uint16_t *cam_gpio_tbl;
+        uint8_t cam_gpio_tbl_size;
+};
+#else
 struct msm_camera_gpio_conf {
 	void *cam_gpiomux_conf_tbl;
 	uint8_t cam_gpiomux_conf_tbl_size;
-	struct gpio *cam_gpio_common_tbl;
-	uint8_t cam_gpio_common_tbl_size;
 	struct gpio *cam_gpio_req_tbl;
 	uint8_t cam_gpio_req_tbl_size;
 	struct msm_gpio_set_tbl *cam_gpio_set_tbl;
@@ -195,13 +200,12 @@ struct msm_camera_gpio_conf {
 	uint32_t *camera_on_table;
 	uint8_t camera_on_table_size;
 };
-
+#endif
 enum msm_camera_i2c_mux_mode {
 	MODE_R,
 	MODE_L,
 	MODE_DUAL
 };
-
 struct msm_camera_i2c_conf {
 	uint8_t use_i2c_mux;
 	struct platform_device *mux_dev;
@@ -224,6 +228,23 @@ struct msm_camera_sensor_platform_info {
 	struct msm_camera_gpio_conf *gpio_conf;
 	struct msm_camera_i2c_conf *i2c_conf;
 	struct msm_camera_csi_lane_params *csi_lane_params;
+#if defined(CONFIG_S5C73M3) && defined(CONFIG_S5K6A3YX) /* D2 */
+	int privacy_light;
+	void *privacy_light_info;
+	int vcm_pwd;
+	int vcm_enable;
+	int mclk;
+	int sensor_pwd;
+	int flash_set;
+	int flash_en;
+	void(*sensor_power_on) (int, int);
+	void(*sensor_power_off) (int);
+	void(*sensor_isp_reset) (void);
+	void(*sensor_get_fw) (u8 *isp_fw, u8 *phone_fw);
+	void(*sensor_set_isp_core) (int);
+	bool(*sensor_is_vdd_core_set) (void);
+#endif
+
 };
 
 enum msm_camera_actuator_name {
@@ -276,6 +297,10 @@ struct msm_camera_sensor_info {
 	struct msm_actuator_info *actuator_info;
 	int pmic_gpio_enable;
 	struct msm_eeprom_info *eeprom_info;
+#if defined(CONFIG_S5C73M3) && defined(CONFIG_S5K6A3YX) /* D2 */
+        struct msm_camera_gpio_conf *gpio_conf;
+#endif
+
 };
 
 struct msm_camera_board_info {

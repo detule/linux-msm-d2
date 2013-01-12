@@ -11,6 +11,7 @@
  */
 
 #include <linux/uaccess.h>
+#include <linux/module.h>
 #include <linux/interrupt.h>
 #include <linux/slab.h>
 #include <linux/io.h>
@@ -1458,7 +1459,7 @@ static int vfe32_proc_general(struct msm_isp_cmd *cmd)
 	case VFE_CMD_START:
 		CDBG("vfe32_proc_general: cmdID = %s\n",
 			vfe32_general_cmd[cmd->id]);
-		rc = vfe32_configure_pingpong_buffers(VFE_MSG_V32_START,
+		rc = vfe32_configure_pingpong_buffers(VFE_MSG_START,
 						      VFE_MSG_OUTPUT_P);
 		if (rc < 0) {
 			pr_err("%s error configuring pingpong buffers"
@@ -1479,7 +1480,7 @@ static int vfe32_proc_general(struct msm_isp_cmd *cmd)
 			rc = -EFAULT;
 			goto proc_general_done;
 		}
-		rc = vfe32_configure_pingpong_buffers(VFE_MSG_V32_CAPTURE,
+		rc = vfe32_configure_pingpong_buffers(VFE_MSG_CAPTURE,
 						      VFE_MSG_OUTPUT_S);
 		if (rc < 0) {
 			pr_err("%s error configuring pingpong buffers"
@@ -1490,7 +1491,7 @@ static int vfe32_proc_general(struct msm_isp_cmd *cmd)
 		if (vfe32_ctrl->operation_mode !=
 		    VFE_MODE_OF_OPERATION_RAW_SNAPSHOT) {
 			rc = vfe32_configure_pingpong_buffers
-			    (VFE_MSG_V32_CAPTURE, VFE_MSG_OUTPUT_T);
+			    (VFE_MSG_CAPTURE, VFE_MSG_OUTPUT_T);
 			if (rc < 0) {
 				pr_err("%s error configuring pingpong buffers"
 				       " for thumbnail", __func__);
@@ -1504,7 +1505,7 @@ static int vfe32_proc_general(struct msm_isp_cmd *cmd)
 		CDBG("vfe32_proc_general: cmdID = %s\n",
 			vfe32_general_cmd[cmd->id]);
 		rc = vfe32_configure_pingpong_buffers
-		    (VFE_MSG_V32_START_RECORDING, VFE_MSG_OUTPUT_V);
+		    (VFE_MSG_START_RECORDING, VFE_MSG_OUTPUT_V);
 		if (rc < 0) {
 			pr_err("%s error configuring pingpong buffers"
 			       " for video", __func__);
@@ -2362,7 +2363,7 @@ static int vfe32_proc_general(struct msm_isp_cmd *cmd)
 		}
 		vfe32_ctrl->jpeg_soc = *cmdp;
 
-		rc = vfe32_configure_pingpong_buffers(VFE_MSG_V32_START,
+		rc = vfe32_configure_pingpong_buffers(VFE_MSG_START,
 						      VFE_MSG_OUTPUT_P);
 		if (rc < 0)
 			goto proc_general_done;
@@ -2371,11 +2372,11 @@ static int vfe32_proc_general(struct msm_isp_cmd *cmd)
 			vfe32_ctrl->outpath.output_mode |=
 				VFE32_OUTPUT_MODE_V;/* video */
 		}
-		rc = vfe32_configure_pingpong_buffers(VFE_MSG_V32_START,
+		rc = vfe32_configure_pingpong_buffers(VFE_MSG_START,
 						      VFE_MSG_OUTPUT_T);
 		if (rc < 0)
 			goto proc_general_done;
-		rc = vfe32_configure_pingpong_buffers(VFE_MSG_V32_START,
+		rc = vfe32_configure_pingpong_buffers(VFE_MSG_START,
 						      VFE_MSG_OUTPUT_S);
 		if (rc < 0)
 			goto proc_general_done;
@@ -3119,8 +3120,8 @@ static void vfe32_process_zsl_frame(void)
 		    no_free_buffer_count++;
 		else
 		    no_free_buffer_count = 0;
-		CDBG("count %d\n", no_free_buffer_count);
-		CDBG("time_diff %d, tv_msec %d, pre_frame_msec %d\n",
+		CDBG("count %x\n", no_free_buffer_count);
+		CDBG("time_diff %x, tv_msec %ld, pre_frame_msec %ld\n",
 		       time_diff, TV_MSEC(tv.tv_nsec), pre_frame_msec);
 		/* max 66msec * 60 = 3960msec */
 		/* min 33msec * 60 = 1980msec */

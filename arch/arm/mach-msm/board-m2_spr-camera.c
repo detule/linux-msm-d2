@@ -12,6 +12,7 @@
  */
 
 #include <asm/mach-types.h>
+#include <linux/module.h>
 #include <linux/gpio.h>
 #include <mach/board.h>
 #include <mach/msm_bus_board.h>
@@ -32,22 +33,24 @@
 #include <linux/leds-aat1290a.h>
 #endif
 
+extern int system_rev;
 #if (defined(CONFIG_GPIO_SX150X) || defined(CONFIG_GPIO_SX150X_MODULE)) && \
 	defined(CONFIG_I2C)
 
+#if 0
 static struct i2c_board_info cam_expander_i2c_info[] = {
 	{
 		I2C_BOARD_INFO("sx1508q", 0x22),
 		.platform_data = &msm8960_sx150x_data[SX150X_CAM]
 	},
 };
-
 static struct msm_cam_expander_info cam_expander_info[] = {
 	{
 		cam_expander_i2c_info,
 		MSM_8960_GSBI4_QUP_I2C_BUS_ID,
 	},
 };
+#endif
 #endif
 
 static struct gpiomux_setting cam_settings[] = {
@@ -302,11 +305,13 @@ struct msm_camera_sensor_strobe_flash_data strobe_flash_xenon = {
 	.irq = MSM_GPIO_TO_INT(GPIO_VFE_CAMIF_TIMER3_INT),
 };
 #ifdef CONFIG_MSM_CAMERA_FLASH
+#if 0
 static struct msm_camera_sensor_flash_src msm_flash_src = {
 	.flash_sr_type = MSM_CAMERA_FLASH_SRC_EXT,
 	._fsrc.ext_driver_src.led_en = GPIO_MSM_FLASH_CNTL_EN,
 	._fsrc.ext_driver_src.led_flash_en = GPIO_MSM_FLASH_NOW,
 };
+#endif
 #endif
 #endif
 
@@ -461,7 +466,7 @@ static struct msm_camera_device_platform_data msm_camera_csi_device_data[] = {
 };
 #endif
 
-static struct regulator *l11, *l12, *l18, *l29, *l28, *isp_core;
+static struct regulator *l29, *l28, *isp_core;
 /* CAM power
 	CAM_SENSOR_A_2.8		:  GPIO_CAM_A_EN(GPIO 46)
 	CAM_SENSOR_IO_1.8		: VREG_L29		: l29
@@ -788,7 +793,6 @@ static void cam_ldo_power_off(int mode)
 
 static void cam_isp_reset(void)
 {
-	int ret = 0;
 	int temp = 0;
 
 	/* ISP_RESET */
@@ -1097,17 +1101,14 @@ static ssize_t back_camera_firmware_show(struct device *dev,
 {
 #if defined(CONFIG_ISX012)
 	char cam_fw[] = "ISX012\n";
-#elif defined(CONFIG_S5C73M3)
-	char cam_fw[] = "SlimISP_XXX\n";
 #elif defined(CONFIG_S5K5CCGX)
 	char cam_fw[] = "S5K5CCGX\n";
-#else
-	char cam_fw[] = "Rear default camera\n";
 #endif
 
 #if defined(CONFIG_S5C73M3)
 	return sprintf(buf, "%s %s", rear_sensor_fw, rear_phone_fw);
 #else
+	char cam_fw[] = "Rear default camera\n";
 	return snprintf(buf, sizeof(cam_fw), "%s", cam_fw);
 #endif
 }
@@ -1143,17 +1144,16 @@ static ssize_t cameraflash_file_cmd_store(struct device *dev,
 			const char *buf, size_t size)
 {
 	int value;
-	int i = 0;
 	int err = 1;
 	int flash_rev = 0;
 
-	flash_rev = get_flash_led_unlock_rev();
+	flash_rev = 0;
 
 	if (strlen(buf) > 2)
 		return -err;
 
 	if (isdigit(*buf)) {
-		err = kstrtoint(buf, NULL, &value);
+		err = kstrtoint(buf, 10, &value);
 		if (err < 0)
 			pr_err("%s, kstrtoint failed.", __func__);
 	} else
@@ -1259,19 +1259,17 @@ static struct spi_board_info s5c73m3_spi_info[] __initdata = {
 	}
 };
 #endif
-
+#if 0
 static struct pm8xxx_mpp_config_data privacy_light_on_config = {
 	.type		= PM8XXX_MPP_TYPE_SINK,
 	.level		= PM8XXX_MPP_CS_OUT_5MA,
 	.control	= PM8XXX_MPP_CS_CTRL_MPP_LOW_EN,
 };
-
 static struct pm8xxx_mpp_config_data privacy_light_off_config = {
 	.type		= PM8XXX_MPP_TYPE_SINK,
 	.level		= PM8XXX_MPP_CS_OUT_5MA,
 	.control	= PM8XXX_MPP_CS_CTRL_DISABLE,
 };
-
 static int32_t msm_camera_8960_ext_power_ctrl(int enable)
 {
 	int rc = 0;
@@ -1284,7 +1282,7 @@ static int32_t msm_camera_8960_ext_power_ctrl(int enable)
 	}
 	return rc;
 }
-
+#endif
 static int get_mclk_rev(void)
 {
 #if defined(CONFIG_MACH_M2_ATT)
@@ -1348,7 +1346,7 @@ void __init msm8960_init_cam(void)
 
 		if (rc) {
 			pr_err("%s pmic gpio config failed\n", __func__);
-			return rc;
+			return;
 		}
 		pmic_gpio_msm_flash_cntl_en =
 			PM8921_GPIO_PM_TO_SYS(PMIC_MSM_FLASH_CNTL_EN);
@@ -1466,4 +1464,29 @@ struct msm_camera_board_info msm8960_camera_board_info = {
 	.board_info = msm8960_camera_i2c_boardinfo,
 	.num_i2c_board_info = ARRAY_SIZE(msm8960_camera_i2c_boardinfo),
 };
+
+struct resource msm_camera_resources[] = {
+	{
+		.name   = "s3d_rw",
+		.start  = 0x008003E0,
+		.end    = 0x008003E0 + SZ_16 - 1,
+		.flags  = IORESOURCE_MEM,
+	},
+	{
+		.name   = "s3d_ctl",
+		.start  = 0x008020B8,
+		.end    = 0x008020B8 + SZ_16 - 1,
+		.flags  = IORESOURCE_MEM,
+	},
+};
+
+int __init msm_get_cam_resources(struct msm_camera_sensor_info *s_info)
+{
+	s_info->resource = msm_camera_resources;
+	s_info->num_resources = ARRAY_SIZE(msm_camera_resources);
+	return 0;
+}
+
+#endif
+#endif
 #endif

@@ -15,6 +15,7 @@
 #define __ASM__ARCH_CAMERA_H
 
 #include <linux/list.h>
+#include <linux/wakelock.h>
 #include <linux/poll.h>
 #include <linux/cdev.h>
 #include <linux/platform_device.h>
@@ -45,7 +46,14 @@
 #define NUM_AF_STAT_OUTPUT_BUFFERS      3
 #define max_control_command_size 512
 #define CROP_LEN 36
-
+#if defined(CONFIG_S5C73M3)
+void msm_io_w(u32 data, void __iomem *addr);
+void msm_io_w_mb(u32 data, void __iomem *addr);
+u32 msm_io_r(void __iomem *addr);
+u32 msm_io_r_mb(void __iomem *addr);
+void msm_io_memcpy(void __iomem *dest_addr, void __iomem *src_addr, u32 len);
+void msm_io_dump(void __iomem *addr, int size);
+#endif
 enum vfe_mode_of_operation{
 	VFE_MODE_OF_OPERATION_CONTINUOUS,
 	VFE_MODE_OF_OPERATION_SNAPSHOT,
@@ -258,7 +266,15 @@ struct msm_sensor_ctrl {
 	enum msm_st_frame_packing s_video_packing;
 	enum msm_st_frame_packing s_snap_packing;
 };
-
+#ifdef CONFIG_S5C73M3
+struct msm_actuator_ctrl {
+	int (*a_init_table)(void);
+	int (*a_power_up)(void *);
+	int (*a_power_down)(void *);
+	int (*a_create_subdevice)(void *, void *);
+	int (*a_config)(void __user *);
+};
+#endif
 struct msm_strobe_flash_ctrl {
 	int (*strobe_flash_init)
 		(struct msm_camera_sensor_strobe_flash_data *);
@@ -313,7 +329,7 @@ enum msm_camera_i2c_cmd_type {
 	MSM_CAMERA_I2C_CMD_WRITE,
 	MSM_CAMERA_I2C_CMD_POLL,
 };
-
+#ifndef CONFIG_S5C73M3
 struct msm_camera_i2c_reg_conf {
 	uint16_t reg_addr;
 	uint16_t reg_data;
@@ -321,21 +337,18 @@ struct msm_camera_i2c_reg_conf {
 	enum msm_camera_i2c_cmd_type cmd_type;
 	int16_t mask;
 };
-
 struct msm_camera_cci_i2c_write_cfg {
 	struct msm_camera_i2c_reg_conf *reg_conf_tbl;
 	enum msm_camera_i2c_reg_addr_type addr_type;
 	enum msm_camera_i2c_data_type data_type;
 	uint16_t size;
 };
-
 struct msm_camera_cci_i2c_read_cfg {
 	uint16_t addr;
 	enum msm_camera_i2c_reg_addr_type addr_type;
 	uint8_t *data;
 	uint16_t num_byte;
 };
-
 struct msm_camera_cci_i2c_queue_info {
 	uint32_t max_queue_size;
 	uint32_t report_id;
@@ -355,6 +368,7 @@ struct msm_camera_cci_ctrl {
 	} cfg;
 };
 
+#endif
 /* this structure is used in kernel */
 struct msm_queue_cmd {
 	struct list_head list_config;
@@ -386,6 +400,10 @@ struct msm_mctl_stats_t {
 };
 
 struct msm_sync {
+#ifdef CONFIG_S5C73M3
+	struct msm_actuator_ctrl actctrl;
+	struct wake_lock wake_lock;
+#endif
 	/* These two queues are accessed from a process context only
 	 * They contain pmem descriptors for the preview frames and the stats
 	 * coming from the camera sensor.
@@ -691,13 +709,23 @@ void msm_isp_sync_free(void *ptr);
 int msm_cam_clk_enable(struct device *dev, struct msm_cam_clk_info *clk_info,
 		struct clk **clk_ptr, int num_clk, int enable);
 int msm_cam_core_reset(void);
-
+#ifndef CONFIG_S5C73M3
 int msm_camera_config_vreg(struct device *dev, struct camera_vreg_t *cam_vreg,
 		int num_vreg, enum msm_camera_vreg_name_t *vreg_seq,
 		int num_vreg_seq, struct regulator **reg_ptr, int config);
 int msm_camera_enable_vreg(struct device *dev, struct camera_vreg_t *cam_vreg,
 		int num_vreg, enum msm_camera_vreg_name_t *vreg_seq,
 		int num_vreg_seq, struct regulator **reg_ptr, int enable);
+#else
+int msm_camio_jpeg_clk_enable(void);
+int msm_camio_jpeg_clk_disable(void);
+void vfe32_process_ispif_sof_irq(int rdi);
+void msm_io_dump1(void __iomem *addr, int size);
+int msm_camera_config_vreg(struct device *dev, struct camera_vreg_t *cam_vreg,
+                int num_vreg, struct regulator **reg_ptr, int config);
+int msm_camera_enable_vreg(struct device *dev, struct camera_vreg_t *cam_vreg,
+                int num_vreg, struct regulator **reg_ptr, int enable);
+#endif
 
 int msm_camera_config_gpio_table
 	(struct msm_camera_sensor_info *sinfo, int gpio_en);

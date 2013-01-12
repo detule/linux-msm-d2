@@ -12,6 +12,8 @@
  */
 
 #include <linux/workqueue.h>
+#include <linux/wakelock.h>
+#include <linux/module.h>
 #include <linux/delay.h>
 #include <linux/types.h>
 #include <linux/list.h>
@@ -1290,7 +1292,7 @@ static int msm_camera_v4l2_subscribe_event(struct v4l2_fh *fh,
 		return -EINVAL;
 	if (sub->type == V4L2_EVENT_ALL)
 		sub->type = V4L2_EVENT_PRIVATE_START+MSM_CAM_APP_NOTIFY_EVENT;
-	rc = v4l2_event_subscribe(fh, sub);
+	rc = v4l2_event_subscribe(fh, sub, 0);
 	if (rc < 0)
 		D("%s: failed for evtType = 0x%x, rc = %d\n",
 						__func__, sub->type, rc);
@@ -1326,7 +1328,7 @@ static int msm_server_v4l2_subscribe_event(struct v4l2_fh *fh,
 		sub->type = V4L2_EVENT_PRIVATE_START + MSM_CAM_RESP_CTRL;
 		D("sub->type start = 0x%x\n", sub->type);
 		do {
-			rc = v4l2_event_subscribe(fh, sub);
+			rc = v4l2_event_subscribe(fh, sub, 0);
 			if (rc < 0) {
 				D("%s: failed for evtType = 0x%x, rc = %d\n",
 						__func__, sub->type, rc);
@@ -1343,7 +1345,7 @@ static int msm_server_v4l2_subscribe_event(struct v4l2_fh *fh,
 			V4L2_EVENT_PRIVATE_START + MSM_CAM_RESP_MAX);
 	} else {
 		D("sub->type not V4L2_EVENT_ALL = 0x%x\n", sub->type);
-		rc = v4l2_event_subscribe(fh, sub);
+		rc = v4l2_event_subscribe(fh, sub, 0);
 		if (rc < 0)
 			D("%s: failed for evtType = 0x%x, rc = %d\n",
 						__func__, sub->type, rc);
@@ -1751,7 +1753,7 @@ static unsigned int msm_poll(struct file *f, struct poll_table_struct *wait)
 		return -EINVAL;
 	}
 	if (pcam_inst->my_index == 0) {
-		poll_wait(f, &(pcam_inst->eventHandle.events->wait), wait);
+		poll_wait(f, &(pcam_inst->eventHandle.wait), wait);
 		if (v4l2_event_pending(&pcam_inst->eventHandle))
 			rc |= POLLPRI;
 	} else {
@@ -1773,7 +1775,7 @@ static unsigned int msm_poll_server(struct file *fp,
 
 	D("%s\n", __func__);
 	poll_wait(fp,
-		 &g_server_dev.server_command_queue.eventHandle.events->wait,
+		 &g_server_dev.server_command_queue.eventHandle.wait,
 		 wait);
 	if (v4l2_event_pending(&g_server_dev.server_command_queue.eventHandle))
 		rc |= POLLPRI;
@@ -2020,7 +2022,7 @@ static unsigned int msm_poll_config(struct file *fp,
 	D("%s\n", __func__);
 
 	poll_wait(fp,
-	&config->config_stat_event_queue.eventHandle.events->wait, wait);
+	&config->config_stat_event_queue.eventHandle.wait, wait);
 	if (v4l2_event_pending(&config->config_stat_event_queue.eventHandle))
 		rc |= POLLPRI;
 	return rc;
@@ -2352,19 +2354,19 @@ static int msm_setup_v4l2_event_queue(struct v4l2_fh *eventHandle,
 	spin_lock_init(&pvdev->fh_lock);
 	INIT_LIST_HEAD(&pvdev->fh_list);
 
-	rc = v4l2_fh_init(eventHandle, pvdev);
-	if (rc < 0)
-		return rc;
-	if (eventHandle->events == NULL) {
-		rc = v4l2_event_init(eventHandle);
-		if (rc < 0)
-			return rc;
-	}
+	v4l2_fh_init(eventHandle, pvdev);
+//	if (rc < 0)
+//		return rc;
+//	if (eventHandle->events == NULL) {
+//		rc = v4l2_event_init(eventHandle);
+//		if (rc < 0)
+//			return rc;
+//	}
 
 	/* queue of max size 30 */
-	rc = v4l2_event_alloc(eventHandle, 30);
-	if (rc < 0)
-		return rc;
+//	rc = v4l2_event_alloc(eventHandle, 30);
+//	if (rc < 0)
+//		return rc;
 
 	v4l2_fh_add(eventHandle);
 	return rc;

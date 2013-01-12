@@ -153,6 +153,7 @@
 #define MSM_CAM_IOCTL_PUT_ST_FRAME \
 	_IOW(MSM_CAM_IOCTL_MAGIC, 39, struct msm_camera_st_frame *)
 
+#ifndef CONFIG_S5C73M3
 #define MSM_CAM_IOCTL_V4L2_EVT_NOTIFY \
 	_IOW(MSM_CAM_IOCTL_MAGIC, 40, struct v4l2_event_and_payload)
 
@@ -248,7 +249,57 @@
 
 #define MSM_CAM_IOCTL_INTF_MCTL_MAPPING_CFG \
 	_IOR(MSM_CAM_IOCTL_MAGIC, 71, struct intf_mctl_mapping_cfg *)
+#else
+#define MSM_CAM_IOCTL_GET_CONFIG_INFO \
+        _IOR(MSM_CAM_IOCTL_MAGIC, 40, struct msm_cam_config_dev_info *)
 
+#define MSM_CAM_IOCTL_V4L2_EVT_NOTIFY \
+        _IOR(MSM_CAM_IOCTL_MAGIC, 41, struct v4l2_event *)
+
+#define MSM_CAM_IOCTL_SET_MEM_MAP_INFO \
+        _IOR(MSM_CAM_IOCTL_MAGIC, 42, struct msm_mem_map_info *)
+
+#define MSM_CAM_IOCTL_ACTUATOR_IO_CFG \
+        _IOW(MSM_CAM_IOCTL_MAGIC, 43, struct msm_actuator_cfg_data *)
+
+#define MSM_CAM_IOCTL_MCTL_POST_PROC \
+        _IOW(MSM_CAM_IOCTL_MAGIC, 44, struct msm_mctl_post_proc_cmd *)
+
+#define MSM_CAM_IOCTL_RESERVE_FREE_FRAME \
+        _IOW(MSM_CAM_IOCTL_MAGIC, 45, struct msm_cam_evt_divert_frame *)
+
+#define MSM_CAM_IOCTL_RELEASE_FREE_FRAME \
+        _IOR(MSM_CAM_IOCTL_MAGIC, 46, struct msm_cam_evt_divert_frame *)
+#define MSM_CAM_IOCTL_PICT_PP_DIVERT_DONE \
+        _IOR(MSM_CAM_IOCTL_MAGIC, 47, struct msm_pp_frame *)
+
+#define MSM_CAM_IOCTL_SENSOR_V4l2_S_CTRL \
+        _IOR(MSM_CAM_IOCTL_MAGIC, 48, struct v4l2_control)
+
+#define MSM_CAM_IOCTL_SENSOR_V4l2_QUERY_CTRL \
+        _IOR(MSM_CAM_IOCTL_MAGIC, 49, struct v4l2_queryctrl)
+
+#define MSM_CAM_IOCTL_GET_KERNEL_SYSTEM_TIME \
+        _IOW(MSM_CAM_IOCTL_MAGIC, 50, struct timeval *)
+
+#define MSM_CAM_IOCTL_SET_VFE_OUTPUT_TYPE \
+        _IOW(MSM_CAM_IOCTL_MAGIC, 51, uint32_t *)
+
+#define MSM_CAM_IOCTL_GET_MCTL_INFO \
+        _IOR(MSM_CAM_IOCTL_MAGIC, 52, struct msm_mctl_node_info *)
+
+#define MSM_CAM_IOCTL_MCTL_DIVERT_DONE \
+        _IOR(MSM_CAM_IOCTL_MAGIC, 53, struct msm_cam_evt_divert_frame *)
+
+#define MSM_CAM_IOCTL_V4L2_EVT_NATIVE_CMD \
+        _IOWR(MSM_CAM_IOCTL_MAGIC, 54, struct ioctl_native_cmd *)
+
+#define MSM_CAM_IOCTL_V4L2_EVT_NATIVE_FRONT_CMD \
+        _IOWR(MSM_CAM_IOCTL_MAGIC, 55, struct ioctl_native_cmd *)
+
+#define MCTL_CAM_IOCTL_SET_FOCUS \
+
+#endif
 struct ioctl_native_cmd {
 	unsigned short mode;
 	unsigned short address;
@@ -412,8 +463,13 @@ struct msm_pp_crop {
 struct msm_mctl_pp_frame_cmd {
 	uint32_t cookie;
 	uint8_t  vpe_output_action;
+#ifdef CONFIG_S5C73M3
+	uint32_t src_buf_handle;
+	uint32_t dest_buf_handle;
+#else
 	struct msm_pp_frame src_frame;
 	struct msm_pp_frame dest_frame;
+#endif
 	struct msm_pp_crop crop;
 	int path;
 };
@@ -448,6 +504,7 @@ struct msm_isp_event_ctrl {
 		struct msm_cam_evt_divert_frame div_frame;
 		struct msm_mctl_pp_event_info pp_event_info;
 	} isp_data;
+	uint32_t evt_id;
 };
 
 #define MSM_CAM_RESP_CTRL              0
@@ -886,7 +943,7 @@ struct msm_stats_buf {
 #define MSM_V4L2_EXT_CAPTURE_MODE_CSTA \
 	(MSM_V4L2_EXT_CAPTURE_MODE_DEFAULT+17)
 #define MSM_V4L2_EXT_CAPTURE_MODE_MAX (MSM_V4L2_EXT_CAPTURE_MODE_DEFAULT+18)
-
+#ifndef CONFIG_S5C73M3
 #define MSM_V4L2_PID_MOTION_ISO              V4L2_CID_PRIVATE_BASE
 #define MSM_V4L2_PID_EFFECT                 (V4L2_CID_PRIVATE_BASE+1)
 #define MSM_V4L2_PID_HJR                    (V4L2_CID_PRIVATE_BASE+2)
@@ -907,7 +964,29 @@ struct msm_stats_buf {
 #define MSM_V4L2_PID_MMAP_INST              (V4L2_CID_PRIVATE_BASE+17)
 #define MSM_V4L2_PID_PP_PLANE_INFO          (V4L2_CID_PRIVATE_BASE+18)
 #define MSM_V4L2_PID_MAX                    MSM_V4L2_PID_PP_PLANE_INFO
-
+#else
+#define MSM_V4L2_PID_MOTION_ISO              V4L2_CID_PRIVATE_BASE
+#define MSM_V4L2_PID_EFFECT                 (V4L2_CID_PRIVATE_BASE+1)
+#define MSM_V4L2_PID_HJR                    (V4L2_CID_PRIVATE_BASE+2)
+#define MSM_V4L2_PID_LED_MODE               (V4L2_CID_PRIVATE_BASE+3)
+#define MSM_V4L2_PID_PREP_SNAPSHOT          (V4L2_CID_PRIVATE_BASE+4)
+#define MSM_V4L2_PID_EXP_METERING           (V4L2_CID_PRIVATE_BASE+5)
+#define MSM_V4L2_PID_ISO                    (V4L2_CID_PRIVATE_BASE+6)
+#define MSM_V4L2_PID_CAM_MODE               (V4L2_CID_PRIVATE_BASE+7)
+#define MSM_V4L2_PID_LUMA_ADAPTATION        (V4L2_CID_PRIVATE_BASE+8)
+#define MSM_V4L2_PID_BEST_SHOT              (V4L2_CID_PRIVATE_BASE+9)
+#define MSM_V4L2_PID_FOCUS_MODE             (V4L2_CID_PRIVATE_BASE+10)
+#define MSM_V4L2_PID_BL_DETECTION           (V4L2_CID_PRIVATE_BASE+11)
+#define MSM_V4L2_PID_SNOW_DETECTION         (V4L2_CID_PRIVATE_BASE+12)
+#define MSM_V4L2_PID_CTRL_CMD               (V4L2_CID_PRIVATE_BASE+13)
+#define MSM_V4L2_PID_EVT_SUB_INFO           (V4L2_CID_PRIVATE_BASE+14)
+#define MSM_V4L2_PID_STROBE_FLASH           (V4L2_CID_PRIVATE_BASE+15)
+#define MSM_V4L2_PID_MMAP_ENTRY             (V4L2_CID_PRIVATE_BASE+16)
+#define MSM_V4L2_PID_MMAP_INST              (V4L2_CID_PRIVATE_BASE+17)
+#define MSM_V4L2_PID_PREVIEW_SIZE           (V4L2_CID_PRIVATE_BASE+18)
+#define MSM_V4L2_PID_PP_PLANE_INFO          (V4L2_CID_PRIVATE_BASE+19)
+#define MSM_V4L2_PID_MAX                    MSM_V4L2_PID_PP_PLANE_INFO
+#endif
 /* camera operation mode for video recording - two frame output queues */
 #define MSM_V4L2_CAM_OP_DEFAULT         0
 /* camera operation mode for video recording - two frame output queues */
@@ -1023,9 +1102,17 @@ struct msm_snapshot_pp_status {
 #define SENSOR_PREVIEW_MODE		0
 #define SENSOR_SNAPSHOT_MODE		1
 #define SENSOR_RAW_SNAPSHOT_MODE	2
+#ifndef CONFIG_S5C73M3
 #define SENSOR_HFR_60FPS_MODE 3
 #define SENSOR_HFR_90FPS_MODE 4
 #define SENSOR_HFR_120FPS_MODE 5
+#else
+#define  SENSOR_VIDEO_MODE      3
+#define  SENSOR_HFR_60FPS_MODE  4
+#define  SENSOR_HFR_90FPS_MODE  5
+#define  SENSOR_HFR_120FPS_MODE 6
+#define  SENSOR_INVALID_MODE            7
+#endif
 
 #define SENSOR_QTR_SIZE			0
 #define SENSOR_FULL_SIZE		1
@@ -1044,8 +1131,9 @@ struct msm_snapshot_pp_status {
 #define CAMERA_EFFECT_EMBOSS		9
 #define CAMERA_EFFECT_SKETCH		10
 #define CAMERA_EFFECT_NEON		11
+#ifndef CONFIG_S5C73M3
 #define CAMERA_EFFECT_MAX		12
-
+#endif
 /* QRD */
 #define CAMERA_EFFECT_BW		10
 #define CAMERA_EFFECT_BLUISH	12
@@ -1329,12 +1417,12 @@ struct sensor_output_info_t {
 	uint16_t num_info;
 };
 
+#ifndef CONFIG_S5C73M3
 struct msm_sensor_exp_gain_info_t {
 	uint16_t coarse_int_time_addr;
 	uint16_t global_gain_addr;
 	uint16_t vert_offset;
 };
-
 struct msm_sensor_output_reg_addr_t {
 	uint16_t x_output;
 	uint16_t y_output;
@@ -1355,7 +1443,7 @@ struct sensor_driver_params_type {
 	struct msm_sensor_exp_gain_info_t *sensor_exp_gain_info;
 	struct msm_sensor_output_info_t *output_info;
 };
-
+#endif
 struct mirror_flip {
 	int32_t x_mirror;
 	int32_t y_flip;
@@ -1470,9 +1558,10 @@ struct csiphy_cfg_data {
 #define CSI_DECODE_8BIT 1
 #define CSI_DECODE_10BIT 2
 #define CSI_DECODE_DPCM_10_8_10 5
-
+#ifndef CONFIG_S5C73M3
 #define ISPIF_STREAM(intf, action, vfe) (((intf)<<ISPIF_S_STREAM_SHIFT)+\
 	(action)+((vfe)<<ISPIF_VFE_INTF_SHIFT))
+#endif
 #define ISPIF_ON_FRAME_BOUNDARY   (0x01 << 0)
 #define ISPIF_OFF_FRAME_BOUNDARY  (0x01 << 1)
 #define ISPIF_OFF_IMMEDIATELY     (0x01 << 2)
@@ -1555,12 +1644,10 @@ struct ispif_cfg_data {
 		struct msm_ispif_params_list ispif_params;
 	} cfg;
 };
-
 enum msm_camera_i2c_reg_addr_type {
 	MSM_CAMERA_I2C_BYTE_ADDR = 1,
 	MSM_CAMERA_I2C_WORD_ADDR,
 };
-
 struct msm_camera_i2c_reg_array {
 	uint16_t reg_addr;
 	uint16_t reg_data;
@@ -1592,7 +1679,12 @@ enum oem_setting_type {
 	VREG_SET,
 	CLK_SET,
 };
-
+#ifdef CONFIG_S5C73M3
+struct sensor_eeprom_data_t {
+        void *eeprom_data;
+        uint16_t index;
+};
+#endif
 struct sensor_oem_setting {
 	enum oem_setting_type type;
 	void *data;
@@ -1656,7 +1748,11 @@ struct sensor_cfg_data {
 		struct sensor_3d_exp_cfg sensor_3d_exp;
 		struct sensor_calib_data calib_info;
 		struct sensor_output_info_t output_info;
+#ifndef CONFIG_S5C73M3
 		struct msm_eeprom_data_t eeprom_data;
+#else
+		struct sensor_eeprom_data_t eeprom_data;
+#endif
 		struct csi_lane_params_t csi_lane_params;
 		/* QRD */
 		uint16_t antibanding;
@@ -1690,13 +1786,13 @@ struct msm_cam_gpio_operation {
 	int value;
 	const char *tag;
 };
-
+#ifndef CONFIG_S5C73M3
 struct damping_params_t {
 	uint32_t damping_step;
 	uint32_t damping_delay;
 	uint32_t hw_params;
 };
-
+#endif
 enum actuator_type {
 	ACTUATOR_VCM,
 	ACTUATOR_PIEZO,
@@ -1729,7 +1825,7 @@ struct reg_settings_t {
 	uint16_t reg_addr;
 	uint16_t reg_data;
 };
-
+#ifndef CONFIG_S5C73M3
 struct region_params_t {
 	/* [0] = ForwardDirection Macro boundary
 	   [1] = ReverseDirection Inf boundary
@@ -1737,7 +1833,7 @@ struct region_params_t {
 	uint16_t step_bound[2];
 	uint16_t code_per_step;
 };
-
+#endif
 struct msm_actuator_move_params_t {
 	int8_t dir;
 	int8_t sign_dir;
@@ -1767,6 +1863,9 @@ struct msm_actuator_params_t {
 };
 
 struct msm_actuator_set_info_t {
+#ifdef CONFIG_S5C73M3
+	uint32_t total_steps;
+#endif
 	struct msm_actuator_params_t actuator_params;
 	struct msm_actuator_tuning_params_t af_tuning_params;
 };
