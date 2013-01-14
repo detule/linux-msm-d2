@@ -1618,12 +1618,11 @@ static int msm8960_i2s_startup(struct snd_pcm_substream *substream)
 		configure_i2s_rx_gpio();
 	codec_clk = clk_get(NULL, "i2s_spkr_osr_clk");
 	if (IS_ERR(codec_clk)) {
-		pr_err("%s Error getting codec clk 0x%x\n", __func__ ,
-			(unsigned int)codec_clk);
+		pr_err("%s Error getting i2s_spkr_osr_clk", __func__);
 		return -EBUSY;
 	}
 	clk_set_rate(codec_clk, TABLA_EXT_CLK_RATE);
-	ret = clk_enable(codec_clk);
+	ret = clk_prepare_enable(codec_clk);
 	if (ret) {
 		pr_err("Unable to enable codec clock\n");
 		clk_put(codec_clk);
@@ -1638,9 +1637,9 @@ static int msm8960_i2s_startup(struct snd_pcm_substream *substream)
 		return -EBUSY;
 	}
 	clk_set_rate(rx_bit_clk, 8);
-	ret = clk_enable(rx_bit_clk);
+	ret = clk_prepare_enable(rx_bit_clk);
 	if (ret) {
-		pr_err("Unable to enable i2s_spkr_bit_clk\n");
+		pr_err("Unable to enable bit_clk\n");
 		clk_disable(codec_clk);
 		clk_put(codec_clk);
 		clk_put(rx_bit_clk);
@@ -1666,7 +1665,7 @@ static int msm8960_i2s_startup(struct snd_pcm_substream *substream)
 		}
 		/* Master clock OSR 256 */
 		clk_set_rate(tx_osr_clk, I2S_MIC_MCLK_RATE);
-		ret = clk_enable(tx_osr_clk);
+		ret = clk_prepare_enable(tx_osr_clk);
 		if (ret) {
 			pr_debug("Unable to enable i2s_mic_osr_clk\n");
 			clk_put(tx_osr_clk);
@@ -1680,7 +1679,7 @@ static int msm8960_i2s_startup(struct snd_pcm_substream *substream)
 			return -EBUSY;
 		}
 		clk_set_rate(tx_bit_clk, 8);
-		ret = clk_enable(tx_bit_clk);
+		ret = clk_prepare_enable(tx_bit_clk);
 		if (ret) {
 			pr_debug("Unable to enable i2s_mic_bit_clk\n");
 			clk_put(tx_bit_clk);
@@ -1998,6 +1997,7 @@ static struct snd_soc_dai_link msm8960_dai[] = {
 		.codec_name = "snd-soc-dummy",
 		.be_id = MSM_FRONTEND_DAI_SGLTE,
 	},
+#if 0
 	{
 		.name = "MSM8960 LowLatency",
 		.stream_name = "MultiMedia5",
@@ -2013,6 +2013,7 @@ static struct snd_soc_dai_link msm8960_dai[] = {
 		.ignore_pmdown_time = 1,
 		.be_id = MSM_FRONTEND_DAI_MULTIMEDIA5,
 	},
+#endif
 	/* Backend BT/FM DAI Links */
 	{
 		.name = LPASS_BE_INT_BT_SCO_RX,
@@ -2283,6 +2284,7 @@ static int __init msm8960_audio_init(void)
 					ARRAY_SIZE(msm8960_i2s_be_dai);
 //	}
 
+	printk(KERN_INFO "%s: start", __func__);
 	mbhc_cfg.calibration = def_tabla_mbhc_cal();
 	if (!mbhc_cfg.calibration) {
 		pr_err("Calibration data allocation failed\n");
