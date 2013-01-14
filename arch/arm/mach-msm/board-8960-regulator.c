@@ -199,10 +199,10 @@ VREG_CONSUMERS(S4) = {
 	REGULATOR_SUPPLY("CDC_VDD_CP",		"tabla2x-slim"),
 	REGULATOR_SUPPLY("CDC_VDDA_TX",		"tabla2x-slim"),
 	REGULATOR_SUPPLY("CDC_VDDA_RX",		"tabla2x-slim"),
-	REGULATOR_SUPPLY("VDDIO_CDC",           "1-000d"),
-	REGULATOR_SUPPLY("CDC_VDD_CP",          "1-000d"),
-	REGULATOR_SUPPLY("CDC_VDDA_TX",         "1-000d"),
-	REGULATOR_SUPPLY("CDC_VDDA_RX",         "1-000d"),
+	REGULATOR_SUPPLY("VDDIO_CDC",           NULL),
+	REGULATOR_SUPPLY("CDC_VDD_CP",          NULL),
+	REGULATOR_SUPPLY("CDC_VDDA_TX",         NULL),
+	REGULATOR_SUPPLY("CDC_VDDA_RX",         NULL),
 	REGULATOR_SUPPLY("vcc_i2c",		"3-005b"),
 	REGULATOR_SUPPLY("EXT_HUB_VDDIO",	"msm_smsc_hub"),
 	REGULATOR_SUPPLY("vcc_i2c",		"10-0048"),
@@ -603,8 +603,11 @@ msm_rpm_regulator_init_data[] __devinitdata = {
 	RPM_LDO(L22,	 0, 1, 0, 2750000, 2750000, NULL,      0, 0),
 	RPM_LDO(L23,	 1, 1, 1, 1800000, 1800000, "8921_s8", 10000, 10000),
 	RPM_LDO(L24,	 0, 1, 1,  750000, 1150000, "8921_s1", 10000, 10000),
+#if defined(CONFIG_MACH_M2_SPR) || defined(CONFIG_MACH_M2_VZW) || defined(CONFIG_MACH_M2_ATT) || defined(CONFIG_MACH_M2_SKT) || defined(CONFIG_MACH_M2_DCM)
+	RPM_LDO(L25,	 1, 1, 0, 1225000, 1225000, "8921_s1", 10000, 10000),
+#else
 	RPM_LDO(L25,	 1, 1, 0, 1250000, 1250000, "8921_s1", 10000, 10000),
-
+#endif
 	/*	ID     a_on pd ss		    supply */
 	RPM_VS(LVS1,	 0, 1, 0,		    "8921_s4"),
 	RPM_VS(LVS2,	 0, 1, 0,		    "8921_s1"),
