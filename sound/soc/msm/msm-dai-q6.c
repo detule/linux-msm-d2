@@ -883,7 +883,7 @@ static int msm_dai_q6_auxpcm_prepare(struct snd_pcm_substream *substream,
 	 * new setting if the below clock assert/deasset and afe_port_start
 	 * sequence is not followed.
 	 */
-
+ 
 	clk_reset(pcm_clk, CLK_RESET_ASSERT);
 
 	afe_port_start(PCM_RX, &dai_data->port_config, dai_data->rate);
@@ -1052,6 +1052,64 @@ static int msm_dai_q6_auxpcm_trigger(struct snd_pcm_substream *substream,
 
 	return rc;
 
+}
+
+static int msm_dai_q6_trigger(struct snd_pcm_substream *substream, int cmd,
+		struct snd_soc_dai *dai)
+{
+	struct msm_dai_q6_dai_data *dai_data = dev_get_drvdata(dai->dev);
+	int rc = 0;
+
+	/* Start/stop port without waiting for Q6 AFE response. Need to have
+	 * native q6 AFE driver propagates AFE response in order to handle
+	 * port start/stop command error properly if error does arise.
+	 */
+	pr_info("%s:port:%d  cmd:%d dai_data->status_mask = %ld",
+		__func__, dai->id, cmd, *dai_data->status_mask);
+	switch (cmd) {
+	case SNDRV_PCM_TRIGGER_START:
+	case SNDRV_PCM_TRIGGER_RESUME:
+	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+		if (!test_bit(STATUS_PORT_STARTED, dai_data->status_mask)) {
+			switch (dai->id) {
+			case VOICE_PLAYBACK_TX:
+			case VOICE_RECORD_TX:
+			case VOICE_RECORD_RX:
+				afe_pseudo_port_start_nowait(dai->id);
+				break;
+			default:
+				afe_port_start(dai->id,
+					&dai_data->port_config, dai_data->rate);
+				break;
+			}
+			set_bit(STATUS_PORT_STARTED,
+				dai_data->status_mask);
+		}
+		break;
+	case SNDRV_PCM_TRIGGER_STOP:
+	case SNDRV_PCM_TRIGGER_SUSPEND:
+	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+		if (test_bit(STATUS_PORT_STARTED, dai_data->status_mask)) {
+			switch (dai->id) {
+			case VOICE_PLAYBACK_TX:
+			case VOICE_RECORD_TX:
+			case VOICE_RECORD_RX:
+				afe_pseudo_port_stop_nowait(dai->id);
+				break;
+			default:
+				afe_port_stop_nowait(dai->id);
+				break;
+			}
+			clear_bit(STATUS_PORT_STARTED,
+				dai_data->status_mask);
+		}
+		break;
+
+	default:
+		rc = -EINVAL;
+	}
+
+	return rc;
 }
 
 static int msm_dai_q6_dai_auxpcm_probe(struct snd_soc_dai *dai)
@@ -1373,7 +1431,7 @@ static int msm_dai_q6_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
 {
 	int rc = 0;
 
-	dev_dbg(dai->dev, "enter %s, id = %d fmt[%d]\n", __func__,
+	pr_info("enter %s, id = %d fmt[%d]\n", __func__,
 							dai->id, fmt);
 	switch (dai->id) {
 	case PRIMARY_I2S_TX:
@@ -1398,7 +1456,7 @@ static int msm_dai_q6_set_channel_map(struct snd_soc_dai *dai,
 	struct msm_dai_q6_dai_data *dai_data = dev_get_drvdata(dai->dev);
 	unsigned int i = 0;
 
-	dev_dbg(dai->dev, "%s: dai_id = %d\n", __func__, dai->id);
+	pr_info("%s: dai_id = %d\n", __func__, dai->id);
 	switch (dai->id) {
 	case SLIMBUS_0_RX:
 	case SLIMBUS_1_RX:
@@ -1468,6 +1526,7 @@ static struct snd_soc_dai_ops msm_dai_q6_mi2s_ops = {
 
 static struct snd_soc_dai_ops msm_dai_q6_ops = {
 	.prepare	= msm_dai_q6_prepare,
+	.trigger	= msm_dai_q6_trigger,
 	.hw_params	= msm_dai_q6_hw_params,
 	.shutdown	= msm_dai_q6_shutdown,
 	.set_fmt	= msm_dai_q6_set_fmt,
@@ -1823,7 +1882,7 @@ static __devinit int msm_dai_q6_dev_probe(struct platform_device *pdev)
 {
 	int rc = 0;
 
-	dev_dbg(&pdev->dev, "dev name %s\n", dev_name(&pdev->dev));
+	pr_info("dev name %s\n", dev_name(&pdev->dev));
 
 	switch (pdev->id) {
 	case PRIMARY_I2S_RX:
