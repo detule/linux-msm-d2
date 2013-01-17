@@ -141,9 +141,9 @@ static struct ext_amp_work ext_amp_dwork;
 remove the static noise during SPK_PA enable */
 static void external_speaker_amp_work(struct work_struct *work)
 {
-	pr_debug("%s :: Top Speaker Amp enable\n", __func__);
+	pr_info("%s :: Top Speaker Amp enable\n", __func__);
 	gpio_direction_output(top_spk_pamp_gpio, 1);
-	pr_debug("%s: slepping 4 ms after turning on external "
+	pr_info("%s: slepping 4 ms after turning on external "
 			" Top Speaker Ampl\n", __func__);
 	usleep_range(4000, 4000);
 }
@@ -155,7 +155,7 @@ static void msm8960_ext_spk_power_amp_on(u32 spk)
 		if ((msm8960_ext_bottom_spk_pamp & BOTTOM_SPK_AMP_POS) &&
 			(msm8960_ext_bottom_spk_pamp & BOTTOM_SPK_AMP_NEG)) {
 
-			pr_debug("%s() External Bottom Speaker Ampl already "
+			pr_info("%s() External Bottom Speaker Ampl already "
 				"turned on. spk = 0x%08x\n", __func__, spk);
 			return;
 		}
@@ -165,9 +165,9 @@ static void msm8960_ext_spk_power_amp_on(u32 spk)
 		if ((msm8960_ext_bottom_spk_pamp & BOTTOM_SPK_AMP_POS) &&
 			(msm8960_ext_bottom_spk_pamp & BOTTOM_SPK_AMP_NEG)) {
 
-			pr_debug("%s Enabling Bottom Speaker\n", __func__);
+			pr_info("%s Enabling Bottom Speaker\n", __func__);
 			gpio_direction_output(bottom_spk_pamp_gpio, 1);
-			pr_debug("%s: slepping 4 ms after turning on external "
+			pr_info("%s: slepping 4 ms after turning on external "
 				" Bottom Speaker Ampl\n", __func__);
 			usleep_range(4000, 4000);
 		}
@@ -177,7 +177,7 @@ static void msm8960_ext_spk_power_amp_on(u32 spk)
 		if ((msm8960_ext_top_spk_pamp & TOP_SPK_AMP_POS) &&
 			(msm8960_ext_top_spk_pamp & TOP_SPK_AMP_NEG)) {
 
-			pr_debug("%s() External Top Speaker Ampl already"
+			pr_info("%s() External Top Speaker Ampl already"
 				"turned on. spk = 0x%08x\n", __func__, spk);
 			return;
 		}
@@ -207,11 +207,11 @@ static void msm8960_ext_spk_power_amp_off(u32 spk)
 		if (!msm8960_ext_bottom_spk_pamp)
 			return;
 
-		pr_debug("%s Disabling Bottom Speaker\n", __func__);
+		pr_info("%s Disabling Bottom Speaker\n", __func__);
 		gpio_direction_output(bottom_spk_pamp_gpio, 0);
 		msm8960_ext_bottom_spk_pamp = 0;
 
-		pr_debug("%s: sleeping 4 ms after turning off external Bottom"
+		pr_info("%s: sleeping 4 ms after turning off external Bottom"
 			" Speaker Ampl\n", __func__);
 
 		usleep_range(4000, 4000);
@@ -221,7 +221,7 @@ static void msm8960_ext_spk_power_amp_off(u32 spk)
 		if (!msm8960_ext_top_spk_pamp)
 			return;
 		gpio_direction_output(top_spk_pamp_gpio, 0);
-		pr_debug("%s: slepping 4 ms after turning off external "
+		pr_info("%s: slepping 4 ms after turning off external "
 			" Top Speaker Ampl\n", __func__);
 		msm8960_ext_top_spk_pamp = 0;
 	} else  {
@@ -237,7 +237,7 @@ static void msm8960_ext_control(struct snd_soc_codec *codec)
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
 	mutex_lock(&dapm->codec->mutex);
 
-	pr_debug("%s: msm8960_spk_control = %d", __func__, msm8960_spk_control);
+	pr_info("%s: msm8960_spk_control = %d", __func__, msm8960_spk_control);
 	if (msm8960_spk_control == MSM8960_SPK_ON ||
 				msm8960_i2s_spk_control == MSM8960_SPK_ON) {
 		snd_soc_dapm_enable_pin(dapm, "Ext Spk Bottom Pos");
@@ -258,7 +258,7 @@ static void msm8960_ext_control(struct snd_soc_codec *codec)
 static int msm8960_get_spk(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
-	pr_debug("%s: msm8960_spk_control = %d", __func__, msm8960_spk_control);
+	pr_info("%s: msm8960_spk_control = %d", __func__, msm8960_spk_control);
 	ucontrol->value.integer.value[0] = msm8960_spk_control;
 	return 0;
 }
@@ -267,7 +267,7 @@ static int msm8960_set_spk(struct snd_kcontrol *kcontrol,
 {
 	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 	if (msm8960_spk_control == ucontrol->value.integer.value[0])
 		return 0;
 
@@ -278,7 +278,7 @@ static int msm8960_set_spk(struct snd_kcontrol *kcontrol,
 static int msm8960_spkramp_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *k, int event)
 {
-	pr_debug("%s() %x\n", __func__, SND_SOC_DAPM_EVENT_ON(event));
+	pr_info("%s() %x\n", __func__, SND_SOC_DAPM_EVENT_ON(event));
 
 	if (SND_SOC_DAPM_EVENT_ON(event)) {
 		if (!strncmp(w->name, "Ext Spk Bottom Pos", 18))
@@ -316,7 +316,7 @@ static int msm8960_spkramp_event(struct snd_soc_dapm_widget *w,
 static int msm8960_bias_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *k, int event)
 {
-	pr_debug("GPIO BIAS UP!!!%d\n", SND_SOC_DAPM_EVENT_ON(event));
+	pr_info("GPIO BIAS UP!!!%d\n", SND_SOC_DAPM_EVENT_ON(event));
 #if defined(CONFIG_MACH_M2_DCM) || defined(CONFIG_MACH_K2_KDI)
 	if (system_rev == BOARD_REV00)
 		gpio_direction_output(GPIO_MAIN_MIC_BIAS_REV00,
@@ -344,7 +344,7 @@ static int msm8960_bias_event(struct snd_soc_dapm_widget *w,
 static int msm8960_cdc_cp_event(struct snd_soc_dapm_widget *w,
 	struct snd_kcontrol *k, int event)
 {
-	pr_debug("%s %d\n", __func__, SND_SOC_DAPM_EVENT_ON(event));
+	pr_info("%s %d\n", __func__, SND_SOC_DAPM_EVENT_ON(event));
 	gpio_direction_output(PM8921_GPIO_PM_TO_SYS(17),
 	SND_SOC_DAPM_EVENT_ON(event));
 	return 0;
@@ -354,7 +354,7 @@ static int msm8960_cdc_cp_event(struct snd_soc_dapm_widget *w,
 static int msm8960_cdc_vps_event(struct snd_soc_dapm_widget *w,
 		struct snd_kcontrol *kcontrol, int event)
 {
-	pr_debug("%s %d\n", __func__, SND_SOC_DAPM_EVENT_ON(event));
+	pr_info("%s %d\n", __func__, SND_SOC_DAPM_EVENT_ON(event));
 	gpio_direction_output(PM8921_GPIO_PM_TO_SYS(5),
 	SND_SOC_DAPM_EVENT_ON(event));
 	return 0;
@@ -371,7 +371,7 @@ static int msm8960_enable_codec_ext_clk(struct snd_soc_codec *codec, int enable,
 	mutex_lock(&cdc_mclk_mutex);
 	if (enable) {
 		clk_users++;
-		pr_debug("%s: clk_users = %d\n", __func__, clk_users);
+		pr_info("%s: clk_users = %d\n", __func__, clk_users);
 		if (clk_users == 1) {
 			codec_clk = clk_get(NULL, "i2s_spkr_osr_clk");
 			if (codec_clk) {
@@ -387,9 +387,9 @@ static int msm8960_enable_codec_ext_clk(struct snd_soc_codec *codec, int enable,
 	} else {
 		if (clk_users > 0) {
 			clk_users--;
-			pr_debug("%s: clk_users = %d\n", __func__, clk_users);
+			pr_info("%s: clk_users = %d\n", __func__, clk_users);
 			if (clk_users == 0) {
-				pr_debug("%s: disabling MCLK. clk_users = %d\n",
+				pr_info("%s: disabling MCLK. clk_users = %d\n",
 						__func__, clk_users);
 				tabla_mclk_enable(codec, 0, dapm);
 				clk_disable(codec_clk);
@@ -407,7 +407,7 @@ static int msm8960_enable_codec_ext_clk(struct snd_soc_codec *codec, int enable,
 static int msm8960_mclk_event(struct snd_soc_dapm_widget *w,
 		struct snd_kcontrol *kcontrol, int event)
 {
-	pr_debug("%s: event = %d\n", __func__, event);
+	pr_info("%s: event = %d\n", __func__, event);
 
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
@@ -793,7 +793,7 @@ static const struct soc_enum msm8960_btsco_enum[] = {
 static int msm8960_i2s_rx_ch_get(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
-	pr_debug("%s: msm8960_i2s_rx_ch  = %d\n", __func__,
+	pr_info("%s: msm8960_i2s_rx_ch  = %d\n", __func__,
 			msm8960_i2s_rx_ch);
 	ucontrol->value.integer.value[0] = msm8960_i2s_rx_ch - 1;
 	return 0;
@@ -804,7 +804,7 @@ static int msm8960_i2s_rx_ch_put(struct snd_kcontrol *kcontrol,
 {
 	msm8960_i2s_rx_ch = ucontrol->value.integer.value[0] + 1;
 
-	pr_debug("%s: msm8960_i2s_rx_ch = %d\n", __func__,
+	pr_info("%s: msm8960_i2s_rx_ch = %d\n", __func__,
 			msm8960_i2s_rx_ch);
 	return 1;
 }
@@ -812,7 +812,7 @@ static int msm8960_i2s_rx_ch_put(struct snd_kcontrol *kcontrol,
 static int msm8960_i2s_tx_ch_get(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
-	pr_debug("%s: msm8960_i2s_tx_ch  = %d\n", __func__,
+	pr_info("%s: msm8960_i2s_tx_ch  = %d\n", __func__,
 			msm8960_i2s_tx_ch);
 	ucontrol->value.integer.value[0] = msm8960_i2s_tx_ch - 1;
 	return 0;
@@ -823,7 +823,7 @@ static int msm8960_i2s_tx_ch_put(struct snd_kcontrol *kcontrol,
 {
 	msm8960_i2s_tx_ch = ucontrol->value.integer.value[0] + 1;
 
-	pr_debug("%s: msm8960_i2s_tx_ch = %d\n", __func__,
+	pr_info("%s: msm8960_i2s_tx_ch = %d\n", __func__,
 			msm8960_i2s_tx_ch);
 	return 1;
 }
@@ -831,7 +831,7 @@ static int msm8960_i2s_tx_ch_put(struct snd_kcontrol *kcontrol,
 static int msm8960_slim_0_rx_ch_get(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
-	pr_debug("%s: msm8960_slim_0_rx_ch  = %d\n", __func__,
+	pr_info("%s: msm8960_slim_0_rx_ch  = %d\n", __func__,
 			msm8960_slim_0_rx_ch);
 	ucontrol->value.integer.value[0] = msm8960_slim_0_rx_ch - 1;
 	return 0;
@@ -842,7 +842,7 @@ static int msm8960_slim_0_rx_ch_put(struct snd_kcontrol *kcontrol,
 {
 	msm8960_slim_0_rx_ch = ucontrol->value.integer.value[0] + 1;
 
-	pr_debug("%s: msm8960_slim_0_rx_ch = %d\n", __func__,
+	pr_info("%s: msm8960_slim_0_rx_ch = %d\n", __func__,
 			msm8960_slim_0_rx_ch);
 	return 1;
 }
@@ -850,7 +850,7 @@ static int msm8960_slim_0_rx_ch_put(struct snd_kcontrol *kcontrol,
 static int msm8960_slim_0_tx_ch_get(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
-	pr_debug("%s: msm8960_slim_0_tx_ch  = %d\n", __func__,
+	pr_info("%s: msm8960_slim_0_tx_ch  = %d\n", __func__,
 			msm8960_slim_0_tx_ch);
 	ucontrol->value.integer.value[0] = msm8960_slim_0_tx_ch - 1;
 	return 0;
@@ -861,7 +861,7 @@ static int msm8960_slim_0_tx_ch_put(struct snd_kcontrol *kcontrol,
 {
 	msm8960_slim_0_tx_ch = ucontrol->value.integer.value[0] + 1;
 
-	pr_debug("%s: msm8960_slim_0_tx_ch = %d\n", __func__,
+	pr_info("%s: msm8960_slim_0_tx_ch = %d\n", __func__,
 			msm8960_slim_0_tx_ch);
 	return 1;
 }
@@ -869,7 +869,7 @@ static int msm8960_slim_0_tx_ch_put(struct snd_kcontrol *kcontrol,
 static int msm8960_btsco_rate_get(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
-	pr_debug("%s: msm8960_btsco_rate  = %d", __func__,
+	pr_info("%s: msm8960_btsco_rate  = %d", __func__,
 					msm8960_btsco_rate);
 	ucontrol->value.integer.value[0] = msm8960_btsco_rate;
 	return 0;
@@ -889,7 +889,7 @@ static int msm8960_btsco_rate_put(struct snd_kcontrol *kcontrol,
 		msm8960_btsco_rate = BTSCO_RATE_8KHZ;
 		break;
 	}
-	pr_debug("%s: msm8960_btsco_rate = %d\n", __func__,
+	pr_info("%s: msm8960_btsco_rate = %d\n", __func__,
 					msm8960_btsco_rate);
 	return 0;
 }
@@ -899,7 +899,7 @@ static int msm8960_i2s_set_spk(struct snd_kcontrol *kcontrol,
 {
 	struct snd_soc_codec *codec =  snd_kcontrol_chip(kcontrol);
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 	if (msm8960_i2s_spk_control == ucontrol->value.integer.value[0])
 		return 0;
 
@@ -911,7 +911,7 @@ static int msm8960_i2s_set_spk(struct snd_kcontrol *kcontrol,
 static int msm8960_i2s_get_spk(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
-	pr_debug("%s: msm8960_spk_control = %d", __func__, msm8960_spk_control);
+	pr_info("%s: msm8960_spk_control = %d", __func__, msm8960_spk_control);
 	ucontrol->value.integer.value[0] = msm8960_i2s_spk_control;
 	return 0;
 }
@@ -1034,7 +1034,7 @@ static int msm8960_i2s_audrx_init(struct snd_soc_pcm_runtime *rtd)
 	struct snd_soc_codec *codec = rtd->codec;
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 	err = snd_soc_add_codec_controls(codec, tabla_msm8960_i2s_controls,
 				ARRAY_SIZE(tabla_msm8960_i2s_controls));
 	if (err < 0) {
@@ -1135,7 +1135,7 @@ static int msm8960_audrx_init(struct snd_soc_pcm_runtime *rtd)
 		.inv_int_pol = 0,
 	};
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 
 	if (machine_is_msm8960_liquid()) {
 		top_spk_pamp_gpio = (PM8921_GPIO_PM_TO_SYS
@@ -1271,7 +1271,7 @@ static int msm8960_i2s_rx_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 	struct snd_interval *channels = hw_param_interval(params,
 			SNDRV_PCM_HW_PARAM_CHANNELS);
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 	rate->min = rate->max = 48000;
 	channels->min = channels->max = msm8960_i2s_rx_ch;
 
@@ -1287,7 +1287,7 @@ static int msm8960_i2s_tx_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 	struct snd_interval *channels = hw_param_interval(params,
 			SNDRV_PCM_HW_PARAM_CHANNELS);
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 	rate->min = rate->max = 48000;
 	channels->min = channels->max = msm8960_i2s_tx_ch;
 
@@ -1303,7 +1303,7 @@ static int msm8960_slim_0_rx_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 	struct snd_interval *channels = hw_param_interval(params,
 			SNDRV_PCM_HW_PARAM_CHANNELS);
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 	rate->min = rate->max = 48000;
 	channels->min = channels->max = msm8960_slim_0_rx_ch;
 
@@ -1319,7 +1319,7 @@ static int msm8960_slim_0_tx_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 	struct snd_interval *channels = hw_param_interval(params,
 			SNDRV_PCM_HW_PARAM_CHANNELS);
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 	rate->min = rate->max = 48000;
 	channels->min = channels->max = msm8960_slim_0_tx_ch;
 
@@ -1332,7 +1332,7 @@ static int msm8960_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 	struct snd_interval *rate = hw_param_interval(params,
 	SNDRV_PCM_HW_PARAM_RATE);
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 	rate->min = rate->max = 48000;
 
 	return 0;
@@ -1347,7 +1347,7 @@ static int msm8960_hdmi_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 	struct snd_interval *channels = hw_param_interval(params,
 					SNDRV_PCM_HW_PARAM_CHANNELS);
 
-	pr_debug("%s channels->min %u channels->max %u ()\n", __func__,
+	pr_info("%s channels->min %u channels->max %u ()\n", __func__,
 			channels->min, channels->max);
 	rate->min = rate->max = 48000;
 
@@ -1390,7 +1390,7 @@ static int msm8960_proxy_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 	struct snd_interval *rate = hw_param_interval(params,
 	SNDRV_PCM_HW_PARAM_RATE);
 
-	pr_debug("%s()\n", __func__);
+	pr_info("%s()\n", __func__);
 	rate->min = rate->max = 48000;
 
 	return 0;
@@ -1400,7 +1400,7 @@ int msm8960_aux_pcm_get_gpios(void)
 {
 	int ret = 0;
 
-	pr_debug("%s\n", __func__);
+	pr_info("%s\n", __func__);
 
 	ret = gpio_request(GPIO_AUX_PCM_DOUT, "AUX PCM DOUT");
 	if (ret < 0) {
@@ -1616,64 +1616,64 @@ static int msm8960_i2s_startup(struct snd_pcm_substream *substream)
 	pr_info("%s\n", __func__);
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
 		configure_i2s_rx_gpio();
-	codec_clk = clk_get(NULL, "i2s_spkr_osr_clk");
-	if (IS_ERR(codec_clk)) {
-		pr_err("%s Error getting i2s_spkr_osr_clk", __func__);
-		return -EBUSY;
-	}
-	clk_set_rate(codec_clk, TABLA_EXT_CLK_RATE);
-	ret = clk_prepare_enable(codec_clk);
-	if (ret) {
-		pr_err("Unable to enable codec clock\n");
-		clk_put(codec_clk);
-		return ret;
-	}
+		codec_clk = clk_get(NULL, "i2s_spkr_osr_clk");
+		if (IS_ERR(codec_clk)) {
+			pr_err("%s Error getting i2s_spkr_osr_clk", __func__);
+			return -EBUSY;
+		}
+		clk_set_rate(codec_clk, TABLA_EXT_CLK_RATE);
+		ret = clk_prepare_enable(codec_clk);
+		if (ret) {
+			pr_err("Unable to enable codec clock\n");
+			clk_put(codec_clk);
+			return ret;
+		}
 
-	rx_bit_clk = clk_get(NULL, "i2s_spkr_bit_clk");
-	if (IS_ERR(rx_bit_clk)) {
-		pr_err("Failed to get i2s_spkr_bit_clk\n");
-		clk_disable(codec_clk);
-		clk_put(codec_clk);
-		return -EBUSY;
-	}
-	clk_set_rate(rx_bit_clk, 8);
-	ret = clk_prepare_enable(rx_bit_clk);
-	if (ret) {
-		pr_err("Unable to enable bit_clk\n");
-		clk_disable(codec_clk);
-		clk_put(codec_clk);
-		clk_put(rx_bit_clk);
-		return ret;
-	}
-	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_CBS_CFS);
-	if (ret < 0) {
-		pr_err("set format for cpu dai failed\n");
-		return ret;
-	}
+		rx_bit_clk = clk_get(NULL, "i2s_spkr_bit_clk");
+		if (IS_ERR(rx_bit_clk)) {
+			pr_err("Failed to get i2s_spkr_bit_clk\n");
+			clk_disable(codec_clk);
+			clk_put(codec_clk);
+			return -EBUSY;
+		}
+		clk_set_rate(rx_bit_clk, 8);
+		ret = clk_prepare_enable(rx_bit_clk);
+		if (ret) {
+			pr_err("Unable to enable bit_clk\n");
+			clk_disable(codec_clk);
+			clk_put(codec_clk);
+			clk_put(rx_bit_clk);
+			return ret;
+		}
+		ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_CBS_CFS);
+		if (ret < 0) {
+			pr_err("set format for cpu dai failed\n");
+			return ret;
+		}
 		ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_CBS_CFS);
-	if (ret < 0) {
-		pr_err("set format for codec dai failed\n");
-		return ret;
-	}
+		if (ret < 0) {
+			pr_err("set format for codec dai failed\n");
+			return ret;
+		}
 	} else if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
 		configure_i2s_tx_gpio();
 
 		tx_osr_clk = clk_get(NULL, "i2s_mic_osr_clk");
 		if (IS_ERR(tx_osr_clk)) {
-			pr_debug("Failed to get i2s_mic_osr_clk\n");
+			pr_info("Failed to get i2s_mic_osr_clk\n");
 			return -EBUSY;
 		}
 		/* Master clock OSR 256 */
 		clk_set_rate(tx_osr_clk, I2S_MIC_MCLK_RATE);
 		ret = clk_prepare_enable(tx_osr_clk);
 		if (ret) {
-			pr_debug("Unable to enable i2s_mic_osr_clk\n");
+			pr_info("Unable to enable i2s_mic_osr_clk\n");
 			clk_put(tx_osr_clk);
 			return ret;
 		}
 		tx_bit_clk = clk_get(NULL, "i2s_mic_bit_clk");
 		if (IS_ERR(tx_bit_clk)) {
-			pr_debug("Failed to get i2s_mic_bit_clk\n");
+			pr_info("Failed to get i2s_mic_bit_clk\n");
 			clk_disable(tx_osr_clk);
 			clk_put(tx_osr_clk);
 			return -EBUSY;
@@ -1681,7 +1681,7 @@ static int msm8960_i2s_startup(struct snd_pcm_substream *substream)
 		clk_set_rate(tx_bit_clk, 8);
 		ret = clk_prepare_enable(tx_bit_clk);
 		if (ret) {
-			pr_debug("Unable to enable i2s_mic_bit_clk\n");
+			pr_info("Unable to enable i2s_mic_bit_clk\n");
 			clk_put(tx_bit_clk);
 			clk_disable(tx_osr_clk);
 			clk_put(tx_osr_clk);
@@ -1706,7 +1706,7 @@ static int msm8960_i2s_startup(struct snd_pcm_substream *substream)
 #if 0
 static int msm8960_startup(struct snd_pcm_substream *substream)
 {
-	pr_debug("%s(): substream = %s  stream = %d\n", __func__,
+	pr_info("%s(): substream = %s  stream = %d\n", __func__,
 		 substream->name, substream->stream);
 	return 0;
 }
@@ -1715,7 +1715,7 @@ static int msm8960_auxpcm_startup(struct snd_pcm_substream *substream)
 {
 	int ret = 0;
 
-	pr_debug("%s(): substream = %s\n", __func__, substream->name);
+	pr_info("%s(): substream = %s\n", __func__, substream->name);
 	ret = msm8960_aux_pcm_get_gpios();
 	if (ret < 0) {
 		pr_err("%s: Aux PCM GPIO request failed\n", __func__);
@@ -1727,13 +1727,13 @@ static int msm8960_auxpcm_startup(struct snd_pcm_substream *substream)
 static void msm8960_auxpcm_shutdown(struct snd_pcm_substream *substream)
 {
 
-	pr_debug("%s(): substream = %s\n", __func__, substream->name);
+	pr_info("%s(): substream = %s\n", __func__, substream->name);
 	msm8960_aux_pcm_free_gpios();
 }
 
 static void msm8960_shutdown(struct snd_pcm_substream *substream)
 {
-	pr_debug("%s(): substream = %s  stream = %d\n", __func__,
+	pr_info("%s(): substream = %s  stream = %d\n", __func__,
 		 substream->name, substream->stream);
 }
 
