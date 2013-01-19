@@ -46,6 +46,9 @@ VREG_CONSUMERS(L4) = {
 	REGULATOR_SUPPLY("8921_l4",		NULL),
 	REGULATOR_SUPPLY("HSUSB_1p8",		"msm_otg"),
 	REGULATOR_SUPPLY("iris_vddxo",		"wcnss_wlan.0"),
+#if defined(CONFIG_BCM4334) || defined(CONFIG_BCM4334_MODULE)
+        REGULATOR_SUPPLY("sdc_vdd",             "msm_sdcc.4"),
+#endif
 	REGULATOR_SUPPLY("sdc_vdd_io",		"msm_sdcc.4"),
 };
 VREG_CONSUMERS(L5) = {
