@@ -128,7 +128,7 @@ obj-y				+= ieee802154/
 obj-y				+= clk/
 obj-$(CONFIG_NEW_SENSORS)       += sensors/
 obj-$(CONFIG_BATTERY_SAMSUNG)   += battery/
-
+obj-$(CONFIG_VIBETONZ)		+= motor/
 obj-$(CONFIG_HWSPINLOCK)	+= hwspinlock/
 obj-$(CONFIG_NFC)		+= nfc/
 obj-$(CONFIG_IOMMU_SUPPORT)	+= iommu/
