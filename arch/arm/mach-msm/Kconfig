@@ -919,6 +919,19 @@ config MACH_M2_SPR
         bool "MSM8960 Samsung M2_SPR"
         help
           Support for the Samsung M2 Sprint device.
+
+config MACH_M2_VZW
+	depends on ARCH_MSM8960
+	default n
+	select REGULATOR_MSM_GPIO
+	select MSM_PIL_LPASS_QDSP6V4
+	select MSM_PIL_MODEM_QDSP6V4
+	select HAVE_MEMBLOCK_NODE_MAP
+	select ARCH_SPARSEMEM_ENABLE
+	select HOLES_IN_ZONE if SPARSEMEMP
+        bool "MSM8960 Samsung M2_VZW"
+        help
+          Support for the Samsung M2 Verizon device.
 endmenu
 
 source "arch/arm/mach-msm/lge/Kconfig"
