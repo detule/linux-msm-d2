@@ -302,8 +302,10 @@ obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire-keypad.o board-sapphire-panel.o
 obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire-mmc.o board-sapphire-wifi.o
 obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire-rfkill.o msm_vibrator.o
 obj-$(CONFIG_MACH_M2_SPR)   += board-m2_spr.o board-m2_spr-gpiomux.o board-m2_spr-camera.o board-m2_spr-display.o board-m2_spr-pmic.o board-8960-storage.o board-8960-regulator.o board-mms-tsp.o
+obj-$(CONFIG_MACH_M2_VZW)   += board-m2_vzw.o board-m2_vzw-gpiomux.o board-m2_spr-camera.o board-m2_spr-display.o board-m2_spr-pmic.o board-8960-storage.o board-8960-regulator.o board-mms-tsp.o
 ifdef CONFIG_BCM4334
 obj-$(CONFIG_MACH_M2_SPR)   += board-8960-wifi.o
+obj-$(CONFIG_MACH_M2_VZW)   += board-8960-wifi.o
 endif
 
 obj-$(CONFIG_MACH_LGE) += lge/
