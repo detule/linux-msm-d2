@@ -578,11 +578,7 @@ static struct msm_gpiomux_config msm8960_audio_codec_configs[] __initdata = {
 
 static struct gpiomux_setting cdc_i2s_mclk = {
 	.func = GPIOMUX_FUNC_1,
-#if defined(_d2usc_)
-	.drv = GPIOMUX_DRV_2MA,
-#else
 	.drv = GPIOMUX_DRV_8MA,
-#endif
 	.pull = GPIOMUX_PULL_NONE,
 };
 
@@ -865,20 +861,6 @@ static struct msm_gpiomux_config mdm_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &ap2mdm_cfg,
 		}
 	},
-	/* AP2MDM_KPDPWR_N */
-	{
-		.gpio = 81,
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &ap2mdm_kpdpwr_n_cfg,
-		}
-	},
-	/* AP2MDM_PMIC_RESET_N */
-	{
-		.gpio = 80,
-		.settings = {
-			[GPIOMUX_SUSPENDED] = &ap2mdm_kpdpwr_n_cfg,
-		}
-	}
 };
 
 static struct msm_gpiomux_config msm8960_mdp_vsync_configs[] __initdata = {
@@ -1037,7 +1019,7 @@ int __init msm8960_init_gpiomux(void)
 #endif
 	msm8960_gpio_key_configs[0].gpio = gpio_rev(VOLUME_UP);
 	msm8960_gpio_key_configs[1].gpio = gpio_rev(VOLUME_DOWN);
-	if (system_rev < BOARD_REV13)
+	if (system_rev < BOARD_REV09)
 		msm_gpiomux_install(msm8960_gpio_key_configs, 2);
 	else
 		msm_gpiomux_install(msm8960_gpio_key_configs,
@@ -1053,7 +1035,7 @@ int __init msm8960_init_gpiomux(void)
 			ARRAY_SIZE(msm8960_audio_codec_configs));
 
 #ifdef CONFIG_MMC_MSM_SDC4_SUPPORT
-	if (system_rev >= BOARD_REV09)
+	if (system_rev >= BOARD_REV04)
 		msm_gpiomux_install(sdc4_interface, ARRAY_SIZE(sdc4_interface));
 	else
 #endif
@@ -1090,10 +1072,6 @@ int __init msm8960_init_gpiomux(void)
 #ifdef CONFIG_FB_MSM_HDMI_MSM_PANEL
 	msm_gpiomux_install(msm8960_hdmi_configs,
 			ARRAY_SIZE(msm8960_hdmi_configs));
-#endif
-#if defined(CONFIG_VIDEO_MHL_V1) || defined(CONFIG_VIDEO_MHL_V2)
-	msm_gpiomux_install(msm8960_mhl_configs,
-			ARRAY_SIZE(msm8960_mhl_configs));
 #endif
 
 	msm_gpiomux_install(msm8960_mdp_vsync_configs,

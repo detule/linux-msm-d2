@@ -907,28 +907,35 @@ config MACH_FSM9XXX_SURF
 config MACH_MSM_DUMMY
 	bool "NONE (No device)"
 
-config MACH_M2_SPR
+config MACH_M2
 	depends on ARCH_MSM8960
 	default n
 	select REGULATOR_MSM_GPIO
-	select MSM_PIL_LPASS_QDSP6V4
-	select MSM_PIL_MODEM_QDSP6V4
 	select HAVE_MEMBLOCK_NODE_MAP
 	select ARCH_SPARSEMEM_ENABLE
 	select HOLES_IN_ZONE if SPARSEMEMP
+	select MSM_MERCURY
+        bool "MSM8960 Samsung M2"
+        help
+          Support for Samsung M2 devices.
+
+config MACH_M2_ATT
+	depends on MACH_M2
+	default n
+        bool "MSM8960 Samsung M2_ATT"
+        help
+          Support for the Samsung M2 AT&T device.
+
+config MACH_M2_SPR
+	depends on MACH_M2
+	default n
         bool "MSM8960 Samsung M2_SPR"
         help
           Support for the Samsung M2 Sprint device.
 
 config MACH_M2_VZW
-	depends on ARCH_MSM8960
+	depends on MACH_M2
 	default n
-	select REGULATOR_MSM_GPIO
-	select MSM_PIL_LPASS_QDSP6V4
-	select MSM_PIL_MODEM_QDSP6V4
-	select HAVE_MEMBLOCK_NODE_MAP
-	select ARCH_SPARSEMEM_ENABLE
-	select HOLES_IN_ZONE if SPARSEMEMP
         bool "MSM8960 Samsung M2_VZW"
         help
           Support for the Samsung M2 Verizon device.

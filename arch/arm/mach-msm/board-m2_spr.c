@@ -92,7 +92,7 @@
 #include <linux/i2c/gp2ap020.h>
 #endif
 #ifdef CONFIG_VP_A2220
-#include <config/vp/a2220.h>
+#include <sound/a2220.h>
 #endif
 #ifdef CONFIG_INPUT_BMP180
 #include <linux/input/bmp180.h>
@@ -1880,6 +1880,13 @@ static struct platform_device sec_device_battery = {
 	.id = -1,
 	.dev.platform_data = &sec_bat_pdata,
 };
+
+static void check_highblock_temp(void)
+{
+	if (system_rev < 0xd)
+		sec_bat_pdata.high_block = 600;
+}
+
 #endif /* CONFIG_BATTERY_SEC */
 
 static int is_smb347_using(void)
@@ -3940,6 +3947,21 @@ static void mxt_init_hw_liquid(void)
 				__func__, GPIO_MXT_TS_LDO_EN);
 		goto err_ldo_gpio_req;
 	}
+#if !defined(CONFIG_WIRELESS_CHARGING)
+	rc = gpio_request(GPIO_MXT_TS_RESET, "mxt_reset_gpio");
+	if (rc) {
+		pr_err("%s: unable to request mxt_reset gpio [%d]\n",
+				__func__, GPIO_MXT_TS_RESET);
+		goto err_ldo_gpio_set_dir;
+	}
+
+	rc = gpio_direction_output(GPIO_MXT_TS_RESET, 1);
+	if (rc) {
+		pr_err("%s: unable to set_direction for mxt_reset gpio [%d]\n",
+				__func__, GPIO_MXT_TS_RESET);
+		goto err_reset_gpio_req;
+	}
+#endif
 	return;
 
 err_ldo_gpio_req:
@@ -4055,6 +4077,15 @@ static struct msm_rpm_platform_data msm_rpm_data = {
 	.msm_apps_ipc_rpm_val = 4,
 };
 #endif
+
+#if 0
+static struct msm_pm_sleep_status_data msm_pm_slp_sts_data = {
+	.base_addr = MSM_ACC0_BASE + 0x08,
+	.cpu_offset = MSM_ACC1_BASE - MSM_ACC0_BASE,
+	.mask = 1UL << 13,
+};
+#endif
+
 #ifndef CONFIG_S5C73M3
 static struct ks8851_pdata spi_eth_pdata = {
 	.irq_gpio = KS8851_IRQ_GPIO,
@@ -4078,13 +4109,6 @@ static struct spi_board_info spi_board_info[] __initdata = {
 		.chip_select            = 1,
 		.mode                   = SPI_MODE_0,
 	},
-};
-#endif
-#if 0
-static struct msm_pm_sleep_status_data msm_pm_slp_sts_data = {
-	.base_addr = MSM_ACC0_BASE + 0x08,
-	.cpu_offset = MSM_ACC1_BASE - MSM_ACC0_BASE,
-	.mask = 1UL << 13,
 };
 #endif
 static struct platform_device msm_device_saw_core0 = {
@@ -5411,6 +5435,9 @@ static void __init samsung_m2_spr_init(void)
 #ifndef CONFIG_S5C73M3
 	spi_register_board_info(spi_board_info, ARRAY_SIZE(spi_board_info));
 #endif
+#ifdef CONFIG_BATTERY_SEC
+	check_highblock_temp();
+#endif /*CONFIG_BATTERY_SEC*/
 	msm8960_init_pmic();
 	msm8960_i2c_init();
 	msm8960_gfx_init();

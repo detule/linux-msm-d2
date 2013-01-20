@@ -301,12 +301,11 @@ obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire.o board-sapphire-gpio.o
 obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire-keypad.o board-sapphire-panel.o
 obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire-mmc.o board-sapphire-wifi.o
 obj-$(CONFIG_MACH_SAPPHIRE) += board-sapphire-rfkill.o msm_vibrator.o
-obj-$(CONFIG_MACH_M2_SPR)   += board-m2_spr.o board-m2_spr-gpiomux.o board-m2_spr-camera.o board-m2_spr-display.o board-m2_spr-pmic.o board-m2_spr-storage.o board-8960-regulator.o board-mms-tsp.o board-bluetooth-bcm4334.o
-obj-$(CONFIG_MACH_M2_VZW)   += board-m2_vzw.o board-m2_vzw-gpiomux.o board-m2_spr-camera.o board-m2_spr-display.o board-m2_spr-pmic.o board-m2_spr-storage.o board-8960-regulator.o board-mms-tsp.o board-bluetooth-bcm4334.o
-ifdef CONFIG_BCM4334
-obj-$(CONFIG_MACH_M2_SPR)   += board-8960-wifi.o
-obj-$(CONFIG_MACH_M2_VZW)   += board-8960-wifi.o
-endif
+obj-$(CONFIG_MACH_M2)       += board-mms-tsp.o board-bluetooth-bcm4334.o board-8960-wifi.o board-8960-regulator.o
+obj-$(CONFIG_MACH_M2)       += board-m2-camera.o board-m2-display.o board-m2-pmic.o board-m2-storage.o 
+obj-$(CONFIG_MACH_M2_ATT)   += board-m2_att.o board-m2_att-gpiomux.o
+obj-$(CONFIG_MACH_M2_SPR)   += board-m2_spr.o board-m2_spr-gpiomux.o
+obj-$(CONFIG_MACH_M2_VZW)   += board-m2_vzw.o board-m2_vzw-gpiomux.o
 
 obj-$(CONFIG_MACH_LGE) += lge/
 
