@@ -2283,6 +2283,12 @@ config BT_MSM_PINTEST
 	  This driver provides support for verifying the MSM to BT pin
 	  connectivity.
 
+config BT_BCM4334
+        bool "Enable BCM4334 driver"
+        default n
+        help
+          Adds BCM4334 RFKILL driver for Broadcom BCM4334 chipset
+
 config MSM_FAKE_BATTERY
 		depends on POWER_SUPPLY
 		default n
