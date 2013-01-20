@@ -5526,5 +5526,6 @@ MACHINE_START(M2_VZW, "SAMSUNG M2_VZW")
 	.init_machine = samsung_m2_vzw_init,
 	.init_early = msm8960_allocate_memory_regions,
 	.init_very_early = msm8960_early_memory,
+	.restart = msm_restart,
 MACHINE_END
 #endif
