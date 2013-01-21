@@ -2201,17 +2201,26 @@ static void msm_otg_init_sm(struct msm_otg *motg)
 			else
 				clear_bit(B_SESS_VLD, &motg->inputs);
 		} else if (pdata->otg_control == OTG_PMIC_CONTROL) {
-			if (pdata->pmic_id_irq) {
+			if (otgsc & OTGSC_ID) {
 				if (msm_otg_read_pmic_id_state(motg))
 					set_bit(ID, &motg->inputs);
 				else
 					clear_bit(ID, &motg->inputs);
 			}
-			/*
-			 * VBUS initial state is reported after PMIC
-			 * driver initialization. Wait for it.
-			 */
-			wait_for_completion(&pmic_vbus_init);
+			if (pdata->smb347s) {
+				pr_info("msm_otg_init_sm, smb347s\n");
+				if (otgsc & OTGSC_BSV)
+					set_bit(B_SESS_VLD, &motg->inputs);
+				else
+					clear_bit(B_SESS_VLD, &motg->inputs);
+			} else {
+                                pr_info("msm_otg_init_sm, PM8921\n");
+				/*
+				 * VBUS initial state is reported after PMIC
+				 * driver initialization. Wait for it.
+				 */
+				wait_for_completion(&pmic_vbus_init);
+			}
 		}
 		break;
 	case USB_HOST:
@@ -2987,10 +2996,11 @@ void msm_otg_set_vbus_state(int online)
 {
 	static bool init;
 	struct msm_otg *motg = the_msm_otg;
-//	struct usb_otg *otg = motg->phy.otg;
+	struct usb_otg *otg = motg->phy.otg;
 
 	/* Ignore received BSV interrupts, if ID pin is GND */
-	pr_debug("%s: %d", __func__, online);
+	pr_info("%s: %d", __func__, online);
+#if 0
 	if (!test_bit(ID, &motg->inputs)) {
 		/*
 		 * state machine work waits for initial VBUS
@@ -3002,12 +3012,16 @@ void msm_otg_set_vbus_state(int online)
 			return;
 		}
 	}
-
+#endif
 	if (online) {
-		pr_debug("PMIC: BSV set\n");
+		if (otg->phy->state > OTG_STATE_B_IDLE) {
+			dev_info(motg->phy.dev, "msm_otg_set_vbus_state(1): on working\n");
+			return;
+		}
+		pr_info("PMIC: BSV set\n");
 		set_bit(B_SESS_VLD, &motg->inputs);
 	} else {
-		pr_debug("PMIC: BSV clear\n");
+		pr_info("PMIC: BSV clear\n");
 		clear_bit(B_SESS_VLD, &motg->inputs);
 	}
 
@@ -4002,7 +4016,7 @@ static int msm_otg_pm_suspend(struct device *dev)
 	int ret = 0;
 	struct msm_otg *motg = dev_get_drvdata(dev);
 
-	dev_dbg(dev, "OTG PM suspend\n");
+	dev_info(dev, "OTG PM suspend\n");
 
 	atomic_set(&motg->pm_suspended, 1);
 	ret = msm_otg_suspend(motg);
