@@ -446,7 +446,7 @@ int msm_camio_clk_enable(enum msm_camio_clk_type clktype)
 	}
 
 	if (!IS_ERR(clk))
-		rc = clk_enable(clk);
+		rc = clk_prepare_enable(clk);
 	else
 		rc = PTR_ERR(clk);
 
@@ -479,7 +479,7 @@ int msm_camio_clk_disable(enum msm_camio_clk_type clktype)
 	}
 
 	if (!IS_ERR(clk)) {
-		clk_disable(clk);
+		clk_disable_unprepare(clk);
 		clk_put(clk);
 	} else
 		rc = PTR_ERR(clk);
