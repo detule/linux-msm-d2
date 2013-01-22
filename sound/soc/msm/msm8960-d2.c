@@ -865,7 +865,7 @@ static int msm8960_slim_0_tx_ch_put(struct snd_kcontrol *kcontrol,
 			msm8960_slim_0_tx_ch);
 	return 1;
 }
-#if 0
+
 static int msm8960_btsco_rate_get(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
@@ -893,7 +893,7 @@ static int msm8960_btsco_rate_put(struct snd_kcontrol *kcontrol,
 					msm8960_btsco_rate);
 	return 0;
 }
-#endif
+
 static int msm8960_i2s_set_spk(struct snd_kcontrol *kcontrol,
 	struct snd_ctl_elem_value *ucontrol)
 {
@@ -934,7 +934,7 @@ static const struct snd_kcontrol_new tabla_msm8960_controls[] = {
 		msm8960_slim_0_tx_ch_get, msm8960_slim_0_tx_ch_put),
 };
 
-#if 0
+
 static const struct snd_kcontrol_new int_btsco_rate_mixer_controls[] = {
 	SOC_ENUM_EXT("Internal BTSCO SampleRate", msm8960_btsco_enum[0],
 		msm8960_btsco_rate_get, msm8960_btsco_rate_put),
@@ -951,7 +951,7 @@ static int msm8960_btsco_init(struct snd_soc_pcm_runtime *rtd)
 		return err;
 	return 0;
 }
-#endif
+
 static void *def_tabla_mbhc_cal(void)
 {
 	void *tabla_cal;
@@ -2022,6 +2022,7 @@ static struct snd_soc_dai_link msm8960_dai[] = {
 		.platform_name = "msm-pcm-routing",
 		.codec_name = "msm-stub-codec.1",
 		.codec_dai_name	= "msm-stub-rx",
+		.init = &msm8960_btsco_init,
 		.no_pcm = 1,
 		.be_id = MSM_BACKEND_DAI_INT_BT_SCO_RX,
 		.be_hw_params_fixup = msm8960_btsco_be_hw_params_fixup,
