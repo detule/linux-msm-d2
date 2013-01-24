@@ -254,7 +254,7 @@
         _IOR(MSM_CAM_IOCTL_MAGIC, 40, struct msm_cam_config_dev_info *)
 
 #define MSM_CAM_IOCTL_V4L2_EVT_NOTIFY \
-        _IOR(MSM_CAM_IOCTL_MAGIC, 41, struct v4l2_event *)
+        _IOR(MSM_CAM_IOCTL_MAGIC, 41, struct msm_v4l2_event *)
 
 #define MSM_CAM_IOCTL_SET_MEM_MAP_INFO \
         _IOR(MSM_CAM_IOCTL_MAGIC, 42, struct msm_mem_map_info *)
@@ -383,6 +383,7 @@ struct msm_mctl_post_proc_cmd {
  * 1. control command: control command(from control thread),
  *                     control status (from config thread);
  */
+#ifndef CONFIG_S5C73M3
 struct msm_ctrl_cmd {
 	uint16_t type;
 	uint16_t length;
@@ -396,14 +397,28 @@ struct msm_ctrl_cmd {
 	uint32_t stream_type; /* used to pass value to qcamera server */
 	int config_ident; /*used as identifier for config node*/
 };
-
+#else
+struct msm_ctrl_cmd {
+        uint16_t type;
+        uint16_t length;
+        void *value;
+        uint16_t status;
+        uint32_t timeout_ms;
+        int resp_fd; /* FIXME: to be used by the kernel, pass-through for now */
+        int vnode_id;  /* video dev id. Can we overload resp_fd? */
+        uint32_t stream_type; /* used to pass value to qcamera server */
+        int config_ident; /*used as identifier for config node*/
+};
+#endif
 struct msm_cam_evt_msg {
 	unsigned short type;	/* 1 == event (RPC), 0 == message (adsp) */
 	unsigned short msg_id;
 	unsigned int len;	/* size in, number of bytes out */
 	uint32_t frame_id;
 	void *data;
+#ifndef CONFIG_S5C73M3
 	struct timespec timestamp;
+#endif
 };
 
 struct msm_pp_frame_sp {
@@ -473,7 +488,7 @@ struct msm_mctl_pp_frame_cmd {
 	struct msm_pp_crop crop;
 	int path;
 };
-
+#ifndef CONFIG_S5C73M3
 struct msm_cam_evt_divert_frame {
 	unsigned short image_mode;
 	unsigned short op_mode;
@@ -482,6 +497,26 @@ struct msm_cam_evt_divert_frame {
 	struct msm_pp_frame frame;
 	int            do_pp;
 };
+#else
+struct msm_cam_evt_divert_frame {
+	unsigned short image_mode;
+	unsigned short op_mode;
+	unsigned short inst_idx;
+	unsigned short node_idx;
+	unsigned long  phy_addr;
+	uint32_t       phy_offset;
+	uint32_t       y_off;
+	uint32_t       cbcr_off;
+	int32_t        fd;
+	uint32_t       frame_id;
+	int            path;
+	uint32_t       length;
+	struct timeval timestamp;
+	struct msm_pp_frame frame;
+	int            do_pp;
+        uint32_t       vb;
+};
+#endif
 
 struct msm_mctl_pp_cmd_ack_event {
 	uint32_t cmd;        /* VPE_CMD_ZOOM? */
@@ -504,7 +539,9 @@ struct msm_isp_event_ctrl {
 		struct msm_cam_evt_divert_frame div_frame;
 		struct msm_mctl_pp_event_info pp_event_info;
 	} isp_data;
+#ifdef CONFIG_S5C73M3
 	uint32_t evt_id;
+#endif
 };
 
 #define MSM_CAM_RESP_CTRL              0

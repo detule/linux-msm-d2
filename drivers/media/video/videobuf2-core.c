@@ -21,7 +21,7 @@
 
 #include <media/videobuf2-core.h>
 
-static int debug;
+static int debug=2;
 module_param(debug, int, 0644);
 
 #define dprintk(level, fmt, arg...)					\
@@ -979,7 +979,7 @@ static int __buf_prepare(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 {
 	struct vb2_queue *q = vb->vb2_queue;
 	int ret;
-
+/*
 	switch (q->memory) {
 	case V4L2_MEMORY_MMAP:
 		ret = __qbuf_mmap(vb, b);
@@ -992,7 +992,7 @@ static int __buf_prepare(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 		ret = -EINVAL;
 	}
 
-	if (!ret)
+	if (!ret)*/
 		ret = call_qop(q, buf_prepare, vb);
 	if (ret)
 		dprintk(1, "qbuf: buffer preparation failed: %d\n", ret);

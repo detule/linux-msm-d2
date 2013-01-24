@@ -2398,7 +2398,6 @@ struct v4l2_event_ctrl {
 struct v4l2_event_frame_sync {
 	__u32 frame_sequence;
 };
-
 struct v4l2_event {
 	__u32				type;
 	union {
@@ -2414,6 +2413,18 @@ struct v4l2_event {
 	__u32				reserved[8];
 };
 
+struct msm_v4l2_event {
+        __u32                           type;
+        union {
+                struct v4l2_event_vsync vsync;
+                __u8                    data[64];
+        } u;
+        __u32                           pending;
+        __u32                           sequence;
+        struct timespec                 timestamp;
+        __u32                           reserved[9];
+};
+
 #define V4L2_EVENT_SUB_FL_SEND_INITIAL		(1 << 0)
 #define V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK	(1 << 1)
 
@@ -2422,6 +2433,11 @@ struct v4l2_event_subscription {
 	__u32				id;
 	__u32				flags;
 	__u32				reserved[5];
+};
+
+struct msm_v4l2_event_subscription {
+        __u32                           type;
+        __u32                           reserved[7];
 };
 
 /*
@@ -2563,9 +2579,9 @@ struct v4l2_create_buffers {
 #define	VIDIOC_QUERY_DV_PRESET	_IOR('V',  86, struct v4l2_dv_preset)
 #define	VIDIOC_S_DV_TIMINGS	_IOWR('V', 87, struct v4l2_dv_timings)
 #define	VIDIOC_G_DV_TIMINGS	_IOWR('V', 88, struct v4l2_dv_timings)
-#define	VIDIOC_DQEVENT		 _IOR('V', 89, struct v4l2_event)
-#define	VIDIOC_SUBSCRIBE_EVENT	 _IOW('V', 90, struct v4l2_event_subscription)
-#define	VIDIOC_UNSUBSCRIBE_EVENT _IOW('V', 91, struct v4l2_event_subscription)
+#define	VIDIOC_DQEVENT		 _IOR('V', 89, struct msm_v4l2_event)
+#define	VIDIOC_SUBSCRIBE_EVENT	 _IOW('V', 90, struct msm_v4l2_event_subscription)
+#define	VIDIOC_UNSUBSCRIBE_EVENT _IOW('V', 91, struct msm_v4l2_event_subscription)
 
 /* Experimental, the below two ioctls may change over the next couple of kernel
    versions */

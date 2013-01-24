@@ -513,11 +513,11 @@ static long __video_do_ioctl(struct file *file,
 		return ret;
 	}
 
-	if ((vfd->debug & V4L2_DEBUG_IOCTL) &&
-				!(vfd->debug & V4L2_DEBUG_IOCTL_ARG)) {
+//	if ((vfd->debug & V4L2_DEBUG_IOCTL) &&
+//				!(vfd->debug & V4L2_DEBUG_IOCTL_ARG)) {
 		v4l_print_ioctl(vfd->name, cmd);
 		printk(KERN_CONT "\n");
-	}
+//	}
 
 	if (test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags)) {
 		vfh = file->private_data;
@@ -888,6 +888,7 @@ static long __video_do_ioctl(struct file *file,
 	{
 		struct v4l2_requestbuffers *p = arg;
 
+		pr_info("%s: VIDIOC_REQBUFS", __func__);
 		if (!ops->vidioc_reqbufs)
 			break;
 		if (ret_prio) {
@@ -902,7 +903,7 @@ static long __video_do_ioctl(struct file *file,
 			CLEAR_AFTER_FIELD(p, memory);
 
 		ret = ops->vidioc_reqbufs(file, fh, p);
-		dbgarg(cmd, "count=%d, type=%s, memory=%s\n",
+		pr_info("%s: count=%d, type=%s, memory=%s\n",__func__,
 				p->count,
 				prt_names(p->type, v4l2_type_names),
 				prt_names(p->memory, v4l2_memory_names));
@@ -2206,6 +2207,7 @@ static long __video_do_ioctl(struct file *file,
 	case VIDIOC_DQEVENT:
 	{
 		struct v4l2_event *ev = arg;
+		pr_info("%s: VIDIOC_DQEVENT\n", __func__);
 
 		if (!ops->vidioc_subscribe_event)
 			break;
@@ -2225,6 +2227,7 @@ static long __video_do_ioctl(struct file *file,
 	case VIDIOC_SUBSCRIBE_EVENT:
 	{
 		struct v4l2_event_subscription *sub = arg;
+		pr_info("%s: VIDIOC_SUBSCRIBE_EVENT\n", __func__);
 
 		if (!ops->vidioc_subscribe_event)
 			break;
@@ -2293,12 +2296,12 @@ static long __video_do_ioctl(struct file *file,
 		break;
 	} /* switch */
 
-	if (vfd->debug & V4L2_DEBUG_IOCTL_ARG) {
+//	if (vfd->debug & V4L2_DEBUG_IOCTL_ARG) {
 		if (ret < 0) {
 			v4l_print_ioctl(vfd->name, cmd);
 			printk(KERN_CONT " error %ld\n", ret);
 		}
-	}
+//	}
 
 	return ret;
 }

@@ -3793,7 +3793,7 @@ static int s5c73m3_sensor_probe(const struct msm_camera_sensor_info *info,
 	CAM_DBG_M("Entered\n");
 
 	if (rc < 0 || s5c73m3_client == NULL) {
-		//cam_err("%d :%d\n", rc, s5c73m3_client);
+		pr_err("%s: rc=%d", __func__, rc);
 		rc = -ENOTSUPP;
 		goto probe_done;
 	}

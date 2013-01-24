@@ -85,7 +85,7 @@ static int msm_vb2_ops_buf_init(struct vb2_buffer *vb)
 	vq = vb->vb2_queue;
 	pcam_inst = vb2_get_drv_priv(vq);
 	pcam = pcam_inst->pcam;
-	D("%s\n", __func__);
+	pr_info("%s\n", __func__);
 	D("%s, inst=0x%x,idx=%d, width = %d\n", __func__,
 		(u32)pcam_inst, pcam_inst->my_index,
 		pcam_inst->vid_fmt.fmt.pix.width);
@@ -103,8 +103,10 @@ static int msm_vb2_ops_buf_init(struct vb2_buffer *vb)
 	else if (pcam_inst->plane_info.buffer_type ==
 		V4L2_BUF_TYPE_VIDEO_CAPTURE)
 		buf_type = VIDEOBUF2_SINGLE_PLANE;
-	else
+	else {
+		pr_err("%s: bad exit");
 		return -EINVAL;
+	}
 
 	if (buf_type == VIDEOBUF2_SINGLE_PLANE) {
 		offset.sp_off.y_off = pcam_inst->plane_info.sp_y_offset;
