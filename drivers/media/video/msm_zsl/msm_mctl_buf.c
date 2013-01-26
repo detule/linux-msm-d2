@@ -550,7 +550,10 @@ int msm_mctl_reserve_free_buf(
 			free_buf->num_planes =
 				pcam_inst->plane_info.num_planes;
 			for (i = 0; i < free_buf->num_planes; i++) {
+				pr_info("%s: vb2_plane_cookie: i=%d", __func__,i);
 				mem = vb2_plane_cookie(&buf->vidbuf, i);
+				if (mem == NULL)
+					pr_err("%s: mem=null, going down", __func__);
 				if (mem->buffer_type ==
 						VIDEOBUF2_MULTIPLE_PLANES)
 					plane_offset =

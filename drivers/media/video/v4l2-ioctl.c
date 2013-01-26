@@ -2226,7 +2226,7 @@ static long __video_do_ioctl(struct file *file,
 	}
 	case VIDIOC_SUBSCRIBE_EVENT:
 	{
-		struct v4l2_event_subscription *sub = arg;
+		struct msm_v4l2_event_subscription *sub = arg;
 		pr_info("%s: VIDIOC_SUBSCRIBE_EVENT\n", __func__);
 
 		if (!ops->vidioc_subscribe_event)

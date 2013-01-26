@@ -2069,7 +2069,7 @@ struct flash_ctrl_data {
 #define GET_SNAPSHOT_PIXELS_PER_LINE	4
 #define GET_SNAPSHOT_FPS		5
 #define GET_SNAPSHOT_MAX_EP_LINE_CNT	6
-
+#ifndef CONFIG_S5C73M3
 struct msm_camsensor_info {
 	char name[MAX_SENSOR_NAME];
 	uint8_t flash_enabled;
@@ -2086,6 +2086,14 @@ struct msm_camsensor_info {
 	uint32_t max_width;
 	uint32_t max_height;
 };
+#else
+struct msm_camsensor_info {
+	char name[MAX_SENSOR_NAME];
+	uint8_t flash_enabled;
+	int8_t total_steps;
+	uint8_t support_3d;
+};
+#endif
 
 #define V4L2_SINGLE_PLANE	0
 #define V4L2_MULTI_PLANE_Y	0
@@ -2109,7 +2117,11 @@ struct img_plane_info {
 	uint8_t num_planes;
 	struct plane_data plane[MAX_PLANES];
 	uint32_t sp_y_offset;
+#ifndef CONFIG_S5C73M3
 	uint32_t inst_handle;
+#else
+	uint8_t vpe_can_use;
+#endif
 };
 
 #define QCAMERA_NAME "qcamera"

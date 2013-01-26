@@ -1439,7 +1439,7 @@ static int vfe32_proc_general(struct msm_isp_cmd *cmd)
 	uint32_t snapshot_cnt = 0;
 	uint32_t temp1 = 0, temp2 = 0;
 
-	CDBG("vfe32_proc_general: cmdID = %s, length = %d\n",
+	pr_info("vfe32_proc_general: cmdID = %s, length = %d\n",
 	     vfe32_general_cmd[cmd->id], cmd->length);
 
 	if (vfe32_ctrl->vfebase == NULL) {

@@ -53,6 +53,7 @@ static int msm_mctl_pp_buf_divert(
 	memset(&v4l2_evt, 0, sizeof(v4l2_evt));
 	v4l2_evt.type = V4L2_EVENT_PRIVATE_START +
 			MSM_CAM_RESP_DIV_FRAME_EVT_MSG;
+	v4l2_evt.id = 0;
 	*((uint32_t *)v4l2_evt.u.data) = (uint32_t)isp_event;
 	/* Copy the divert frame struct into event ctrl struct. */
 	isp_event->isp_data.div_frame = *div;
@@ -691,6 +692,7 @@ int msm_mctl_pp_notify(struct msm_cam_media_controller *p_mctl,
 			pp_event_info->ack.cookie = pp_frame_cmd->cookie;
 			v4l2_evt.type = V4L2_EVENT_PRIVATE_START +
 						MSM_CAM_RESP_MCTL_PP_EVENT;
+			v4l2_evt.id = 0;
 
 			v4l2_event_queue(
 				p_mctl->config_device->

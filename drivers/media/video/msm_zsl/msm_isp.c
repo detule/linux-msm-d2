@@ -171,6 +171,7 @@ static int msm_isp_notify_vfe(struct v4l2_subdev *sd,
 
 	v4l2_evt.type = V4L2_EVENT_PRIVATE_START +
 					MSM_CAM_RESP_STAT_EVT_MSG;
+	v4l2_evt.id = 0;
 	*((uint32_t *)v4l2_evt.u.data) = (uint32_t)isp_event;
 
 	isp_event->resptype = MSM_CAM_RESP_STAT_EVT_MSG;
