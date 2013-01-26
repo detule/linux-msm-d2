@@ -898,11 +898,11 @@ static int __qbuf_userptr(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 				"reacquiring memory\n", plane);
 
 		/* Check if the provided plane buffer is large enough */
-		if (planes[plane].length < q->plane_sizes[plane]) {
+/*		if (planes[plane].length < q->plane_sizes[plane]) {
 			ret = -EINVAL;
 			goto err;
 		}
-
+*/
 		/* Release previously acquired memory if present */
 		if (vb->planes[plane].mem_priv)
 			call_memop(q, put_userptr, vb->planes[plane].mem_priv);
@@ -979,7 +979,7 @@ static int __buf_prepare(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 {
 	struct vb2_queue *q = vb->vb2_queue;
 	int ret;
-/*
+
 	switch (q->memory) {
 	case V4L2_MEMORY_MMAP:
 		ret = __qbuf_mmap(vb, b);
@@ -992,7 +992,7 @@ static int __buf_prepare(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 		ret = -EINVAL;
 	}
 
-	if (!ret)*/
+	if (!ret)
 		ret = call_qop(q, buf_prepare, vb);
 	if (ret)
 		dprintk(1, "qbuf: buffer preparation failed: %d\n", ret);

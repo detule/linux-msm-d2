@@ -85,7 +85,6 @@ static int msm_vb2_ops_buf_init(struct vb2_buffer *vb)
 	vq = vb->vb2_queue;
 	pcam_inst = vb2_get_drv_priv(vq);
 	pcam = pcam_inst->pcam;
-	pr_info("%s\n", __func__);
 	D("%s, inst=0x%x,idx=%d, width = %d\n", __func__,
 		(u32)pcam_inst, pcam_inst->my_index,
 		pcam_inst->vid_fmt.fmt.pix.width);
