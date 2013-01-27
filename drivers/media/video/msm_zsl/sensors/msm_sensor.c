@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  */
 
-#include "../../msm_zsl/sensors/msm_sensor.h"
+#include "msm_sensor.h"
 #include "../../msm_zsl/io/msm_camera_i2c.h"
 #include "msm.h"
 #include <linux/module.h>

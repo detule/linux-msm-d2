@@ -28,7 +28,7 @@
 #include <linux/msm_ion.h>
 #include <mach/iommu_domains.h>
 
-#define CONFIG_MSM_CAMERA_DEBUG
+//#define CONFIG_MSM_CAMERA_DEBUG
 #ifdef CONFIG_MSM_CAMERA_DEBUG
 #define CDBG(fmt, args...) pr_debug(fmt, ##args)
 #else
@@ -122,6 +122,26 @@ enum msm_stereo_state {
 	STEREO_SNAP_BUFFER2_PROCESSING,
 	STEREO_RAW_SNAP_IDLE,
 	STEREO_RAW_SNAP_STARTED,
+};
+
+enum msm_ispif_intftype {
+        PIX0,
+        RDI0,
+        PIX1,
+        RDI1,
+        PIX2,
+        RDI2,
+};
+
+struct msm_ispif_params {
+        uint8_t intftype;
+        uint16_t cid_mask;
+        uint8_t csid;
+};
+
+struct msm_ispif_params_list {
+        uint32_t len;
+        struct msm_ispif_params params[3];
 };
 
 struct msm_vpe_phy_info {
@@ -325,10 +345,6 @@ struct msm_camera_cci_gpio_cfg {
 	uint16_t i2c_queue;
 };
 
-enum msm_camera_i2c_cmd_type {
-	MSM_CAMERA_I2C_CMD_WRITE,
-	MSM_CAMERA_I2C_CMD_POLL,
-};
 #ifndef CONFIG_S5C73M3
 struct msm_camera_i2c_reg_conf {
 	uint16_t reg_addr;
@@ -656,6 +672,41 @@ enum msm_bus_perf_setting {
 	S_EXIT
 };
 
+enum msm_camera_csi_data_format {
+	CSI_8BIT,
+	CSI_10BIT,
+	CSI_12BIT,
+};
+
+struct msm_camera_csi_params {
+	enum msm_camera_csi_data_format data_format;
+	uint8_t lane_cnt;
+	uint8_t lane_assign;
+	uint8_t settle_cnt;
+	uint8_t dpcm_scheme;
+};
+struct msm_camera_csiphy_params {
+	uint8_t lane_cnt;
+	uint8_t settle_cnt;
+};
+
+struct msm_camera_csid_lut_params {
+        uint8_t num_cid;
+        struct msm_camera_csid_vc_cfg *vc_cfg;
+};
+
+struct msm_camera_csid_params {
+        uint8_t lane_cnt;
+        uint8_t lane_assign;
+        struct msm_camera_csid_lut_params lut_params;
+};
+
+struct msm_camera_csi2_params {
+        struct msm_camera_csid_params csid_params;
+        struct msm_camera_csiphy_params csiphy_params;
+};
+
+
 int msm_camio_enable(struct platform_device *dev);
 int msm_camio_vpe_clk_enable(uint32_t);
 int msm_camio_vpe_clk_disable(void);
@@ -706,6 +757,11 @@ void *msm_isp_sync_alloc(int size, gfp_t gfp);
 
 void msm_isp_sync_free(void *ptr);
 
+struct msm_cam_clk_info {
+        const char *clk_name;
+        long clk_rate;
+};
+
 int msm_cam_clk_enable(struct device *dev, struct msm_cam_clk_info *clk_info,
 		struct clk **clk_ptr, int num_clk, int enable);
 int msm_cam_core_reset(void);
@@ -733,4 +789,35 @@ int msm_camera_request_gpio_table
 	(struct msm_camera_sensor_info *sinfo, int gpio_en);
 void msm_camera_bus_scale_cfg(uint32_t bus_perf_client,
 		enum msm_bus_perf_setting perf_setting);
+struct msm_camera_csid_vc_cfg {
+        uint8_t cid;
+        uint8_t dt;
+        uint8_t decode_format;
+};
+
+enum camera_vreg_type {
+        REG_LDO,
+        REG_VS,
+};
+
+struct camera_vreg_t {
+        char *reg_name;
+        enum camera_vreg_type type;
+        int min_voltage;
+        int max_voltage;
+        int op_mode;
+};
+
+#define CSI_EMBED_DATA 0x12
+#define CSI_YUV422_8  0x1E
+#define CSI_RAW8    0x2A
+#define CSI_RAW10   0x2B
+#define CSI_RAW12   0x2C
+
+
+#define CSI_DECODE_6BIT 0
+#define CSI_DECODE_8BIT 1
+#define CSI_DECODE_10BIT 2
+#define CSI_DECODE_DPCM_10_8_10 5
+
 #endif

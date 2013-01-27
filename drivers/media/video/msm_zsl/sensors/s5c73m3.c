@@ -57,23 +57,6 @@
 
 /*#define YUV_PREVIEW*/
 #define SPI_DMA_MODE
-enum msm_v4l2_focusmode {
-        FOCUS_MODE_AUTO = 0,
-        FOCUS_MODE_MACRO,
-        FOCUS_MODE_FACEDETECT,
-        FOCUS_MODE_AUTO_DEFAULT,
-        FOCUS_MODE_MACRO_DEFAULT,
-        FOCUS_MODE_FACEDETECT_DEFAULT,
-        FOCUS_MODE_INFINITY,
-        FOCUS_MODE_FIXED,
-        FOCUS_MODE_CONTINOUS,
-        FOCUS_MODE_CONTINOUS_PICTURE,
-        FOCUS_MODE_CONTINOUS_PICTURE_MACRO,
-        FOCUS_MODE_CONTINOUS_VIDEO,
-        FOCUS_MODE_TOUCH,
-        FOCUS_MODE_MAX,
-        FOCUS_MODE_DEFAULT = (1 << 8),
-};
 
 static uint32_t op_pixel_clk1;
 const int camcorder_30fps = 30;
