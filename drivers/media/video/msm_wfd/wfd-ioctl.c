@@ -22,7 +22,6 @@
 #include <linux/sched.h>
 #include <linux/kthread.h>
 #include <linux/time.h>
-#include <linux/dynamic_debug.h>
 #include <mach/board.h>
 
 #include <media/v4l2-dev.h>
