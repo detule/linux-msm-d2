@@ -6964,7 +6964,7 @@ wl_notify_mic_status(struct wl_priv *wl, struct net_device *ndev,
 
 	return 0;
 }
-
+#if 0
 #ifdef PNO_SUPPORT
 static s32
 wl_notify_pfn_status(struct wl_priv *wl, struct net_device *ndev,
@@ -6986,7 +6986,7 @@ wl_notify_pfn_status(struct wl_priv *wl, struct net_device *ndev,
 	return 0;
 }
 #endif /* PNO_SUPPORT */
-
+#endif
 static s32
 wl_notify_scan_status(struct wl_priv *wl, struct net_device *ndev,
 	const wl_event_msg_t *e, void *data)

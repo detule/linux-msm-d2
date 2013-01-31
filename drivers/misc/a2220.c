@@ -600,7 +600,7 @@ static unsigned char pcm_reset[] = {
 
 static ssize_t chk_wakeup_a2220(struct a2220_data *a2220)
 {
-	int i, rc = 0, retry = 4;
+	int rc = 0, retry = 4;
 
 	if (a2220->suspended == 1) {
 		mdelay(1);
@@ -1009,7 +1009,7 @@ static long a2220_ioctl(struct file *file, unsigned int cmd,
 			struct a2220_data, device);
 	static struct task_struct *task;
 	int rc = 0;
-#if ENABLE_DIAG_IOCTLS
+#if 0
 	char msg[4];
 	int mic_cases = 0;
 	int mic_sel = 0;
@@ -1047,7 +1047,7 @@ static long a2220_ioctl(struct file *file, unsigned int cmd,
 					A2220_CONFIG_VP);
 		mutex_unlock(&a2220->lock);
 		break;
-#if ENABDIAG_IOCTLS
+#if 0
 	case A2220_SET_MIC_ONOFF:
 		mutex_lock(&a2220->lock);
 		rc = chk_wakeup_a2220(a2220);
@@ -1125,7 +1125,7 @@ static long a2220_ioctl(struct file *file, unsigned int cmd,
 			rc = exe_cmd_in_file(msg);
 		mutex_unlock(&a2220->lock);
 		break;
-#endif /* ENABLE_DIAG_IOCTLS */
+#endif
 	default:
 		pr_err("%s: invalid command %d\n", __func__, _IOC_NR(cmd));
 		rc = -EINVAL;
