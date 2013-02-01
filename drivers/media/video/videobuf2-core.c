@@ -896,13 +896,17 @@ static int __qbuf_userptr(struct vb2_buffer *vb, const struct v4l2_buffer *b)
 
 		dprintk(3, "qbuf: userspace address for plane %d changed, "
 				"reacquiring memory\n", plane);
-
+/* HACK: detule: This fails for us, and is not present in 3.0.  I
+ * backported it there and it fails there as well, so remove for now.
+ * Need to know why it fails though.
+ */
+#if 0 
 		/* Check if the provided plane buffer is large enough */
 		if (planes[plane].length < q->plane_sizes[plane]) {
 			ret = -EINVAL;
 			goto err;
 		}
-
+#endif
 		/* Release previously acquired memory if present */
 		if (vb->planes[plane].mem_priv)
 			call_memop(q, put_userptr, vb->planes[plane].mem_priv);
