@@ -152,6 +152,7 @@ static int msm_isp_notify_vfe(struct v4l2_subdev *sd,
 	struct msm_cam_media_controller *pmctl = NULL;
 	struct msm_free_buf buf;
 
+	v4l2_evt.id = 0;
 	if (!sync) {
 		pr_err("%s: no context in dsp callback.\n", __func__);
 		rc = -EINVAL;
