@@ -88,8 +88,8 @@ static int msm_isp_notify_VFE_BUF_EVT(struct v4l2_subdev *sd, void *arg)
 		return rc;
 	}
 	switch (vdata->type) {
-	case VFE_MSG_START:
-	case VFE_MSG_START_RECORDING:
+	case VFE_MSG_V32_START:
+	case VFE_MSG_V32_START_RECORDING:
 		D("%s Got V32_START_*: Getting ping addr id = %d",
 						__func__, vfe_id);
 		msm_mctl_reserve_free_buf(&pcam->mctl, vfe_id, &free_buf);
@@ -105,7 +105,7 @@ static int msm_isp_notify_VFE_BUF_EVT(struct v4l2_subdev *sd, void *arg)
 		vfe_params.data = (void *)&free_buf;
 		rc = v4l2_subdev_call(sd, core, ioctl, 0, &vfe_params);
 		break;
-	case VFE_MSG_CAPTURE:
+	case VFE_MSG_V32_CAPTURE:
 		pr_err("%s Got V32_CAPTURE: getting buffer for id = %d",
 						__func__, vfe_id);
 		msm_mctl_reserve_free_buf(&pcam->mctl, vfe_id, &free_buf);

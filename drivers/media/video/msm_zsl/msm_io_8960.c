@@ -788,7 +788,7 @@ int msm_camio_probe_off(struct platform_device *pdev)
 	return msm_camio_clk_disable(CAMIO_CAM_MCLK_CLK);
 }
 
-void msm_camio_mode_config(enum msm_camera_i2c_mux_mode mode)
+void msm_camio_mode_config(enum msm_cam_mode mode)
 {
 	uint32_t val;
 	val = msm_io_r(s3d_ctl);

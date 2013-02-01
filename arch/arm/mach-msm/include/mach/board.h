@@ -65,6 +65,19 @@ struct msm_camera_device_platform_data {
 	struct msm_bus_scale_pdata *cam_bus_scale_table;
 };
 
+enum msm_camera_csi_data_format {
+	CSI_8BIT,
+	CSI_10BIT,
+	CSI_12BIT,
+};
+struct msm_camera_csi_params {
+	enum msm_camera_csi_data_format data_format;
+	uint8_t lane_cnt;
+	uint8_t lane_assign;
+	uint8_t settle_cnt;
+	uint8_t dpcm_scheme;
+};
+
 #ifdef CONFIG_SENSORS_MT9T013
 struct msm_camera_legacy_device_platform_data {
 	int sensor_reset;
@@ -168,6 +181,19 @@ enum msm_sensor_type {
 	YUV_SENSOR,
 };
 
+enum camera_vreg_type {
+	REG_LDO,
+	REG_VS,
+};
+
+struct camera_vreg_t {
+	char *reg_name;
+	enum camera_vreg_type type;
+	int min_voltage;
+	int max_voltage;
+	int op_mode;
+};
+
 struct msm_gpio_set_tbl {
 	unsigned gpio;
 	unsigned long flags;
@@ -201,17 +227,6 @@ struct msm_camera_gpio_conf {
 	uint8_t camera_on_table_size;
 };
 #endif
-enum msm_camera_i2c_mux_mode {
-	MODE_R,
-	MODE_L,
-	MODE_DUAL
-};
-struct msm_camera_i2c_conf {
-	uint8_t use_i2c_mux;
-	struct platform_device *mux_dev;
-	enum msm_camera_i2c_mux_mode i2c_mux_mode;
-};
-
 enum msm_camera_vreg_name_t {
 	CAM_VDIG,
 	CAM_VIO,
