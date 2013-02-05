@@ -531,16 +531,16 @@ static int s5c73m3_set_antibanding(int val)
 	CAM_DBG_M("E, value %d\n", val);
 
 	switch (val) {
-	case CAMERA_ANTIBANDING_OFF:
+	case ANTI_BANDING_OFF:
 		antibanding_mode = S5C73M3_FLICKER_NONE;
 		break;
-	case CAMERA_ANTIBANDING_50HZ:
+	case ANTI_BANDING_50HZ:
 		antibanding_mode = S5C73M3_FLICKER_AUTO_50HZ;
 		break;
-	case CAMERA_ANTIBANDING_60HZ:
+	case ANTI_BANDING_60HZ:
 		antibanding_mode = S5C73M3_FLICKER_AUTO_60HZ;
 		break;
-	case CAMERA_ANTIBANDING_AUTO:
+	case ANTI_BANDING_AUTO:
 	default:
 		antibanding_mode = S5C73M3_FLICKER_AUTO;
 		break;
