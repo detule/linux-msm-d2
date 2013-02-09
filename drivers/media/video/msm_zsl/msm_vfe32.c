@@ -4121,7 +4121,7 @@ int msm_vfe_subdev_init(struct v4l2_subdev *sd, void *data,
 
 	if (vfe32_ctrl->fs_vfe == NULL) {
 		vfe32_ctrl->fs_vfe =
-		    regulator_get(&vfe32_ctrl->pdev->dev, "fs_vfe");
+		    regulator_get(&vfe32_ctrl->pdev->dev, "vdd");
 		if (IS_ERR(vfe32_ctrl->fs_vfe)) {
 			pr_err("%s: Regulator FS_VFE get failed %ld\n",
 			       __func__, PTR_ERR(vfe32_ctrl->fs_vfe));
