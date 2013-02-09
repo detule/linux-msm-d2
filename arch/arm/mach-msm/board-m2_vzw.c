@@ -342,7 +342,11 @@ static struct msm_gpiomux_config msm8960_sec_ts_configs[] = {
 #define MSM_ION_MM_SIZE            0x3800000 /* Need to be multiple of 64K */
 #define MSM_ION_SF_SIZE            0x0
 #define MSM_ION_QSECOM_SIZE        0x780000 /* (7.5MB) */
+#ifdef CONFIG_CMA
+#define MSM_ION_HEAP_NUM	8
+#else
 #define MSM_ION_HEAP_NUM	7
+#endif
 #else
 #define MSM_ION_MM_SIZE		   MSM_PMEM_ADSP_SIZE
 #define MSM_ION_SF_SIZE		   0x6400000 /* 100MB */
@@ -362,8 +366,9 @@ static struct msm_gpiomux_config msm8960_sec_ts_configs[] = {
 							HOLE_SIZE))
 #define MAX_FIXED_AREA_SIZE	0x10000000
 #define MSM8960_FW_START	MSM8960_FIXED_AREA_START
-
-
+#ifdef CONFIG_CMA
+#define MSM_ION_ADSP_SIZE      SZ_8M
+#endif
 static unsigned msm_ion_sf_size = MSM_ION_SF_SIZE;
 #else
 #define MSM_PMEM_KERNEL_EBI1_SIZE  0x110C000
@@ -603,7 +608,16 @@ static struct platform_device ion_mm_heap_device = {
 		.coherent_dma_mask = DMA_BIT_MASK(32),
 	}
 };
-
+#ifdef CONFIG_CMA
+static struct platform_device ion_adsp_heap_device = {
+	.name = "ion-adsp-heap-device",
+	.id = -1,
+	.dev = {
+		.dma_mask = &msm_dmamask,
+		.coherent_dma_mask = DMA_BIT_MASK(32),
+	}
+};
+#endif
 /**
  * These heaps are listed in the order they will be allocated. Due to
  * video hardware restrictions and content protection the FW heap has to
@@ -679,6 +693,17 @@ struct ion_platform_heap m2_ion_heaps[] = {
 			.memory_type = ION_EBI_TYPE,
 			.extra_data = (void *) &co_ion_pdata,
 		},
+#ifdef CONFIG_CMA
+		{
+			.id     = ION_ADSP_HEAP_ID,
+			.type   = ION_HEAP_TYPE_DMA,
+			.name   = ION_ADSP_HEAP_NAME,
+			.size   = MSM_ION_ADSP_SIZE,
+			.memory_type = ION_EBI_TYPE,
+			.extra_data = (void *) &co_ion_pdata,
+			.priv = &ion_adsp_heap_device.dev,
+		},
+#endif
 #endif
 };
 
