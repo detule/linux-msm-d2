@@ -141,6 +141,7 @@ static int footswitch_enable(struct regulator_dev *rdev)
 	struct fs_clk_data *clock;
 	uint32_t regval, rc = 0;
 
+	printk(KERN_DEBUG "%s: %s\n", __func__, fs->desc.name);
 	mutex_lock(&claim_lock);
 	fs->is_claimed = true;
 	mutex_unlock(&claim_lock);
@@ -227,6 +228,7 @@ static int footswitch_disable(struct regulator_dev *rdev)
 	struct fs_clk_data *clock;
 	uint32_t regval, rc = 0;
 
+	printk(KERN_DEBUG "%s: %s\n", __func__, fs->desc.name);
 	/* Return early if already disabled. */
 	regval = readl_relaxed(fs->gfs_ctl_reg);
 	if ((regval & ENABLE_BIT) == 0)
