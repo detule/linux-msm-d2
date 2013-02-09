@@ -393,9 +393,9 @@ struct msm_frame_buffer *msm_mctl_buf_find(
 		buf_phyaddr = (unsigned long)
 				videobuf2_to_pmem_contig(&buf->vidbuf, 0) +
 				offset;
-		D("%s vb_idx=%d,vb_paddr=0x%x ch0=0x%x\n",
+		D("%s vb_idx=%d,vb_paddr=0x%x ch0=0x%x msm->mapped_phyaddr=0x%lx offset=%ld\n",
 			__func__, buf->vidbuf.v4l2_buf.index,
-			buf_phyaddr, fbuf->ch_paddr[0]);
+			buf_phyaddr, fbuf->ch_paddr[0],mem->mapped_phyaddr, (unsigned long int)offset);
 		if (fbuf->ch_paddr[0] == buf_phyaddr) {
 			if (del_buf)
 				list_del_init(&buf->list);

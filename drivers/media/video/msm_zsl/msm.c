@@ -782,12 +782,14 @@ static int msm_camera_v4l2_s_ctrl(struct file *f, void *pctx,
 
 	return rc;
 }
-
+int disable_force_offset;
+EXPORT_SYMBOL(disable_force_offset);
 static int msm_camera_v4l2_reqbufs(struct file *f, void *pctx,
 				struct v4l2_requestbuffers *pb)
 {
 	int rc = 0, i, j;
 	struct msm_cam_v4l2_dev_inst *pcam_inst;
+	disable_force_offset=1;
 	pcam_inst = container_of(f->private_data,
 		struct msm_cam_v4l2_dev_inst, eventHandle);
 	D("%s\n", __func__);
@@ -867,6 +869,7 @@ static int msm_camera_v4l2_querybuf(struct file *f, void *pctx,
 	return rc;
 }
 
+static int current_offset;
 static int msm_camera_v4l2_qbuf(struct file *f, void *pctx,
 					struct v4l2_buffer *pb)
 {
@@ -894,14 +897,23 @@ static int msm_camera_v4l2_qbuf(struct file *f, void *pctx,
 			return -EINVAL;
 		}
 		for (i = 0; i < pcam_inst->plane_info.num_planes; i++) {
-			D("%s stored offsets for plane %d as"
-				"addr offset %d, data offset %d",
-				__func__, i, pb->m.planes[i].reserved[0],
-				pb->m.planes[i].data_offset);
-			pcam_inst->buf_offset[pb->index][i].data_offset =
-				pb->m.planes[i].data_offset;
-			pcam_inst->buf_offset[pb->index][i].addr_offset =
-				pb->m.planes[i].reserved[0];
+			if (i == 0) {
+				D("%s stored offsets for plane %d as"
+					"addr offset 0, data offset 0",
+					__func__, i);
+				pcam_inst->buf_offset[pb->index][i].data_offset = 0;
+				pcam_inst->buf_offset[pb->index][i].addr_offset = 0;
+			} else {
+				if (disable_force_offset) {
+					current_offset = pb->m.planes[i].reserved[0];
+					disable_force_offset = 0;
+				}
+				D("%s stored offsets for plane %d as"
+					"addr offset %d, data offset 0",
+					__func__, i, current_offset);
+				pcam_inst->buf_offset[pb->index][i].data_offset = 0;
+				pcam_inst->buf_offset[pb->index][i].addr_offset = current_offset;
+			}
 		}
 	} else {
 		D("%s stored reserved info %d", __func__, pb->reserved);
@@ -2800,6 +2812,8 @@ static int __init msm_camera_init(void)
 	int rc = 0, i;
 	/*for now just create a config 0 node
 	  put logic here later to know how many configs to create*/
+	current_offset=0;
+	disable_force_offset=1;
 	g_server_dev.config_info.num_config_nodes = 1;
 	rc = msm_isp_init_module(g_server_dev.config_info.num_config_nodes);
 	if (rc < 0) {
