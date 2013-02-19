@@ -3029,7 +3029,6 @@ void msm_otg_set_vbus_state(int online)
 		init = true;
 		complete(&pmic_vbus_init);
 		pr_debug("PMIC: BSV init complete\n");
-		return;
 	}
 
 	if (test_bit(MHL, &motg->inputs) ||
@@ -3042,6 +3041,7 @@ void msm_otg_set_vbus_state(int online)
 		motg->sm_work_pending = true;
 	else
 		queue_work(system_nrt_wq, &motg->sm_work);
+	return;
 }
 EXPORT_SYMBOL_GPL(msm_otg_set_vbus_state);
 
