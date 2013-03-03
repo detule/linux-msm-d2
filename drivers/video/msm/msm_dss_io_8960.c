@@ -657,7 +657,8 @@ void mipi_dsi_prepare_clocks(void)
 	if (clk_set_rate(dsi_byte_div_clk, 1) < 0)	/* divided by 1 */
 		pr_err("%s: dsi_byte_div_clk - "
 			"clk_set_rate failed\n", __func__);
-	if (clk_set_rate(dsi_esc_clk, 2) < 0) /* divided by esc */
+	if (clk_set_rate(dsi_esc_clk, 2) < 0) /* divided by 2 */
+
 		pr_err("%s: dsi_esc_clk - "			 /* clk ratio */
 			"clk_set_rate failed\n", __func__);
 	clk_prepare(dsi_byte_div_clk);
@@ -712,7 +713,7 @@ void mipi_dsi_clk_enable(void)
 	if (clk_set_rate(dsi_byte_div_clk, 1) < 0)	/* divided by 1 */
 		pr_err("%s: dsi_byte_div_clk - "
 			"clk_set_rate failed\n", __func__);
-	if (clk_set_rate(dsi_esc_clk, esc_byte_ratio) < 0) /* divided by esc */
+	if (clk_set_rate(dsi_esc_clk, 2) < 0) /* divided by 2 */
 		pr_err("%s: dsi_esc_clk - "			 /* clk ratio */
 			"clk_set_rate failed\n", __func__);
 	mipi_dsi_pclk_ctrl(&dsi_pclk, 1);
