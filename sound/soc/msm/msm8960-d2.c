@@ -105,6 +105,7 @@ static struct snd_soc_jack hs_jack;
 static struct snd_soc_jack button_jack;
 static struct snd_soc_jack volumedown_jack;
 static struct snd_soc_jack volumeup_jack;
+static atomic_t auxpcm_rsc_ref;
 
 static int msm8960_enable_codec_ext_clk(struct snd_soc_codec *codec, int enable,
 					bool dapm);
@@ -932,9 +933,12 @@ static const struct snd_kcontrol_new tabla_msm8960_controls[] = {
 		msm8960_slim_0_rx_ch_get, msm8960_slim_0_rx_ch_put),
 	SOC_ENUM_EXT("SLIM_0_TX Channels", msm8960_enum[2],
 		msm8960_slim_0_tx_ch_get, msm8960_slim_0_tx_ch_put),
+	SOC_ENUM_EXT("Internal BTSCO SampleRate", msm8960_btsco_enum[0],
+		msm8960_btsco_rate_get, msm8960_btsco_rate_put),
 };
 
 
+#if 0
 static const struct snd_kcontrol_new int_btsco_rate_mixer_controls[] = {
 	SOC_ENUM_EXT("Internal BTSCO SampleRate", msm8960_btsco_enum[0],
 		msm8960_btsco_rate_get, msm8960_btsco_rate_put),
@@ -951,7 +955,7 @@ static int msm8960_btsco_init(struct snd_soc_pcm_runtime *rtd)
 		return err;
 	return 0;
 }
-
+#endif
 static void *def_tabla_mbhc_cal(void)
 {
 	void *tabla_cal;
@@ -1702,21 +1706,15 @@ static int msm8960_i2s_startup(struct snd_pcm_substream *substream)
 	return ret;
 }
 
-/* Not used */
-#if 0
-static int msm8960_startup(struct snd_pcm_substream *substream)
-{
-	pr_info("%s(): substream = %s  stream = %d\n", __func__,
-		 substream->name, substream->stream);
-	return 0;
-}
-
 static int msm8960_auxpcm_startup(struct snd_pcm_substream *substream)
 {
 	int ret = 0;
 
-	pr_info("%s(): substream = %s\n", __func__, substream->name);
-	ret = msm8960_aux_pcm_get_gpios();
+	pr_debug("%s(): substream = %s, auxpcm_rsc_ref counter = %d\n",
+		__func__, substream->name, atomic_read(&auxpcm_rsc_ref));
+	if (atomic_inc_return(&auxpcm_rsc_ref) == 1)
+		ret = msm8960_aux_pcm_get_gpios();
+
 	if (ret < 0) {
 		pr_err("%s: Aux PCM GPIO request failed\n", __func__);
 		return -EINVAL;
@@ -1726,9 +1724,19 @@ static int msm8960_auxpcm_startup(struct snd_pcm_substream *substream)
 
 static void msm8960_auxpcm_shutdown(struct snd_pcm_substream *substream)
 {
+	pr_debug("%s(): substream = %s, auxpcm_rsc_ref counter = %d\n",
+		__func__, substream->name, atomic_read(&auxpcm_rsc_ref));
+	if (atomic_dec_return(&auxpcm_rsc_ref) == 0)
+		msm8960_aux_pcm_free_gpios();
+}
 
-	pr_info("%s(): substream = %s\n", __func__, substream->name);
-	msm8960_aux_pcm_free_gpios();
+/* Not used */
+#if 0
+static int msm8960_startup(struct snd_pcm_substream *substream)
+{
+	pr_info("%s(): substream = %s  stream = %d\n", __func__,
+		 substream->name, substream->stream);
+	return 0;
 }
 
 static void msm8960_shutdown(struct snd_pcm_substream *substream)
@@ -1749,12 +1757,11 @@ static struct snd_soc_ops msm8960_i2s_be_ops = {
 };
 
 /* Not Used */
-/*
+
 static struct snd_soc_ops msm8960_auxpcm_be_ops = {
 	.startup = msm8960_auxpcm_startup,
 	.shutdown = msm8960_auxpcm_shutdown,
 };
-*/
 
 static struct snd_soc_dai_link *msm8960_dai_list;
 static struct snd_soc_dai_link msm8960_i2s_be_dai[] = {
@@ -2022,7 +2029,6 @@ static struct snd_soc_dai_link msm8960_dai[] = {
 		.platform_name = "msm-pcm-routing",
 		.codec_name = "msm-stub-codec.1",
 		.codec_dai_name	= "msm-stub-rx",
-		.init = &msm8960_btsco_init,
 		.no_pcm = 1,
 		.be_id = MSM_BACKEND_DAI_INT_BT_SCO_RX,
 		.be_hw_params_fixup = msm8960_btsco_be_hw_params_fixup,
@@ -2110,7 +2116,7 @@ static struct snd_soc_dai_link msm8960_dai[] = {
 		.no_pcm = 1,
 		.be_id = MSM_BACKEND_DAI_AUXPCM_RX,
 		.be_hw_params_fixup = msm8960_auxpcm_be_params_fixup,
-//		.ops = &msm8960_auxpcm_be_ops,
+		.ops = &msm8960_auxpcm_be_ops,
 		.ignore_pmdown_time = 1,
 	},
 	{
@@ -2123,7 +2129,7 @@ static struct snd_soc_dai_link msm8960_dai[] = {
 		.no_pcm = 1,
 		.be_id = MSM_BACKEND_DAI_AUXPCM_TX,
 		.be_hw_params_fixup = msm8960_auxpcm_be_params_fixup,
-//		.ops = &msm8960_auxpcm_be_ops,
+		.ops = &msm8960_auxpcm_be_ops,
 	},
 	/* Incall Music BACK END DAI Link */
 	{
