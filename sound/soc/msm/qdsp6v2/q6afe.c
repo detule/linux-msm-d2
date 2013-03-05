@@ -225,7 +225,7 @@ int afe_q6_interface_prepare(void)
 {
 	int ret = 0;
 
-	pr_info("%s:", __func__);
+	pr_debug("%s:", __func__);
 
 	if (this_afe.apr == NULL) {
 		this_afe.apr = apr_register("ADSP", "AFE", afe_callback,
