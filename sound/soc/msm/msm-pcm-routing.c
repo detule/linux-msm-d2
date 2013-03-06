@@ -424,7 +424,7 @@ static void msm_pcm_routing_process_audio(u16 reg, u16 val, int set)
 	int session_type, path_type;
 	u32 channels;
 
-	pr_info("%s: reg %x val %x set %x\n", __func__, reg, val, set);
+	pr_debug("%s: reg %x val %x set %x\n", __func__, reg, val, set);
 
 	if (val > MSM_FRONTEND_DAI_MM_MAX_ID) {
 		/* recheck FE ID in the mixer control defined in this file */
@@ -2664,7 +2664,6 @@ static int msm_pcm_routing_prepare(struct snd_pcm_substream *substream)
 	u32 channels;
 	bool playback, capture;
 
-	pr_info("%s: be_id = %x", __func__, be_id);
 	if (be_id >= MSM_BACKEND_DAI_MAX) {
 		pr_err("%s: unexpected be_id %d\n", __func__, be_id);
 		return -EINVAL;
