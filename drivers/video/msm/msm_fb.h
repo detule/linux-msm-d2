@@ -217,6 +217,8 @@ struct msm_fb_data_type {
 	int vsync_sysfs_created;
 	void *copy_splash_buf;
 	unsigned char *copy_splash_phys;
+	uint32 sec_mapped;
+	uint32 sec_active;
 };
 struct msm_fb_backup_type {
 	struct fb_info info;
@@ -240,8 +242,9 @@ int msm_fb_writeback_stop(struct fb_info *info);
 int msm_fb_writeback_terminate(struct fb_info *info);
 int msm_fb_detect_client(const char *name);
 int calc_fb_offset(struct msm_fb_data_type *mfd, struct fb_info *fbi, int bpp);
-int msm_fb_wait_for_fence(struct msm_fb_data_type *mfd);
+void msm_fb_wait_for_fence(struct msm_fb_data_type *mfd);
 int msm_fb_signal_timeline(struct msm_fb_data_type *mfd);
+void msm_fb_release_timeline(struct msm_fb_data_type *mfd);
 #ifdef CONFIG_FB_BACKLIGHT
 void msm_fb_config_backlight(struct msm_fb_data_type *mfd);
 #endif

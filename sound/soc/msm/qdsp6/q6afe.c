@@ -349,7 +349,7 @@ int afe_q6_interface_prepare(void)
 {
 	int ret = 0;
 
-	pr_info("%s:", __func__);
+	pr_debug("%s:", __func__);
 
 	if (this_afe.apr == NULL) {
 		this_afe.apr = apr_register("ADSP", "AFE", afe_callback,
@@ -368,11 +368,11 @@ static void afe_send_cal_block(int32_t path, u16 port_id)
 	int						result = 0;
 	struct acdb_cal_block				cal_block;
 	struct afe_port_cmd_set_param_no_payload	afe_cal;
-	pr_info("%s: path %d\n", __func__, path);
+	pr_debug("%s: path %d\n", __func__, path);
 
 	get_afe_cal(path, &cal_block);
 	if (cal_block.cal_size <= 0) {
-		pr_info("%s: No AFE cal to send!\n", __func__);
+		pr_debug("%s: No AFE cal to send!\n", __func__);
 		goto done;
 	}
 
@@ -398,7 +398,7 @@ static void afe_send_cal_block(int32_t path, u16 port_id)
 	afe_cal.payload_size = cal_block.cal_size;
 	afe_cal.payload_address = cal_block.cal_paddr;
 
-	pr_info("%s: AFE cal sent for device port = %d, path = %d, "
+	pr_debug("%s: AFE cal sent for device port = %d, path = %d, "
 		"cal size = %d, cal addr = 0x%x\n", __func__,
 		port_id, path, cal_block.cal_size, cal_block.cal_paddr);
 
@@ -424,7 +424,7 @@ done:
 
 void afe_send_cal(u16 port_id)
 {
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	if (afe_get_port_type(port_id) == MSM_AFE_PORT_TYPE_TX)
 		afe_send_cal_block(TX_CAL, port_id);
@@ -447,7 +447,7 @@ int afe_port_start(u16 port_id, union afe_port_config *afe_config,
 		ret = -EINVAL;
 		return ret;
 	}
-	pr_info("%s: %d %d\n", __func__, port_id, rate);
+	pr_debug("%s: %d %d\n", __func__, port_id, rate);
 
 	if ((port_id == RT_PROXY_DAI_001_RX) ||
 		(port_id == RT_PROXY_DAI_002_TX)) {
@@ -520,7 +520,7 @@ int afe_port_start(u16 port_id, union afe_port_config *afe_config,
 			 * is L-PCM, the AFE_PORT_AUDIO_IF_CONFIG is used
 			 * to make the backward compatible.
 			 */
-			pr_info("%s: afe_config->mi2s.format = %d\n", __func__,
+			pr_debug("%s: afe_config->mi2s.format = %d\n", __func__,
 					 afe_config->mi2s.format);
 			if (afe_config->mi2s.format == MSM_AFE_I2S_FORMAT_LPCM)
 				config.hdr.opcode = AFE_PORT_AUDIO_IF_CONFIG;
