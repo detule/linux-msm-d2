@@ -227,13 +227,13 @@ static struct gpiomux_setting mdm2ap_errfatal_cfg = {
 	.drv = GPIOMUX_DRV_16MA,
 	.pull = GPIOMUX_PULL_DOWN,
 };
-
+#if 0
 static struct gpiomux_setting ap2mdm_kpdpwr_n_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_8MA,
 	.pull = GPIOMUX_PULL_NONE,
 };
-
+#endif
 static struct gpiomux_setting mdp_vsync_suspend_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_2MA,
@@ -280,6 +280,7 @@ static struct gpiomux_setting hdmi_active_4_cfg = {
 #endif
 #endif
 #if defined(CONFIG_VIDEO_MHL_V1) || defined(CONFIG_VIDEO_MHL_V2)
+#if 0
 static struct gpiomux_setting mhl_suspend_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_2MA,
@@ -292,7 +293,6 @@ static struct gpiomux_setting mhl_active_1_cfg = {
 	.pull = GPIOMUX_PULL_DOWN,
 	.dir = GPIOMUX_OUT_LOW,
 };
-#if 0
 static struct gpiomux_setting mhl_active_2_cfg = {
 	.func = GPIOMUX_FUNC_GPIO,
 	.drv = GPIOMUX_DRV_2MA,
@@ -906,6 +906,7 @@ static struct msm_gpiomux_config msm8960_hdmi_configs[] __initdata = {
 };
 #endif
 #if defined(CONFIG_VIDEO_MHL_V1) || defined(CONFIG_VIDEO_MHL_V2)
+#if 0
 static struct msm_gpiomux_config msm8960_mhl_configs[] __initdata = {
 	{
 		.gpio = GPIO_MHL_EN,
@@ -943,6 +944,7 @@ static struct msm_gpiomux_config msm8960_mhl_configs[] __initdata = {
 
 
 };
+#endif
 #endif
 
 #ifdef CONFIG_I2C
