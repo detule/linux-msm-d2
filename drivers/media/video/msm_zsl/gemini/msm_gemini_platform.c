@@ -22,7 +22,7 @@
 #include "msm_gemini_platform.h"
 #include "msm_gemini_common.h"
 #include "msm_gemini_hw.h"
-
+#define UNCACHED 0
 /* AXI rate in KHz */
 #define MSM_SYSTEM_BUS_RATE	160000
 struct ion_client *gemini_client;
