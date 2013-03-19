@@ -265,7 +265,7 @@ void msm_restart(char mode, const char *cmd)
 
 	pm8xxx_reset_pwr_off(1);
 
-	if (cmd != NULL) {
+	if (cmd[0]) {
 		if (!strncmp(cmd, "bootloader", 10)) {
 			__raw_writel(0x77665500, restart_reason);
 		} else if (!strncmp(cmd, "recovery", 8)) {
@@ -278,7 +278,9 @@ void msm_restart(char mode, const char *cmd)
 			__raw_writel(0x77665501, restart_reason);
 		}
 	} else {
-		__raw_writel(0x77665501, restart_reason);
+		pr_err("%s : clear reset flag\r\n", __func__);
+		/* clear abnormal reset flag */
+		__raw_writel(0x12345678, restart_reason);
 	}
 #ifdef CONFIG_LGE_CRASH_HANDLER
 	if (in_panic == 1)
