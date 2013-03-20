@@ -62,7 +62,7 @@ static unsigned long msm_mem_allocate(struct videobuf2_contig_pmem *mem)
 		goto alloc_failed;
 	}
 	rc = ion_map_iommu(mem->client, mem->ion_handle,
-			-1, 0, SZ_4K, 0,
+			CAMERA_DOMAIN, GEN_POOL, SZ_4K, 0,
 			(unsigned long *)&phyaddr,
 			(unsigned long *)&len, 0, 0);
 	if (rc < 0) {
@@ -87,7 +87,7 @@ static int32_t msm_mem_free(struct videobuf2_contig_pmem *mem)
 {
 	int32_t rc = 0;
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
-	ion_unmap_iommu(mem->client, mem->ion_handle, -1, 0);
+	ion_unmap_iommu(mem->client, mem->ion_handle, CAMERA_DOMAIN, 0);
 	ion_free(mem->client, mem->ion_handle);
 	ion_client_destroy(mem->client);
 #else
@@ -191,7 +191,7 @@ int videobuf2_pmem_contig_user_get(struct videobuf2_contig_pmem *mem,
 		pr_err("%s ION import failed\n", __func__);
 		return PTR_ERR(mem->ion_handle);
 	}
-	rc = ion_map_iommu(client, mem->ion_handle, domain_num, 0,
+	rc = ion_map_iommu(client, mem->ion_handle, CAMERA_DOMAIN, GEN_POOL,
 		SZ_4K, 0, (unsigned long *)&mem->phyaddr, &len, 0, 0);
 	if (rc < 0)
 		ion_free(client, mem->ion_handle);
@@ -226,7 +226,7 @@ void videobuf2_pmem_contig_user_put(struct videobuf2_contig_pmem *mem,
 	if (mem->is_userptr) {
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 		ion_unmap_iommu(client, mem->ion_handle,
-				domain_num, 0);
+				CAMERA_DOMAIN, 0);
 		ion_free(client, mem->ion_handle);
 #elif CONFIG_ANDROID_PMEM
 		put_pmem_file(mem->file);
