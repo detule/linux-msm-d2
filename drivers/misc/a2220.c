@@ -165,7 +165,7 @@ static void a2220_i2c_sw_reset(struct a2220_data *a2220, unsigned int reset_cmd)
 	msgbuf[2] = (reset_cmd >> 8) & 0xFF;
 	msgbuf[3] = reset_cmd & 0xFF;
 
-	pr_info("%s: %08x\n", __func__, reset_cmd);
+	pr_debug("%s: %08x\n", __func__, reset_cmd);
 
 	rc = a2220_i2c_write(a2220, msgbuf, 4);
 	if (!rc)
@@ -813,9 +813,9 @@ int a2220_set_config(struct a2220_data *a2220, char newid, int mode)
 	pr_info("%s: change to mode %d\n", __func__, newid);
 	pr_info("%s: block write start (size = %d)\n", __func__, size);
 	for (i = 1; i <= size; i++) {
-		pr_info("%x ", *(i2c_cmds + i - 1));
+		pr_debug("%x ", *(i2c_cmds + i - 1));
 		if (!(i % 4))
-			pr_info("\n");
+			pr_debug("\n");
 	}
 
 	pMsg = (unsigned char *)&msg;
@@ -880,7 +880,7 @@ int execute_cmdmsg(struct a2220_data *a2220, unsigned int msg)
 		return rc;
 	}
 
-	pr_info("execute_cmdmsg + 1\n");
+	pr_debug("execute_cmdmsg + 1\n");
 	/* We don't need to get Ack after sending out a suspend command */
 	if (msg == A100_msg_Sleep) {
 		pr_info("%s : ...go to suspend first\n", __func__);
@@ -888,7 +888,7 @@ int execute_cmdmsg(struct a2220_data *a2220, unsigned int msg)
 
 		return rc;
 	}
-	pr_info("execute_cmdmsg + 2\n");
+	pr_debug("execute_cmdmsg + 2\n");
 
 	retries = POLLING_RETRY_CNT;
 	while (retries--) {
@@ -901,21 +901,21 @@ int execute_cmdmsg(struct a2220_data *a2220, unsigned int msg)
 			continue;
 		}
 
-		pr_info("execute_cmdmsg + 3\n");
+		pr_debug("execute_cmdmsg + 3\n");
 
 		if (msgbuf[0] == 0x80  && msgbuf[1] == chkbuf[1]) {
 			pass = 1;
-			pr_info("execute_cmdmsg + 4\n");
-			pr_info("got ACK\n");
+			pr_debug("execute_cmdmsg + 4\n");
+			pr_debug("got ACK\n");
 			break;
 		} else if (msgbuf[0] == 0xff && msgbuf[1] == 0xff) {
 			pr_err("%s: illegal cmd %08x\n", __func__, msg);
 			rc = -EINVAL;
-			pr_info("execute_cmdmsg + 5\n");
+			pr_debug("execute_cmdmsg + 5\n");
 		} else if (msgbuf[0] == 0x00 && msgbuf[1] == 0x00) {
-			pr_info("%s: not ready (%d retries)\n", __func__,
+			pr_err("%s: not ready (%d retries)\n", __func__,
 					retries);
-			pr_info("execute_cmdmsg + 6\n");
+			pr_debug("execute_cmdmsg + 6\n");
 			rc = -EBUSY;
 		} else {
 			pr_info("%s: cmd/ack mismatch: (%d retries left)\n",

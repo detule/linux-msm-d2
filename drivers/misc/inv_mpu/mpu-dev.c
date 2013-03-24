@@ -1090,7 +1090,7 @@ void mpu_dev_early_suspend(struct early_suspend *h)
 	struct i2c_adapter *slave_adapter[EXT_SLAVE_NUM_TYPES];
 	struct ext_slave_platform_data **pdata_slave = mldl_cfg->pdata_slave;
 	int ii;
-	printk(KERN_INFO"[@@@@@%s@@@@@]\n", __func__);
+	pr_debug("[@@@@@%s@@@@@]\n", __func__);
 
 	mpu_early_notifier_callback(mpu, PM_SUSPEND_PREPARE, NULL);
 
@@ -1122,7 +1122,7 @@ void mpu_dev_early_resume(struct early_suspend *h)
 	struct i2c_adapter *slave_adapter[EXT_SLAVE_NUM_TYPES];
 	struct ext_slave_platform_data **pdata_slave = mldl_cfg->pdata_slave;
 	int ii;
-	printk(KERN_INFO"[@@@@@%s@@@@@]\n", __func__);
+	pr_debug("[@@@@@%s@@@@@]\n", __func__);
 	for (ii = 0; ii < EXT_SLAVE_NUM_TYPES; ii++) {
 		if (!pdata_slave[ii])
 			slave_adapter[ii] = NULL;

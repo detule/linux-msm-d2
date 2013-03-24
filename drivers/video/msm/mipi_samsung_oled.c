@@ -89,7 +89,7 @@ static uint32 mipi_samsung_manufacture_id(struct msm_fb_data_type *mfd)
 	cmd = &samsung_manufacture_id1_cmd;
 	mipi_dsi_cmds_rx(mfd, tp, rp, cmd, 1);
 #endif
-	pr_info("%s: manufacture_id1=%x\n", __func__, *rp->data);
+	pr_debug("%s: manufacture_id1=%x\n", __func__, *rp->data);
 	id = *((uint32 *)rp->data);
 	id <<= 8;
 
@@ -103,7 +103,7 @@ static uint32 mipi_samsung_manufacture_id(struct msm_fb_data_type *mfd)
 	cmd = &samsung_manufacture_id2_cmd;
 	mipi_dsi_cmds_rx(mfd, tp, rp, cmd, 1);
 #endif
-	pr_info("%s: manufacture_id2=%x\n", __func__, *rp->data);
+	pr_debug("%s: manufacture_id2=%x\n", __func__, *rp->data);
 	bypass_lcd_id = *rp->data;
 	id |= *((uint32 *)rp->data);
 	id <<= 8;
@@ -117,11 +117,11 @@ static uint32 mipi_samsung_manufacture_id(struct msm_fb_data_type *mfd)
 	cmd = &samsung_manufacture_id3_cmd;
 	mipi_dsi_cmds_rx(mfd, tp, rp, cmd, 1);
 #endif
-	pr_info("%s: manufacture_id3=%x\n", __func__, *rp->data);
+	pr_debug("%s: manufacture_id3=%x\n", __func__, *rp->data);
 	elvss_value = *rp->data;
 	id |= *((uint32 *)rp->data);
 
-	pr_info("%s: manufacture_id=%x\n", __func__, id);
+	pr_debug("%s: manufacture_id=%x\n", __func__, id);
 
 #ifdef FACTORY_TEST
 	if (id == 0x00) {
@@ -373,11 +373,11 @@ static int mipi_samsung_disp_send_cmd(struct msm_fb_data_type *mfd,
 #ifdef CONFIG_FB_MSM_MIPI_SAMSUNG_OLED_VIDEO_HD_PT
 	case PANEL_READY_TO_ON_FAST:
 		if (Is_4_65LCD_cmc() || Is_4_65LCD_bypass()) { /*4.65 LCD_ID*/
-			pr_info("Select 4.65 = %x\n", LCD_Get_Value());
+			pr_debug("Select 4.65 = %x\n", LCD_Get_Value());
 			cmd_desc = msd.mpd->ready_to_on_fast.cmd;
 			cmd_size = msd.mpd->ready_to_on_fast.size;
 		} else {
-			pr_info("Select 4.8 = %x\n", LCD_Get_Value());
+			pr_debug("Select 4.8 = %x\n", LCD_Get_Value());
 			cmd_desc = msd.mpd->ready_to_on_4_8_fast.cmd;
 			cmd_size = msd.mpd->ready_to_on_4_8_fast.size;
 		}
@@ -391,7 +391,7 @@ static int mipi_samsung_disp_send_cmd(struct msm_fb_data_type *mfd,
 			cmd_desc = msd.mpd->ready_to_on.cmd;
 			cmd_size = msd.mpd->ready_to_on.size;
 		} else { /* 4.8 LCD_ID*/
-			pr_info("Select 4.8 = %x(%x)\n", LCD_Get_Value(),
+			pr_debug("Select 4.8 = %x(%x)\n", LCD_Get_Value(),
 				bypass_LCD_Id());
 			cmd_desc = msd.mpd->ready_to_on_4_8.cmd;
 			cmd_size = msd.mpd->ready_to_on_4_8.size;

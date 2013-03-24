@@ -526,10 +526,10 @@ static void reset_mms_ts(struct mms_ts_info *info)
 	info->enabled = true;
 
 	if (info->ta_status) {
-		dev_notice(&client->dev, "TA connect!!!\n");
+		dev_dbg(&client->dev, "TA connect!!!\n");
 		i2c_smbus_write_byte_data(info->client, 0x33, 0x1);
 	} else {
-		dev_notice(&client->dev, "TA disconnect!!!\n");
+		dev_dbg(&client->dev, "TA disconnect!!!\n");
 		i2c_smbus_write_byte_data(info->client, 0x33, 0x2);
 		mms_set_noise_mode(info);
 	}
@@ -549,10 +549,10 @@ static void melfas_ta_cb(struct tsp_callbacks *cb, bool ta_status)
 
 	if (info->enabled) {
 		if (info->ta_status) {
-			dev_notice(&client->dev, "TA connect!!!\n");
+			dev_dbg(&client->dev, "TA connect!!!\n");
 			i2c_smbus_write_byte_data(info->client, 0x33, 0x1);
 		} else {
-			dev_notice(&client->dev, "TA disconnect!!!\n");
+			dev_dbg(&client->dev, "TA disconnect!!!\n");
 			i2c_smbus_write_byte_data(info->client, 0x33, 0x2);
 			mms_set_noise_mode(info);
 		}
@@ -3087,7 +3087,7 @@ static int mms_ts_suspend(struct device *dev)
 	int mt_val;
 #endif
 
-	dev_notice(&info->client->dev, "%s: users=%d\n", __func__,
+	dev_dbg(&info->client->dev, "%s: users=%d\n", __func__,
 			info->input_dev->users);
 	mutex_lock(&info->input_dev->mutex);
 	if (!info->input_dev->users)
@@ -3110,16 +3110,16 @@ static int mms_ts_resume(struct device *dev)
 	struct mms_ts_info *info = i2c_get_clientdata(client);
 	int ret = 0;
 
-	dev_notice(&info->client->dev, "%s: users=%d\n", __func__,
+	dev_dbg(&info->client->dev, "%s: users=%d\n", __func__,
 			info->input_dev->users);
 	info->pdata->vdd_on(1);
 	msleep(120);
 
 	if (info->ta_status) {
-		dev_notice(&client->dev, "TA connect!!!\n");
+		dev_dbg(&client->dev, "TA connect!!!\n");
 		i2c_smbus_write_byte_data(info->client, 0x33, 0x1);
 	} else {
-		dev_notice(&client->dev, "TA disconnect!!!\n");
+		dev_dbg(&client->dev, "TA disconnect!!!\n");
 		i2c_smbus_write_byte_data(info->client, 0x33, 0x2);
 	}
 

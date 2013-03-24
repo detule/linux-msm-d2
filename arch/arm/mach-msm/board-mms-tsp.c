@@ -103,7 +103,7 @@ void  melfas_vdd_on(bool onoff)
 				pr_err("enable lvs6 failed, rc=%d\n", ret);
 				return;
 			}
-			pr_info("tsp 1.8V on is finished.\n");
+			pr_debug("tsp 1.8V on is finished.\n");
 		} else {
 			if (regulator_is_enabled(reg_lvs6))
 				ret = regulator_disable(reg_lvs6);
@@ -111,7 +111,7 @@ void  melfas_vdd_on(bool onoff)
 				pr_err("enable lvs6 failed, rc=%d\n", ret);
 				return;
 			}
-			pr_info("tsp 1.8V off is finished.\n");
+			pr_debug("tsp 1.8V off is finished.\n");
 		}
 	}
 
@@ -137,7 +137,7 @@ void  melfas_vdd_on(bool onoff)
 			pr_err("enable l17 failed, rc=%d\n", ret);
 			return;
 		}
-		pr_info("tsp 3.3V on is finished.\n");
+		pr_debug("tsp 3.3V on is finished.\n");
 	} else {
 		if (regulator_is_enabled(reg_l17))
 			ret = regulator_disable(reg_l17);
@@ -146,7 +146,7 @@ void  melfas_vdd_on(bool onoff)
 			pr_err("disable l17 failed, rc=%d\n", ret);
 			return;
 		}
-		pr_info("tsp 3.3V off is finished.\n");
+		pr_debug("tsp 3.3V off is finished.\n");
 	}
 #else
 		/* 2.8V */
@@ -173,7 +173,7 @@ void  melfas_vdd_on(bool onoff)
 					pr_err("l17 failed, rc=%d\n", ret);
 					return;
 				}
-				pr_info("tsp 2.8V on is finished.\n");
+				pr_debug("tsp 2.8V on is finished.\n");
 			} else {
 				if (regulator_is_enabled(reg_l17))
 					ret = regulator_disable(reg_l17);
@@ -183,7 +183,7 @@ void  melfas_vdd_on(bool onoff)
 					ret);
 					return;
 				}
-				pr_info("tsp 2.8V off is finished.\n");
+				pr_debug("tsp 2.8V off is finished.\n");
 			}
 		} else {
 			if (!reg_l11) {
@@ -209,7 +209,7 @@ void  melfas_vdd_on(bool onoff)
 						ret);
 					return;
 				}
-				pr_info("tsp 2.8V on is finished.\n");
+				pr_debug("tsp 2.8V on is finished.\n");
 			} else {
 				if (regulator_is_enabled(reg_l11))
 					ret = regulator_disable(reg_l11);
@@ -219,7 +219,7 @@ void  melfas_vdd_on(bool onoff)
 						ret);
 					return;
 				}
-				pr_info("tsp 2.8V off is finished.\n");
+				pr_debug("tsp 2.8V off is finished.\n");
 			}
 
 

@@ -448,14 +448,14 @@ static void max17040_work(struct work_struct *work)
 
 	max17040_get_vcell(chip->client);
 	max17040_get_soc(chip->client);
-	pr_info("%s : VCELL:%dmV, AVGVCELL:%dmV\n", __func__,
+	pr_debug("%s : VCELL:%dmV, AVGVCELL:%dmV\n", __func__,
 		chip->vcell/1000, chip->avgvcell/1000);
-	pr_info("%s : Raw SOC:%d%%, SOC:%d%%\n", __func__,
+	pr_debug("%s : Raw SOC:%d%%, SOC:%d%%\n", __func__,
 		chip->raw_soc, chip->soc);
-	pr_info("%s : CONFIG:0x%04x, RATE:0x%04x\n", __func__,
+	pr_debug("%s : CONFIG:0x%04x, RATE:0x%04x\n", __func__,
 		max17040_read_word(chip->client, MAX17040_RCOMP_MSB),
 		max17040_read_word(chip->client, 0x16));
-	pr_info("%s : STATUS:0x%04x, temperature:%d\n", __func__,
+	pr_debug("%s : STATUS:0x%04x, temperature:%d\n", __func__,
 		max17040_read_word(chip->client, 0x1a),
 		chip->temperature);
 

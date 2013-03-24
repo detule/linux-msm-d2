@@ -292,10 +292,10 @@ static int cypress_touchkey_auto_cal(struct cypress_touchkey_info *dev_info)
 				CYPRESS_GEN, 6, data);
 
 		if ((data[5] & 0x80)) {
-			printk(KERN_DEBUG "[Touchkey] autocal Enabled\n");
+			pr_debug("[Touchkey] autocal Enabled\n");
 			break;
 		} else {
-			printk(KERN_DEBUG "[Touchkey] autocal disabled, retry %d\n",
+			pr_debug("[Touchkey] autocal disabled, retry %d\n",
 					retry);
 		}
 		retry = retry + 1;
