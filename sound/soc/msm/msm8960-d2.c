@@ -367,7 +367,7 @@ static int msm8960_enable_codec_ext_clk(struct snd_soc_codec *codec, int enable,
 		bool dapm)
 {
 	int r = 0;
-	pr_info("%s: enable = %d\n", __func__, enable);
+	pr_debug("%s: enable = %d\n", __func__, enable);
 
 	mutex_lock(&cdc_mclk_mutex);
 	if (enable) {
@@ -1496,7 +1496,7 @@ static int msm8660_i2s_hw_params(struct snd_pcm_substream *substream,
 {
 	int rate = params_rate(params);
 	int bit_clk_set = 0;
-	pr_info("%s Codec Clock 0x%x ; Rx Bit Clock %x\n", __func__,
+	pr_debug("%s Codec Clock 0x%x ; Rx Bit Clock %x\n", __func__,
 			(unsigned int)codec_clk, (unsigned int)rx_bit_clk);
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
 		bit_clk_set = I2S_MCLK_RATE / (rate * 2 *
@@ -1535,7 +1535,7 @@ static int msm8660_i2s_hw_params(struct snd_pcm_substream *substream,
 
 static void msm8960_i2s_shutdown(struct snd_pcm_substream *substream)
 {
-	pr_info("%s Codec Clock 0x%x ; Rx Bit Clock %x\n", __func__,
+	pr_debug("%s Codec Clock 0x%x ; Rx Bit Clock %x\n", __func__,
 			(unsigned int)codec_clk, (unsigned int)rx_bit_clk);
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
 		if (rx_bit_clk) {
@@ -1617,7 +1617,7 @@ static int msm8960_i2s_startup(struct snd_pcm_substream *substream)
 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
 		configure_i2s_rx_gpio();
 	codec_clk = clk_get(NULL, "i2s_spkr_osr_clk");

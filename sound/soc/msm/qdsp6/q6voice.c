@@ -3750,7 +3750,7 @@ static int32_t qdsp_mvm_callback(struct apr_client_data *data, void *priv)
 		if (data->payload_size) {
 			ptr = data->payload;
 
-			pr_info("%x %x\n", ptr[0], ptr[1]);
+			pr_debug("%x %x\n", ptr[0], ptr[1]);
 			/* ping mvm service ACK */
 			switch (ptr[0]) {
 			case VSS_IMVM_CMD_CREATE_PASSIVE_CONTROL_SESSION:
@@ -3840,7 +3840,7 @@ static int32_t qdsp_cvs_callback(struct apr_client_data *data, void *priv)
 		if (data->payload_size) {
 			ptr = data->payload;
 
-			pr_info("%x %x\n", ptr[0], ptr[1]);
+			pr_debug("%x %x\n", ptr[0], ptr[1]);
 			/*response from  CVS */
 			switch (ptr[0]) {
 			case VSS_ISTREAM_CMD_CREATE_PASSIVE_CONTROL_SESSION:
@@ -3991,7 +3991,7 @@ static int32_t qdsp_cvp_callback(struct apr_client_data *data, void *priv)
 		if (data->payload_size) {
 			ptr = data->payload;
 
-			pr_info("%x %x\n", ptr[0], ptr[1]);
+			pr_debug("%x %x\n", ptr[0], ptr[1]);
 
 			switch (ptr[0]) {
 			case VSS_IVOCPROC_CMD_CREATE_FULL_CONTROL_SESSION:
