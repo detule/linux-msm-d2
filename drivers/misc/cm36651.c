@@ -118,6 +118,7 @@ struct cm36651_data {
 	struct workqueue_struct *prox_wq;
 	struct work_struct work_light;
 	struct work_struct work_prox;
+	struct delayed_work work_prox_delayed;
 	struct device *proximity_dev;
 	struct device *light_dev;
 	ktime_t light_poll_delay;
@@ -703,15 +704,24 @@ static DEVICE_ATTR(vendor, S_IRUGO, cm36651_vendor_show, NULL);
 static DEVICE_ATTR(name, S_IRUGO, cm36651_name_show, NULL);
 
 static DEVICE_ATTR(raw_data, S_IRUGO, lightsensor_lux_show, NULL);
-
+static u8 prox_value=1;
 /* interrupt happened due to transition/change of near/far proximity state */
+
+static void prox_delayed_work(struct work_struct *work)
+{
+        struct cm36651_data *cm36651 = container_of(work,
+                        struct cm36651_data, work_prox_delayed.work);
+
+	input_report_abs(cm36651->proximity_input_dev, ABS_DISTANCE, prox_value);
+	input_sync(cm36651->proximity_input_dev);
+}
+
 static irqreturn_t cm36651_irq_thread_fn(int irq, void *data)
 {
 	struct cm36651_data *cm36651 = data;
-	u8 val = 1;
 	u8 ps_data = 0;
 
-	val = gpio_get_value_cansleep(cm36651->pdata->irq);
+	prox_value = gpio_get_value_cansleep(cm36651->pdata->irq);
 
 	mutex_lock(&cm36651->read_lock);
 	cm36651_i2c_read_byte(cm36651, CM36651_PS, &ps_data);
@@ -719,11 +729,12 @@ static irqreturn_t cm36651_irq_thread_fn(int irq, void *data)
 
 
 	/* 0 is close, 1 is far */
-	input_report_abs(cm36651->proximity_input_dev, ABS_DISTANCE, val);
-	input_sync(cm36651->proximity_input_dev);
 	wake_lock_timeout(&cm36651->prx_wake_lock, 3 * HZ);
-	pr_info("%s: val = %d (close:0, far:1), ps_data = %d\n", __func__,
-		val, ps_data);
+	pr_info("%s: prox_value = %d (close:0, far:1), ps_data = %d\n", __func__,
+		prox_value, ps_data);
+        schedule_delayed_work(&cm36651->work_prox_delayed,
+                        round_jiffies_relative(msecs_to_jiffies
+                        (300)));
 
 	return IRQ_HANDLED;
 }
@@ -804,6 +815,8 @@ static int cm36651_setup_irq(struct cm36651_data *cm36651)
 		       __func__, cm36651->irq, pdata->irq, rc);
 		goto err_request_irq;
 	}
+
+	INIT_DELAYED_WORK(&cm36651->work_prox_delayed, prox_delayed_work);
 
 	/* start with interrupts disabled */
 	disable_irq(cm36651->irq);
