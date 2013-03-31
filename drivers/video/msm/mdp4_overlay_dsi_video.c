@@ -464,7 +464,7 @@ void mdp4_dsi_vsync_init(int cndx)
 	mutex_init(&vctrl->update_lock);
 	init_completion(&vctrl->dmap_comp);
 	init_completion(&vctrl->ov_comp);
-	atomic_set(&vctrl->suspend, 1);
+	atomic_set(&vctrl->suspend, dsi_video_enabled ? 0 : 1);
 	spin_lock_init(&vctrl->spin_lock);
 	init_waitqueue_head(&vctrl->wait_queue);
 }
