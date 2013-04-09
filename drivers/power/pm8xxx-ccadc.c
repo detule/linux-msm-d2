@@ -319,7 +319,7 @@ static int calib_ccadc_program_trim(struct pm8xxx_ccadc_chip *chip,
 	calib_ccadc_restore_trim_access(chip, sbi_config);
 	return 0;
 }
-#if 0
+
 static int get_batt_temp(struct pm8xxx_ccadc_chip *chip, int *batt_temp)
 {
 	int rc;
@@ -367,7 +367,6 @@ static int get_current_time(unsigned long *now_tm_sec)
 
 	return 0;
 }
-#endif
 
 static void __pm8xxx_calib_ccadc(int sample_count)
 {
@@ -534,7 +533,7 @@ void pm8xxx_calib_ccadc(void)
 	__pm8xxx_calib_ccadc(SAMPLE_COUNT);
 }
 EXPORT_SYMBOL(pm8xxx_calib_ccadc);
-#if 0
+
 static void calibrate_ccadc_work(struct work_struct *work)
 {
 	struct pm8xxx_ccadc_chip *chip = container_of(work,
@@ -545,7 +544,7 @@ static void calibrate_ccadc_work(struct work_struct *work)
 			round_jiffies_relative(msecs_to_jiffies
 			(chip->calib_delay_ms)));
 }
-#endif
+
 static irqreturn_t pm8921_bms_ccadc_eoc_handler(int irq, void *data)
 {
 	u8 data_msb, data_lsb;
@@ -768,10 +767,9 @@ static int __devinit pm8xxx_ccadc_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, chip);
 	the_chip = chip;
-#if 0
 	INIT_DELAYED_WORK(&chip->calib_ccadc_work, calibrate_ccadc_work);
 	schedule_delayed_work(&chip->calib_ccadc_work, 0);
-#endif
+
 	create_debugfs_entries(chip);
 
 	return 0;
@@ -802,7 +800,6 @@ static int pm8xxx_ccadc_suspend(struct device *dev)
 }
 
 #define CCADC_CALIB_TEMP_THRESH 20
-#if 0
 static int pm8xxx_ccadc_resume(struct device *dev)
 {
   int rc, delta_temp;
@@ -851,16 +848,14 @@ static const struct dev_pm_ops pm8xxx_ccadc_pm_ops = {
 	.suspend	= pm8xxx_ccadc_suspend,
 	.resume		= pm8xxx_ccadc_resume,
 };
-#endif
+
 static struct platform_driver pm8xxx_ccadc_driver = {
 	.probe	= pm8xxx_ccadc_probe,
 	.remove	= __devexit_p(pm8xxx_ccadc_remove),
 	.driver	= {
 		.name	= PM8XXX_CCADC_DEV_NAME,
 		.owner	= THIS_MODULE,
-#if 0
 		.pm	= &pm8xxx_ccadc_pm_ops,
-#endif
 	},
 };
 
