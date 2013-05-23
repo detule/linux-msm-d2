@@ -329,30 +329,27 @@ static struct msm_gpiomux_config msm8960_sec_ts_configs[] = {
 	},
 };
 #endif
-#define MSM_PMEM_ADSP_SIZE                 0x9600000 /* 150 Mbytes */
-#define MSM_PMEM_ADSP_SIZE_FOR_2GB         0xA500000 /* 165 Mbytes */
-#define MSM_PMEM_AUDIO_SIZE        0x4CF000 /* 1.375 Mbytes */
+#define MSM_PMEM_ADSP_SIZE         0xA500000 /* 165 Mbytes */
+#define MSM_PMEM_AUDIO_SIZE        0x4CF000
 #define MSM_PMEM_SIZE 0x2800000 /* 40 Mbytes */
 #define MSM_LIQUID_PMEM_SIZE 0x4000000 /* 64 Mbytes */
 #define MSM_HDMI_PRIM_PMEM_SIZE 0x4000000 /* 64 Mbytes */
 
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 #define HOLE_SIZE	0x20000
-#define MSM_PMEM_KERNEL_EBI1_SIZE  0x280000 /* 2.5MB */
+#define MSM_CONTIG_MEM_SIZE  0x65000
 #ifdef CONFIG_MSM_IOMMU
-#define MSM_ION_MM_SIZE            0x3800000
+#define MSM_ION_MM_SIZE            0x3800000 /* Need to be multiple of 64K */
 #define MSM_ION_SF_SIZE            0x0
-#define MSM_ION_SF_SIZE_FOR_2GB            0x0
 #define MSM_ION_QSECOM_SIZE        0x780000 /* (7.5MB) */
 #define MSM_ION_HEAP_NUM	7
 #else
-#define MSM_ION_MM_SIZE		MSM_PMEM_ADSP_SIZE
-#define MSM_ION_SF_SIZE		0x5000000 /* 80MB */
-#define MSM_ION_SF_SIZE_FOR_2GB		0x6400000 /* 100MB */
-#define MSM_ION_QSECOM_SIZE	0x1700000 /* (24MB) */
+#define MSM_ION_MM_SIZE		   MSM_PMEM_ADSP_SIZE
+#define MSM_ION_SF_SIZE		   0x6400000 /* 100MB */
+#define MSM_ION_QSECOM_SIZE	   0x600000 /* (6MB) */
 #define MSM_ION_HEAP_NUM	8
 #endif
-#define MSM_ION_MM_FW_SIZE	0x200000 /* (2MB) */
+#define MSM_ION_MM_FW_SIZE	(0x200000 - HOLE_SIZE) /* 128kb */
 #define MSM_ION_MFC_SIZE	SZ_8K
 #define MSM_ION_AUDIO_SIZE	MSM_PMEM_AUDIO_SIZE
 
@@ -360,10 +357,12 @@ static struct msm_gpiomux_config msm8960_sec_ts_configs[] = {
 #define MSM_LIQUID_ION_SF_SIZE MSM_LIQUID_PMEM_SIZE
 #define MSM_HDMI_PRIM_ION_SF_SIZE MSM_HDMI_PRIM_PMEM_SIZE
 
-#define MSM8960_FIXED_AREA_START 0xb0000000
+#define MSM_MM_FW_SIZE		(0x200000 - HOLE_SIZE) /* 2mb -128kb*/
+#define MSM8960_FIXED_AREA_START (0xa0000000 - (MSM_ION_MM_FW_SIZE + \
+							HOLE_SIZE))
 #define MAX_FIXED_AREA_SIZE	0x10000000
-#define MSM_MM_FW_SIZE		0x200000
-#define MSM8960_FW_START	(MSM8960_FIXED_AREA_START - MSM_MM_FW_SIZE)
+#define MSM8960_FW_START	MSM8960_FIXED_AREA_START
+
 
 static unsigned msm_ion_sf_size = MSM_ION_SF_SIZE;
 #else
@@ -372,7 +371,7 @@ static unsigned msm_ion_sf_size = MSM_ION_SF_SIZE;
 #endif
 
 #ifdef CONFIG_KERNEL_PMEM_EBI_REGION
-static unsigned pmem_kernel_ebi1_size = MSM_PMEM_KERNEL_EBI1_SIZE;
+static unsigned pmem_kernel_ebi1_size = MSM_CONTIG_MEM_SIZE;
 static int __init pmem_kernel_ebi1_size_setup(char *p)
 {
 	pmem_kernel_ebi1_size = memparse(p, NULL);
@@ -631,7 +630,7 @@ struct ion_platform_heap m2_ion_heaps[] = {
 			.id	= ION_SF_HEAP_ID,
 			.type	= ION_HEAP_TYPE_CARVEOUT,
 			.name	= ION_SF_HEAP_NAME,
-			.size	= MSM_ION_SF_SIZE_FOR_2GB,
+			.size	= MSM_ION_SF_SIZE,
 			.memory_type = ION_EBI_TYPE,
 			.extra_data = (void *) &co_ion_pdata,
 		},
@@ -771,7 +770,6 @@ static void __init reserve_ion_memory(void)
 	unsigned int fixed_size = 0;
 	unsigned int fixed_low_size, fixed_middle_size, fixed_high_size;
 	unsigned long fixed_low_start, fixed_middle_start, fixed_high_start;
-	struct membank *mb = &meminfo.bank[meminfo.nr_banks - 1];
 
 	adjust_mem_for_liquid();
 	fixed_low_size = 0;
@@ -787,13 +785,6 @@ static void __init reserve_ion_memory(void)
 
 		if (heap->extra_data) {
 			int fixed_position = NOT_FIXED;
-
-			if (!strcmp(heap->name, "mm")
-				&& (mb->start >= 0xc0000000)) {
-				printk(KERN_ERR "heap->name %s, mb->start %x\n",
-					heap->name, mb->start);
-				heap->size = MSM_PMEM_ADSP_SIZE_FOR_2GB;
-			}
 
 			switch ((int)heap->type) {
 			case ION_HEAP_TYPE_CP:
