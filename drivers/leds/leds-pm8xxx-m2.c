@@ -66,7 +66,9 @@
 /*  low_powermode is for led blinking level */
 int low_powermode;
 #define LOW_POWERMODE_DIVIDER	9
-
+#define PM8XXX_PWM_CURRENT_4MA		4
+#define PM8XXX_PWM_CURRENT_8MA		8
+#define PM8XXX_PWM_CURRENT_12MA		12
 /**
  * struct pm8xxx_led_data - internal led data structure
  * @led_classdev - led class device
@@ -89,6 +91,7 @@ struct pm8xxx_led_data {
 	struct pwm_device	*pwm_dev;
 	int			pwm_channel;
 	u32			pwm_period_us;
+	int			max_current;
 	struct pm8xxx_pwm_duty_cycles *pwm_duty_cycles;
 };
 
@@ -321,7 +324,7 @@ static int __devinit get_init_value(struct pm8xxx_led_data *led, u8 *val)
 static int pm8xxx_led_pwm_configure(struct pm8xxx_led_data *led,
 		int lo_pause, int hi_pause)
 {
-	int start_idx, idx_len, duty_us, rc;
+	int start_idx, idx_len, duty_us, rc, flags;
 
 	led->pwm_dev = pwm_request(led->pwm_channel,
 					led->cdev.name);
@@ -347,11 +350,27 @@ static int pm8xxx_led_pwm_configure(struct pm8xxx_led_data *led,
 			return -EINVAL;
 		}
 
+		flags = PM8XXX_LED_PWM_FLAGS;
+		switch (led->max_current) {
+		case PM8XXX_PWM_CURRENT_4MA:
+			flags |= PM_PWM_BANK_LO;
+			break;
+		case PM8XXX_PWM_CURRENT_8MA:
+			flags |= PM_PWM_BANK_HI;
+			break;
+		case PM8XXX_PWM_CURRENT_12MA:
+			flags |= (PM_PWM_BANK_LO | PM_PWM_BANK_HI);
+			break;
+		default:
+			flags |= (PM_PWM_BANK_LO | PM_PWM_BANK_HI);
+			break;
+		}
+
 		rc = pm8xxx_pwm_lut_config(led->pwm_dev, led->pwm_period_us,
 				led->pwm_duty_cycles->duty_pcts,
 				led->pwm_duty_cycles->duty_ms,
 				start_idx, idx_len, lo_pause, hi_pause,
-				PM8XXX_LED_PWM_FLAGS);
+				flags);
 	} else {
 		duty_us = led->pwm_period_us;
 		rc = pwm_config(led->pwm_dev, duty_us, led->pwm_period_us);
@@ -1181,6 +1200,7 @@ static int __devinit pm8xxx_led_probe(struct platform_device *pdev)
 		led_dat->pwm_channel = led_cfg->pwm_channel;
 		led_dat->pwm_period_us = led_cfg->pwm_period_us;
 		led_dat->pwm_duty_cycles = led_cfg->pwm_duty_cycles;
+		led_dat->max_current = led_cfg->max_current;
 
 		if (!((led_dat->id >= PM8XXX_ID_LED_KB_LIGHT) &&
 				(led_dat->id <= PM8XXX_ID_FLASH_LED_1))) {
