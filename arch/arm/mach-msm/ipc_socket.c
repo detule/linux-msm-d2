@@ -171,6 +171,9 @@ static int msm_ipc_router_create(struct net *net,
 {
 	struct sock *sk;
 	struct msm_ipc_port *port_ptr;
+#ifdef CONFIG_MACH_M2
+	void *pil;
+#endif
 
 	if (unlikely(protocol != 0)) {
 		pr_err("%s: Protocol not supported\n", __func__);
@@ -202,9 +205,11 @@ static int msm_ipc_router_create(struct net *net,
 	sock->ops = &msm_ipc_proto_ops;
 	sock_init_data(sock, sk);
 	sk->sk_rcvtimeo = DEFAULT_RCV_TIMEO;
-
+#ifdef CONFIG_MACH_M2
+	pil = msm_ipc_load_default_node();
+	msm_ipc_sk(sk)->default_pil = pil;
+#endif
 	msm_ipc_sk(sk)->port = port_ptr;
-
 	return 0;
 }
 
