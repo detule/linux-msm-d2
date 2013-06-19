@@ -45,7 +45,7 @@
 #define VIDEO_ENHANCE_DEBUG
 
 #ifdef VIDEO_ENHANCE_DEBUG
-#define DPRINT(x...)	printk(KERN_ERR "mdnie " x)
+#define DPRINT(x...)	printk(KERN_DEBUG "mdnie: " x)
 #else
 #define DPRINT(x...)
 #endif
@@ -113,12 +113,17 @@ static int parse_text(char *src, int len)
 	int i, count, ret;
 	int index = 0;
 	int j = 0;
-	char *str_line[300];
+	char **str_line;
 	char *sstart;
 	char *c;
 	unsigned int data1, data2, data3;
 	int sharpvalue;
 
+	str_line = kzalloc(sizeof(char *)*300, GFP_KERNEL);
+	if (!str_line) {
+		pr_err("%s: Failure to allocate stack variables", __func__);
+		return 0;
+	}
 	c = src;
 	count = 0;
 	sstart = c;
@@ -815,6 +820,7 @@ static DEVICE_ATTR(playspeed, 0664,
 
 void init_mdnie_class(void)
 {
+
 	mdnie_class = class_create(THIS_MODULE, "mdnie");
 	if (IS_ERR(mdnie_class))
 		pr_err("Failed to create class(mdnie)!\n");
