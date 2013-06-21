@@ -188,7 +188,7 @@ static int s5c73m3_spi_probe(struct spi_device *spi)
 {
 	int ret;
 
-	cam_err("Entered\n");
+	printk(KERN_DEBUG "%s: Entered\n", __func__);
 
 	if (spi_setup(spi)) {
 		cam_err("failed to setup spi for s5c73m3_spi\n");
@@ -198,7 +198,7 @@ static int s5c73m3_spi_probe(struct spi_device *spi)
 
 	g_spi = spi;
 
-	cam_err("s5c73m3_spi successfully probed\n");
+	printk(KERN_DEBUG "%s: s5c73m3_spi successfully probed\n", __func__);
 
 	return 0;
 
@@ -223,7 +223,7 @@ static struct spi_driver s5c73m3_spi_driver = {
 
 int s5c73m3_spi_init(void)
 {
-	cam_err("Entered\n");
+	printk(KERN_DEBUG "%s: Entered\n", __func__);
 
 	return spi_register_driver(&s5c73m3_spi_driver);
 }

@@ -778,7 +778,7 @@ static struct platform_driver msm_bus_fabric_driver = {
 
 static int __init msm_bus_fabric_init_driver(void)
 {
-	MSM_BUS_ERR("msm_bus_fabric_init_driver\n");
+	pr_debug("%s\n", __func__);
 	return platform_driver_register(&msm_bus_fabric_driver);
 }
 postcore_initcall(msm_bus_fabric_init_driver);

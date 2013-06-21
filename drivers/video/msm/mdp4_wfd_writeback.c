@@ -37,7 +37,7 @@ static int writeback_probe(struct platform_device *pdev)
 	struct msm_fb_panel_data *pdata = NULL;
 	int rc = 0;
 
-	WRITEBACK_MSG_ERR("Inside writeback_probe\n");
+	printk(KERN_DEBUG "%s\n", __func__);
 	mfd = platform_get_drvdata(pdev);
 	if (!mfd)
 		return -ENODEV;
@@ -109,7 +109,7 @@ static struct platform_driver writeback_driver = {
 static int __init writeback_driver_init(void)
 {
 	int rc = 0;
-	WRITEBACK_MSG_ERR("Inside writeback_driver_init\n");
+	printk(KERN_DEBUG "%s\n", __func__);
 	rc = platform_driver_register(&writeback_driver);
 	return rc;
 }

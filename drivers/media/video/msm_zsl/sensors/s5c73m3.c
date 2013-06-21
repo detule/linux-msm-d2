@@ -3796,7 +3796,7 @@ static int s5c73m3_sensor_probe(const struct msm_camera_sensor_info *info,
 	s->s_mount_angle = 90;
 
 probe_done:
-	cam_err("Probe_done!!\n");
+	CAM_DBG_M("Probe_done!!\n");
 	return rc;
 }
 
