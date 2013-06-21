@@ -1896,7 +1896,7 @@ static int mms_ts_fw_load(struct mms_ts_info *info)
 		goto done;
 	}
 
-	dev_err(&client->dev,
+	dev_dbg(&client->dev,
 		"[TSP] ISC Ver [0x%02x] [0x%02x] [0x%02x]",
 		i2c_smbus_read_byte_data(info->client, 0xF3),
 		i2c_smbus_read_byte_data(info->client, 0xF4),
@@ -1904,7 +1904,7 @@ static int mms_ts_fw_load(struct mms_ts_info *info)
 
 	if (ver >= FW_VERSION && ver != 0xFF
 			&& ver != 0x00 && ver != 0x45) {
-		dev_err(&client->dev,
+		dev_dbg(&client->dev,
 			"[TSP] fw is latest. Do not update.");
 		goto done;
 	} else {

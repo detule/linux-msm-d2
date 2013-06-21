@@ -202,7 +202,7 @@ static struct miscdevice aat1290a_miscdev = {
 
 static int aat1290a_led_probe(struct platform_device *pdev)
 {
-	LED_ERROR("Probe\n");
+	pr_debug("%s: Probe\n", __func__);
 	led_pdata =
 		(struct aat1290a_led_platform_data *) pdev->dev.platform_data;
 

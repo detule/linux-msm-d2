@@ -25,13 +25,13 @@
 #if defined(DEBUG_LEVEL_HIGH)
 #define CAM_DBG_H(fmt, arg...)\
 	do {					\
-		printk(KERN_ERR "[%s:%d] " fmt,	\
+		printk(KERN_DEBUG "[%s:%d] " fmt,	\
 			__func__, __LINE__, ##arg);		\
 	}							\
 	while (0)
 #define CAM_DBG_M(fmt, arg...)\
 	do {					\
-		printk(KERN_ERR "[%s:%d] " fmt,	\
+		printk(KERN_DEBUG "[%s:%d] " fmt,	\
 			__func__, __LINE__, ##arg);		\
 	}							\
 	while (0)
@@ -39,7 +39,7 @@
 #define CAM_DBG_H(fmt, arg...)
 #define CAM_DBG_M(fmt, arg...)\
 	do {					\
-		printk(KERN_ERR "[%s:%d] " fmt,	\
+		printk(KERN_DEBUG "[%s:%d] " fmt,	\
 			__func__, __LINE__, ##arg);		\
 	}							\
 	while (0)
@@ -51,7 +51,7 @@
 #if defined(DEBUG_CAM_I2C)
 #define cam_i2c_dbg(fmt, arg...)	\
 	do {					\
-		printk(KERN_ERR "[%s : % d] " fmt,	\
+		printk(KERN_DEBUG "[%s : % d] " fmt,	\
 			__func__, __LINE__, ##arg);		\
 	}							\
 	while (0)
