@@ -6743,9 +6743,10 @@ static void __init msm8930_clock_pre_init(void)
 
 static void __init msm8960_clock_post_init(void)
 {
+#ifndef CONFIG_MACH_M2
 	/* Keep PXO on whenever APPS cpu is active */
 	clk_prepare_enable(&pxo_a_clk.c);
-
+#endif
 	/* Reset 3D core while clocked to ensure it resets completely. */
 	clk_set_rate(&gfx3d_clk.c, 27000000);
 	clk_prepare_enable(&gfx3d_clk.c);
@@ -6797,8 +6798,10 @@ static void __init msm8960_clock_post_init(void)
 	 * times when Apps CPU is active. This ensures the timer's requirement
 	 * of Krait AHB running 4 times as fast as the timer itself.
 	 */
+#ifndef CONFIG_MACH_M2
 	clk_set_rate(&sfab_tmr_a_clk.c, 54000000);
 	clk_prepare_enable(&sfab_tmr_a_clk.c);
+#endif
 }
 
 static int __init msm8960_clock_late_init(void)
