@@ -3159,11 +3159,11 @@ int mdp4_overlay_mdp_perf_req(struct msm_fb_data_type *mfd)
 	perf_req->mdp_ab_port0_bw =
 		roundup(ab_quota_port0, MDP_BUS_SCALE_AB_STEP);
 	perf_req->mdp_ib_port0_bw =
-		roundup(ib_quota_total, MDP_BUS_SCALE_AB_STEP);
+		roundup(ib_quota_port0, MDP_BUS_SCALE_AB_STEP);
 	perf_req->mdp_ab_port1_bw =
 		roundup(ab_quota_port1, MDP_BUS_SCALE_AB_STEP);
 	perf_req->mdp_ib_port1_bw =
-		roundup(ib_quota_total, MDP_BUS_SCALE_AB_STEP);
+		roundup(ib_quota_port1, MDP_BUS_SCALE_AB_STEP);
 
 	pr_debug("%s %d: ab_quota_total=(%llu, %llu) ib_quota_total=(%llu, %llu)\n",
 		 __func__, __LINE__,
