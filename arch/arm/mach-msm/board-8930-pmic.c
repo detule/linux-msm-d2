@@ -461,7 +461,7 @@ static struct pm8xxx_misc_platform_data pm8xxx_misc_pdata = {
 
 static struct pm8xxx_spk_platform_data pm8xxx_spk_pdata = {
 	.spk_add_enable		= false,
-	.cd_ng_threshold	= 0x6,
+	.cd_ng_threshold	= 0x0,
 	.cd_nf_preamp_bias	= 0x1,
 	.cd_ng_hold		= 0x6,
 	.cd_ng_max_atten	= 0x0,
@@ -490,7 +490,7 @@ static struct pm8921_bms_platform_data pm8921_bms_pdata __devinitdata = {
 	.enable_fcc_learning		= 1,
 	.min_fcc_learning_soc		= 20,
 	.min_fcc_ocv_pc			= 30,
-	.max_fcc_learning_samples	= 5,
+	.min_fcc_learning_samples	= 5,
 };
 
 static struct pm8038_platform_data pm8038_platform_data __devinitdata = {
