@@ -1970,6 +1970,11 @@ static int adjust_soc(struct pm8921_bms_chip *chip, int soc,
 		pr_debug("new delta ocv = %d\n", delta_ocv_uv);
 	}
 
+	if (wake_lock_active(&chip->low_voltage_wake_lock)) {
+		pr_debug("Low Voltage, apply only ibat limited corrections\n");
+		goto skip_limiting_corrections;
+	}
+
 	if (chip->last_ocv_uv > 3800000)
 		correction_limit_uv = the_chip->high_ocv_correction_limit_uv;
 	else
@@ -1986,6 +1991,7 @@ static int adjust_soc(struct pm8921_bms_chip *chip, int soc,
 		pr_debug("new delta ocv = %d\n", delta_ocv_uv);
 	}
 
+skip_limiting_corrections:
 	chip->last_ocv_uv -= delta_ocv_uv;
 
 	if (chip->last_ocv_uv >= chip->max_voltage_uv)
@@ -2117,6 +2123,10 @@ static int scale_soc_while_chg(struct pm8921_bms_chip *chip,
 	/* if we are not charging return last soc */
 	if (the_chip->start_percent == -EINVAL)
 		return prev_soc;
+
+	/* do not scale at 100 */
+	if (new_soc == 100)
+		return new_soc;
 
 	chg_time_sec = DIV_ROUND_UP(the_chip->charge_time_us, USEC_PER_SEC);
 	catch_up_sec = DIV_ROUND_UP(the_chip->catch_up_time_us, USEC_PER_SEC);
@@ -2274,7 +2284,6 @@ static int calculate_state_of_charge(struct pm8921_bms_chip *chip,
 	int new_calculated_soc;
 	static int firsttime = 1;
 
-	calib_hkadc_check(chip, batt_temp);
 	calculate_soc_params(chip, raw, batt_temp, chargecycles,
 						&fcc_uah,
 						&unusable_charge_uah,
@@ -2422,6 +2431,7 @@ static int recalculate_soc(struct pm8921_bms_chip *chip)
 	get_batt_temp(chip, &batt_temp);
 
 	mutex_lock(&chip->last_ocv_uv_mutex);
+	calib_hkadc_check(chip, batt_temp);
 	read_soc_params_raw(chip, &raw, batt_temp);
 
 	soc = calculate_state_of_charge(chip, &raw,
@@ -2501,7 +2511,7 @@ static int report_state_of_charge(struct pm8921_bms_chip *chip)
 	}
 
 	/* last_soc < soc  ... scale and catch up */
-	if (last_soc != -EINVAL && last_soc < soc && soc != 100)
+	if (last_soc != -EINVAL && last_soc < soc)
 		soc = scale_soc_while_chg(chip, delta_time_us, soc, last_soc);
 
 	if (last_soc != -EINVAL) {
@@ -2758,6 +2768,7 @@ void pm8921_bms_charging_began(void)
 	get_batt_temp(the_chip, &batt_temp);
 
 	mutex_lock(&the_chip->last_ocv_uv_mutex);
+	calib_hkadc_check(the_chip, batt_temp);
 	read_soc_params_raw(the_chip, &raw, batt_temp);
 	mutex_unlock(&the_chip->last_ocv_uv_mutex);
 
@@ -2903,6 +2914,7 @@ void pm8921_bms_charging_end(int is_battery_full)
 
 	mutex_lock(&the_chip->last_ocv_uv_mutex);
 
+	calib_hkadc_check(the_chip, batt_temp);
 	read_soc_params_raw(the_chip, &raw, batt_temp);
 
 	calculate_cc_uah(the_chip, raw.cc, &bms_end_cc_uah);
